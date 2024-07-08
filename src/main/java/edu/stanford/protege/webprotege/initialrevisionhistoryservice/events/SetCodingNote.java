@@ -2,6 +2,8 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import org.semanticweb.owlapi.model.IRI;
 
+import javax.annotation.Nonnull;
+
 public class SetCodingNote  extends LinearizationEvent {
 
     public final String value;
@@ -12,12 +14,17 @@ public class SetCodingNote  extends LinearizationEvent {
     }
 
     @Override
-    public LinearizationResponse applyEvent(LinearizationResponse input) {
-        return input;
+    public LinearizationEvent applyEvent() {
+        return this;
     }
 
     @Override
     public String getType() {
         return SetCodingNote.class.getName();
+    }
+
+    @Override
+    public void accept(@Nonnull EventChangeVisitor visitor){
+        visitor.visit(this);
     }
 }

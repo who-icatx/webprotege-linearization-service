@@ -1,7 +1,10 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
+import edu.stanford.protege.webprotege.change.OntologyChangeVisitor;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.semanticweb.owlapi.model.IRI;
+
+import javax.annotation.Nonnull;
 
 
 @BsonDiscriminator(key = "type")
@@ -14,7 +17,7 @@ public abstract class LinearizationEvent {
         this.linearizationView = linearizationView;
     }
 
-    abstract LinearizationResponse applyEvent(LinearizationResponse input);
+    public abstract LinearizationEvent applyEvent();
 
 
     abstract String getType();
@@ -22,5 +25,7 @@ public abstract class LinearizationEvent {
     IRI getLinearizationView() {
         return linearizationView;
     }
+
+    public abstract void accept(@Nonnull EventChangeVisitor visitor);
 
 }
