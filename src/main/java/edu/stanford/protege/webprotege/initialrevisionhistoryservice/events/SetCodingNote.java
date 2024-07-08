@@ -2,7 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import org.semanticweb.owlapi.model.IRI;
 
-public class SetCodingNote  extends LinearizationEvent {
+public class SetCodingNote  extends LinearizationSpecificationEvent {
 
     public final String value;
 

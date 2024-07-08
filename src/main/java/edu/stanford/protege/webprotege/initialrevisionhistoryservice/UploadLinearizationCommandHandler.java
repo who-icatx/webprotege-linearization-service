@@ -51,7 +51,7 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
                                                            ExecutionContext executionContext) {
 
         var stream = linearizationRepository.fetchFromDocument(new BlobLocation(request.documentLocation(), this.bucket));
-        int batchSize = 10;
+        int batchSize = 100;
 
         Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = page -> {
             var historiesToBeSaved = page.stream()
@@ -65,10 +65,6 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
 
         return Mono.empty();
-    }
-
-    private void processPage(Set<WhoficEntityLinearizationSpecification> page, ProjectId projectId, String userId) {
-
     }
 
 

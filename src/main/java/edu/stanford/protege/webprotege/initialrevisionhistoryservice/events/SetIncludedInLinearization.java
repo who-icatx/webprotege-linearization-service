@@ -3,7 +3,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
 import org.semanticweb.owlapi.model.IRI;
 
-public class SetIncludedInLinearization extends LinearizationEvent {
+public class SetIncludedInLinearization extends LinearizationSpecificationEvent {
 
     public final ThreeStateBoolean value;
 

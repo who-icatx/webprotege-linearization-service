@@ -43,7 +43,8 @@ public class LinearizationRevisionService {
                                                                       EntityLinearizationHistory existingHistory,
                                                                       String userId) {
 
-        var linearizationEvents = mapLinearizationSpecificationsToEvents(linearizationSpecification);
+        Set<LinearizationEvent> linearizationEvents = mapLinearizationSpecificationsToEvents(linearizationSpecification);
+        linearizationEvents.addAll(mapLinearizationResidualsEvents(linearizationSpecification));
 
         existingHistory.linearizationRevisions().add(new LinearizationRevision(new Date().getTime(), userId, linearizationEvents));
 
@@ -55,6 +56,7 @@ public class LinearizationRevisionService {
                                                                  String userId) {
 
         var linearizationEvents = mapLinearizationSpecificationsToEvents(linearizationSpecification);
+        linearizationEvents.addAll(mapLinearizationSpecificationsToEvents(linearizationSpecification));
 
         var linearizationRevision = new LinearizationRevision(new Date().getTime(), userId, linearizationEvents);
 
@@ -71,11 +73,25 @@ public class LinearizationRevisionService {
         mongoTemplate.save(entityLinearizationHistory, REVISION_HISTORY_COLLECTION);
     }
 
+    private Set<LinearizationEvent> mapLinearizationResidualsEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
+        Set<LinearizationEvent> residuals = new HashSet<>();
+
+        if(linearizationSpecification.linearizationResiduals() != null) {
+            if(linearizationSpecification.linearizationResiduals().getSuppressSpecifiedResidual() != null) {
+                residuals.add(new SetSuppressedSpecifiedResidual(linearizationSpecification.linearizationResiduals().getSuppressSpecifiedResidual()));
+            }
+            if(linearizationSpecification.linearizationResiduals().getUnspecifiedResidualTitle() != null) {
+                residuals.add(new SetUnspecifiedResidualTitle(linearizationSpecification.linearizationResiduals().getUnspecifiedResidualTitle()));
+            }
+        }
+        return residuals;
+    }
+
     @NotNull
     private Set<LinearizationEvent> mapLinearizationSpecificationsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
         return linearizationSpecification.linearizationSpecifications().stream()
                 .flatMap(specification -> {
-                    List<LinearizationEvent> response = new ArrayList<>();
+                    List<LinearizationSpecificationEvent> response = new ArrayList<>();
 
                     if (specification.getIsIncludedInLinearization() != null) {
                         response.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView()));

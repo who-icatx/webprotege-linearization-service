@@ -4,7 +4,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.semanticweb.owlapi.model.IRI;
 
-public class SetLinearizationParent extends LinearizationEvent {
+public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
     public final IRI value;
     public SetLinearizationParent(IRI linearizationParent, IRI linearizationView) {

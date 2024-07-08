@@ -1,9 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.BatchCollector;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 
