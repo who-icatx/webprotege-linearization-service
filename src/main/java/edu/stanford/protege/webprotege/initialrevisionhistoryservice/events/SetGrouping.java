@@ -3,9 +3,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
 import org.semanticweb.owlapi.model.IRI;
 
-import javax.annotation.Nonnull;
-
-public class SetGrouping extends LinearizationEvent {
+public class SetGrouping extends LinearizationSpecificationEvent {
 
     public final ThreeStateBoolean value;
     public SetGrouping(ThreeStateBoolean value, IRI linearizationView) {
@@ -14,8 +12,8 @@ public class SetGrouping extends LinearizationEvent {
     }
 
     @Override
-    public LinearizationEvent applyEvent() {
-        return this;
+    public LinearizationSpecificationEvent applyEvent() {
+        return null;
     }
 
     @Override
