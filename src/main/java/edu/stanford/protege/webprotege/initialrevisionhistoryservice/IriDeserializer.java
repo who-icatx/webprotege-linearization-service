@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.jackson;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -20,6 +20,10 @@ public class IriDeserializer extends StdDeserializer<IRI> {
 
     @Override
     public IRI deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+        String value = jsonParser.getValueAsString();
+        if(value == null) {
+            return null;
+        }
         return IRI.create(jsonParser.getValueAsString());
     }
 }

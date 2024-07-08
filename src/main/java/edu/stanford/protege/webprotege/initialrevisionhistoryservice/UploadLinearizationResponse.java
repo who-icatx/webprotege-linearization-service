@@ -13,7 +13,7 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Uplo
  * 2024-05-03
  */
 @JsonTypeName(CHANNEL)
-public record CreateInitialRevisionHistoryResponse(@JsonProperty("documentLocation") BlobLocation revisionHistoryLocation) implements Response {
+public record UploadLinearizationResponse(@JsonProperty("documentLocation") BlobLocation documentLocation) implements Response {
 
 
 }

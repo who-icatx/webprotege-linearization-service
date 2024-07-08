@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -17,28 +18,27 @@ import java.security.NoSuchAlgorithmException;
  * 2024-05-03
  */
 @Component
-public class MinioOntologyDocumentLoader {
+public class MinioLinearizationDocumentLoader {
 
     private final MinioClient minioClient;
 
     private final MinioProperties minioProperties;
 
-    public MinioOntologyDocumentLoader(MinioClient minioClient, MinioProperties minioProperties) {
+    public MinioLinearizationDocumentLoader(MinioClient minioClient, MinioProperties minioProperties) {
         this.minioClient = minioClient;
         this.minioProperties = minioProperties;
     }
 
-    public byte [] loadOntologyDocument(@Nonnull BlobLocation location) throws StorageException {
+    public InputStream fetchLinearizationDocument(@Nonnull BlobLocation location) throws StorageException {
         try {
-            var object = minioClient.getObject(GetObjectArgs.builder()
+            return minioClient.getObject(GetObjectArgs.builder()
                                                             .bucket(minioProperties.getLinearizationDocumentBucketName())
                                                             .object(location.name())
                                                             .build());
-            return object.str();
         } catch (ErrorResponseException | XmlParserException | ServerException | NoSuchAlgorithmException |
                  IOException | InvalidResponseException | InvalidKeyException | InternalException |
                  InsufficientDataException e) {
-            throw new StorageException("Problem reading ontology document object from storage", e);
+            throw new StorageException("Problem reading linearization document object from storage", e);
         }
     }
 }

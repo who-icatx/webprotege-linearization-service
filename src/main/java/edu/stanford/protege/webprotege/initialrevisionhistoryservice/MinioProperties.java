@@ -18,7 +18,7 @@ public class MinioProperties {
 
     private String endPoint;
 
-    private String ontologyDocumentsBucketName;
+    private String linearizationDocumentBucketName;
 
     private String revisionHistoryDocumentsBucketName;
 
@@ -46,12 +46,12 @@ public class MinioProperties {
         return endPoint;
     }
 
-    public String getOntologyDocumentsBucketName() {
-        return ontologyDocumentsBucketName;
+    public String getLinearizationDocumentBucketName() {
+        return linearizationDocumentBucketName;
     }
 
-    public void setOntologyDocumentsBucketName(String ontologyDocumentsBucketName) {
-        this.ontologyDocumentsBucketName = ontologyDocumentsBucketName;
+    public void setLinearizationDocumentBucketName(String linearizationDocumentBucketName) {
+        this.linearizationDocumentBucketName = linearizationDocumentBucketName;
     }
 
     public String getRevisionHistoryDocumentsBucketName() {

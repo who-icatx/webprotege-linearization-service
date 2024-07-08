@@ -1,19 +1,26 @@
 spring:
     application:
-        name: webprotege-initial-revision-history-service
+        name: webprotege-linearization-service
     rabbitmq:
         host: rabbitmq
         port: 5672
         password: guest
         username: guest
+    data:
+        mongodb:
+            host: localhost
+            port: 27017
+            database: webprotege
+            auto-index-creation: true
+
 webprotege:
     minio:
         access-key: webprotege
         end-point: http://localhost:9000
         secret-key: webprotege
-        ontology-documents-bucket-name: webprotege-processed-ontologies
+        linearization-document-bucket-name: webprotege-linearizations
         revision-history-documents-bucket-name: webprotege-revision-history-documents
     rabbitmq:
-        requestqueue: webprotege-initial-revision-history-service-queue
-        responsequeue: webprotege-initial-revision-history-service-response-queue
+        requestqueue: webprotege-linearization-service-queue
+        responsequeue: webprotege-linearization-service-response-queue
         timeout: 60000

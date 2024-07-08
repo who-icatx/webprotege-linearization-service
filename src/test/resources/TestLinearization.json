@@ -1,44 +1,43 @@
 [
-
   {
-    "whoficEntityLinearizationSpecification" : {
-      "whoficEntityIri" : "http://id.who.int/icd/entity/1912315151",
-      "linearizationSpecifications" : [
+    "whoficEntityLinearizationSpecification": {
+      "whoficEntityIri": "http://id.who.int/icd/entity/1912315151",
+      "linearizationSpecifications": [
         {
-          "isAuxiliaryAxisChild" : "false",
-          "isGrouping" : "false",
-          "isIncludedInLinearization" : "unknown",
-          "linearizationParent" : "http://id.who.int/icd/entity/2221313",
-          "linearizationView" : "http://id.who.int/icd/entity/5513123"
+          "isAuxiliaryAxisChild": "false",
+          "isGrouping": "false",
+          "isIncludedInLinearization": "unknown",
+          "linearizationParent": "http://id.who.int/icd/entity/2221313",
+          "linearizationView": "http://id.who.int/icd/entity/5513123"
         },
         {
-          "isAuxiliaryAxisChild" : "true",
-          "isGrouping" : "unknown",
-          "isIncludedInLinearization" : "unknown",
-          "linearizationParent" : "http://id.who.int/icd/entity/11355",
-          "linearizationView" : "http://id.who.int/icd/entity/77712312"
+          "isAuxiliaryAxisChild": "true",
+          "isGrouping": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "linearizationParent": "http://id.who.int/icd/entity/11355",
+          "linearizationView": "http://id.who.int/icd/entity/77712312"
         }
       ]
     }
   },
   {
-    "whoficEntityLinearizationSpecification" : {
-      "whoficEntityIri" : "http://id.who.int/icd/entity/9989888",
-      "linearizationSpecifications" : [
+    "whoficEntityLinearizationSpecification": {
+      "whoficEntityIri": "http://id.who.int/icd/entity/9989888",
+      "linearizationSpecifications": [
         {
-          "isAuxiliaryAxisChild" : "true",
-          "isGrouping" : "true",
-          "isIncludedInLinearization" : "true",
-          "linearizationParent" : "http://id.who.int/icd/entity/6123123",
-          "linearizationView" : "http://id.who.int/icd/entity/1231236771"
+          "isAuxiliaryAxisChild": "true",
+          "isGrouping": "true",
+          "isIncludedInLinearization": "true",
+          "linearizationParent": "http://id.who.int/icd/entity/6123123",
+          "linearizationView": "http://id.who.int/icd/entity/1231236771"
         },
         {
-          "isAuxiliaryAxisChild" : "unknown",
-          "isGrouping" : "unknown",
-          "isIncludedInLinearization" : "unknown",
-          "linearizationView" : "http://id.who.int/icd/entity/77712312"
+          "isAuxiliaryAxisChild": "unknown",
+          "isGrouping": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "linearizationView": "http://id.who.int/icd/entity/77712312"
         }
       ]
-    },
-
+    }
+  }
 ]

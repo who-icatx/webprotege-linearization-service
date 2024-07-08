@@ -24,16 +24,16 @@ import java.util.stream.StreamSupport;
  * 2024-05-03
  */
 @Service
-public class LinearizationRepository {
+public class LinearizationDocumentRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(LinearizationRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(LinearizationDocumentRepository.class);
 
     private final MinioLinearizationDocumentLoader minioLinearizationDocumentLoader;
 
     private final ObjectMapper objectMapper;
 
 
-    public LinearizationRepository(MinioLinearizationDocumentLoader minioLinearizationDocumentLoader, ObjectMapper objectMapper) {
+    public LinearizationDocumentRepository(MinioLinearizationDocumentLoader minioLinearizationDocumentLoader, ObjectMapper objectMapper) {
         this.minioLinearizationDocumentLoader = minioLinearizationDocumentLoader;
         this.objectMapper = objectMapper;
     }
@@ -48,11 +48,7 @@ public class LinearizationRepository {
             Iterator<WhoficEntityLinearizationSpecification> iterator = new Iterator<>() {
                 @Override
                 public boolean hasNext() {
-                    try {
-                        return jsonParser.nextToken() != JsonToken.END_ARRAY;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                   return jsonParser.currentToken() != null && jsonParser.currentToken() != JsonToken.END_ARRAY;
                 }
 
                 @Override

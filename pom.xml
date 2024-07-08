@@ -9,11 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>edu.stanford.protege</groupId>
-    <artifactId>webprotege-initial-revision-history-service</artifactId>
+    <artifactId>webprotege-linearization-service</artifactId>
     <version>1.0.0</version>
-    <name>webprotege-initial-revision-history-service</name>
-    <description>This service reads Binary OWL ontology documents from cloud storage (using MinIO) and, from these, generates WebProtégé
-        revision history document that contains a single revision to create these ontologies.</description>
+    <name>webprotege-linearization-service</name>
+    <description>This service reads linearization documents from cloud storage (using MinIO) and, from these, generates WebProtégé linearization.
+        Also it handles querying and event sourcing</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -54,6 +54,22 @@
             <version>8.5.10</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.18.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <version>1.18.1</version>
+        </dependency>
         <dependency>
             <groupId>edu.stanford.protege</groupId>
             <artifactId>webprotege-revision-manager</artifactId>

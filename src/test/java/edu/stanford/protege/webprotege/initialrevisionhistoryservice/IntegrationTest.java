@@ -1,8 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
@@ -13,14 +12,18 @@ import org.testcontainers.utility.DockerImageName;
  * Stanford Center for Biomedical Informatics Research
  * 2023-06-06
  */
-public class IntegrationTest {
+public abstract class IntegrationTest {
 
-    private static Logger logger = LoggerFactory.getLogger(MongoTestExtension.class);
+    private static Logger logger = LoggerFactory.getLogger(IntegrationTest.class);
 
-    private MongoDBContainer mongoDBContainer;
+    private static MongoDBContainer mongoDBContainer;
 
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+    @BeforeClass
+    public static void setUpContainers(){
+        setUpMongo();
+    }
+
+    private static void setUpMongo(){
         var imageName = DockerImageName.parse("mongo");
         mongoDBContainer = new MongoDBContainer(imageName)
                 .withExposedPorts(27017, 27017);
@@ -29,11 +32,11 @@ public class IntegrationTest {
         var mappedHttpPort = mongoDBContainer.getMappedPort(27017);
         logger.info("MongoDB port 27017 is mapped to {}", mappedHttpPort);
         System.setProperty("spring.data.mongodb.port", Integer.toString(mappedHttpPort));
-
     }
 
-    @Override
-    public void afterAll(ExtensionContext extensionContext) throws Exception {
-        mongoDBContainer.stop();
+    @AfterClass
+    public static void closeContainers(){
+        mongoDBContainer.close();
     }
+
 }
