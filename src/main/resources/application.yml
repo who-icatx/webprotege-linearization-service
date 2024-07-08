@@ -24,3 +24,5 @@ webprotege:
         requestqueue: webprotege-linearization-service-queue
         responsequeue: webprotege-linearization-service-response-queue
         timeout: 60000
+    linearization:
+        batch-size: 100

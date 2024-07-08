@@ -25,7 +25,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 @Service
 public class LinearizationRevisionService {
 
-    private final static String REVISION_HISTORY_COLLECTION = "EntityLinearizationHistories";
+    public final static String REVISION_HISTORY_COLLECTION = "EntityLinearizationHistories";
 
     private final LinearizationDocumentRepository linearizationRepository;
 

@@ -7,6 +7,7 @@ import edu.stanford.protege.webprotege.ipc.CommandHandler;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.ipc.WebProtegeHandler;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
@@ -27,6 +28,9 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
     private String bucket = "webprotege-uploads";
 
     private final LinearizationDocumentRepository linearizationRepository;
+
+    @Value("${webprotege.linearization.batch-size}")
+    private int batchSize;
 
     private final LinearizationRevisionService linearizationRevisionService;
 
@@ -51,7 +55,6 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
                                                            ExecutionContext executionContext) {
 
         var stream = linearizationRepository.fetchFromDocument(new BlobLocation(request.documentLocation(), this.bucket));
-        int batchSize = 100;
 
         Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = page -> {
             var historiesToBeSaved = page.stream()
