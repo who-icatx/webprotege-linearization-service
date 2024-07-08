@@ -1,43 +1,377 @@
-[
-  {
-    "whoficEntityLinearizationSpecification": {
-      "whoficEntityIri": "http://id.who.int/icd/entity/1912315151",
+{
+  "whoficEntityLinearizationSpecification": [
+    {
+      "linearizationResiduals": {
+        "suppressOtherSpecifiedResiduals": "true",
+        "unspecifiedResidualTitle": "Infection, unspecified"
+      },
       "linearizationSpecifications": [
         {
-          "isAuxiliaryAxisChild": "false",
-          "isGrouping": "false",
-          "isIncludedInLinearization": "unknown",
-          "linearizationParent": "http://id.who.int/icd/entity/2221313",
-          "linearizationView": "http://id.who.int/icd/entity/5513123"
-        },
-        {
-          "isAuxiliaryAxisChild": "true",
-          "isGrouping": "unknown",
-          "isIncludedInLinearization": "unknown",
-          "linearizationParent": "http://id.who.int/icd/entity/11355",
-          "linearizationView": "http://id.who.int/icd/entity/77712312"
-        }
-      ]
-    }
-  },
-  {
-    "whoficEntityLinearizationSpecification": {
-      "whoficEntityIri": "http://id.who.int/icd/entity/9989888",
-      "linearizationSpecifications": [
-        {
-          "isAuxiliaryAxisChild": "true",
-          "isGrouping": "true",
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/455013390",
           "isIncludedInLinearization": "true",
-          "linearizationParent": "http://id.who.int/icd/entity/6123123",
-          "linearizationView": "http://id.who.int/icd/entity/1231236771"
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pch"
         },
         {
           "isAuxiliaryAxisChild": "unknown",
-          "isGrouping": "unknown",
           "isIncludedInLinearization": "unknown",
-          "linearizationView": "http://id.who.int/icd/entity/77712312"
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/research"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mnh"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/der"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mus"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/455013390",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ner"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ped"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/455013390",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mms"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ocu"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/455013390",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pcl"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/rar"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/env"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/oph"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/icd-o"
         }
-      ]
+      ],
+      "whoficEntityIri": "http:\/\/id.who.int\/icd\/entity\/1435254666"
+    },
+    {
+      "linearizationSpecifications": [
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pch"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/research"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mnh"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/der"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mus"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ner"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ped"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/1435254666",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mms"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ocu"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pcl"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/rar"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/env"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/oph"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/icd-o"
+        }
+      ],
+      "whoficEntityIri": "http:\/\/id.who.int\/icd\/entity\/979278646"
+    },
+    {
+      "linearizationSpecifications": [
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pch"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/research"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mnh"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/der"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mus"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ner"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ped"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/979278646",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mms"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ocu"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "true",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pcl"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/env"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/rar"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/oph"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/icd-o"
+        }
+      ],
+      "whoficEntityIri": "http:\/\/id.who.int\/icd\/entity\/2072728114"
+    },
+    {
+      "linearizationResiduals": {
+        "suppressOtherSpecifiedResiduals": "true",
+        "unspecifiedResidualTitle": "Respiratory tuberculosis, without mention of bacteriological or histological confirmation"
+      },
+      "linearizationSpecifications": [
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/2072728114",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pch"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/research"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mnh"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/der"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mus"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ner"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ped"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/2072728114",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/mms"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/ocu"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "linearizationParent": "http:\/\/id.who.int\/icd\/entity\/2072728114",
+          "isIncludedInLinearization": "true",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/pcl"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "false",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/env"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/rar"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/oph"
+        },
+        {
+          "isAuxiliaryAxisChild": "unknown",
+          "isIncludedInLinearization": "unknown",
+          "isGrouping": "unknown",
+          "linearizationView": "http:\/\/id.who.int\/icd\/release\/11\/icd-o"
+        }
+      ],
+      "whoficEntityIri": "http:\/\/id.who.int\/icd\/entity\/882244568"
     }
-  }
-]
+  ]
+}
