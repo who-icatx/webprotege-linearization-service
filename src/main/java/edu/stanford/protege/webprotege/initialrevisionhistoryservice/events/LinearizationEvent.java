@@ -11,8 +11,9 @@ import javax.annotation.Nonnull;
 public interface LinearizationEvent {
 
     String getType();
-    LinearizationResponse applyEvent(LinearizationResponse input);
+    LinearizationEvent applyEvent(LinearizationEvent input);
 
     void accept(@Nonnull EventChangeVisitor visitor);
 
+    String getValue();
 }

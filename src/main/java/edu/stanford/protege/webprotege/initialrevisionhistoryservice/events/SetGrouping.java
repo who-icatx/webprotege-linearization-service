@@ -1,19 +1,28 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
+import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
 
 public class SetGrouping extends LinearizationSpecificationEvent {
 
-    public final ThreeStateBoolean value;
+    private ThreeStateBoolean value;
     public SetGrouping(ThreeStateBoolean value, IRI linearizationView) {
         super(linearizationView);
         this.value = value;
     }
 
     @Override
-    public LinearizationSpecificationEvent applyEvent() {
-        return null;
+    public LinearizationEvent applyEvent(LinearizationEvent event) {
+
+
+        if(event.getValue().equals(this.value.name())){
+            return this;
+        }
+
+        this.value = ThreeStateBoolean.valueOf(event.getValue());
+        return this;
     }
 
     @Override
@@ -24,5 +33,9 @@ public class SetGrouping extends LinearizationSpecificationEvent {
     @Override
     public void accept(@Nonnull EventChangeVisitor visitor){
         visitor.visit(this);
+    }
+
+    public String getValue(){
+        return this.value.name();
     }
 }

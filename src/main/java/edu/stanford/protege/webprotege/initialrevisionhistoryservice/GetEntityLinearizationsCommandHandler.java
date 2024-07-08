@@ -37,10 +37,7 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
 
     @Override
     public Mono<GetEntityLinearizationsResponse> handleRequest(GetEntityLinearizationsRequest request, ExecutionContext executionContext) {
-        /*
-        am iri și project id
-        vreau sa le iau din baza de date și să le pun într-un LinearizationChangeManager și să le aplic
-         */
+
         EntityLinearizationHistory linearizationHistory = this.linearizationRevisionService.getExistingHistory(request.entityIRI(), request.projectId());
 
         WhoficEntityLinearizationSpecification processedSpec = linearizationEventsProcessor.processHistory(linearizationHistory);

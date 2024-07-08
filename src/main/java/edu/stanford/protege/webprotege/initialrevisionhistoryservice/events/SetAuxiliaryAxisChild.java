@@ -1,11 +1,12 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
+import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
 
 public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
 
-    public final ThreeStateBoolean value;
+    private ThreeStateBoolean value;
 
     public SetAuxiliaryAxisChild(ThreeStateBoolean value, IRI linearizationView) {
         super(linearizationView);
@@ -13,8 +14,13 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
     }
 
     @Override
-    public LinearizationSpecificationEvent applyEvent(LinearizationResponse input) {
-        return null;
+    public LinearizationEvent applyEvent(LinearizationEvent event) {
+        if(event.getValue().equals(this.value.name())){
+            return this;
+        }
+
+        this.value = ThreeStateBoolean.valueOf(event.getValue());
+        return this;
     }
 
     @Override
@@ -25,5 +31,9 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
     @Override
     public void accept(@Nonnull EventChangeVisitor visitor){
         visitor.visit(this);
+    }
+
+    public String getValue(){
+        return this.value.name();
     }
 }

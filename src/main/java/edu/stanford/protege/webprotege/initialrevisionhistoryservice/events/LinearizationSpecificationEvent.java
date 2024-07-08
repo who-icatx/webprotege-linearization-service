@@ -13,7 +13,7 @@ public abstract class LinearizationSpecificationEvent implements LinearizationEv
     }
 
 
-    IRI getLinearizationView() {
+    public IRI getLinearizationView() {
         return linearizationView;
     }
 
