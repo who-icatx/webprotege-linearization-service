@@ -62,24 +62,7 @@ public class LinearizationRevisionService {
 
     public EntityLinearizationHistory getExistingHistory(String entityIri, ProjectId projectId) {
         var query = query(where(WHOFIC_ENTITY_IRI_KEY).is(entityIri).and(PROJECT_ID).is(projectId).in(REVISION_HISTORY_COLLECTION));
-        EntityLinearizationHistory history = mongoTemplate.findOne(query, EntityLinearizationHistory.class);
-
-        /*
-        ToDo:
-            make test for this
-         */
-        if (history != null) {
-            // Sort the linearizationRevisions by timestamp
-            Set<LinearizationRevision> sortedRevisions = history.linearizationRevisions()
-                    .stream()
-                    .sorted(Comparator.comparingLong(LinearizationRevision::timestamp))
-                    .collect(Collectors.toCollection(TreeSet::new));
-
-            // Return a new EntityLinearizationHistory object with the sorted revisions
-            return new EntityLinearizationHistory(history.whoficEntityIri(), history.projectId(), sortedRevisions);
-        }
-
-        return null;
+        return mongoTemplate.findOne(query, EntityLinearizationHistory.class);
     }
 
     public void saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory) {
