@@ -1,6 +1,9 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,9 +11,11 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Util
 
 public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
 
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetSuppressedSpecifiedResidual";
     private final ThreeStateBoolean value;
 
-    public SetSuppressedSpecifiedResidual(ThreeStateBoolean value) {
+    @JsonCreator
+    public SetSuppressedSpecifiedResidual(@JsonProperty("value") ThreeStateBoolean value) {
         this.value = value;
     }
 

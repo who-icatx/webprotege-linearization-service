@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
 import jakarta.annotation.Nonnull;
@@ -10,9 +11,11 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Util
 
 public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetLinearizationParent";
     private final IRI value;
 
-    public SetLinearizationParent(IRI linearizationParent, IRI linearizationView) {
+    @JsonCreator
+    public SetLinearizationParent(@JsonProperty("linearizationParent") IRI linearizationParent,@JsonProperty("linearizationView") IRI linearizationView) {
         super(linearizationView);
         this.value = linearizationParent;
     }

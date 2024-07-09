@@ -1,7 +1,8 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
-import jakarta.annotation.Nonnull;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
 import org.semanticweb.owlapi.model.IRI;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
@@ -10,7 +11,10 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
 
     private final ThreeStateBoolean value;
 
-    public SetAuxiliaryAxisChild(ThreeStateBoolean value, IRI linearizationView) {
+    public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetAuxiliaryAxisChild";
+
+    @JsonCreator
+    public SetAuxiliaryAxisChild(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") IRI linearizationView) {
         super(linearizationView);
         this.value = value;
     }
@@ -39,8 +43,12 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
         return SetAuxiliaryAxisChild.class.getName();
     }
 
+    public static String getName(){
+        return SetAuxiliaryAxisChild.class.getName();
+    }
+
     @Override
-    public void accept(@Nonnull EventChangeVisitor visitor){
+    public void accept(EventChangeVisitor visitor){
         visitor.visit(this);
     }
 

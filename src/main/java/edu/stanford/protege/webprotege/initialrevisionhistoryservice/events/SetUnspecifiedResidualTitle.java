@@ -1,5 +1,8 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.jetbrains.annotations.NotNull;
@@ -8,9 +11,11 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Util
 
 public class SetUnspecifiedResidualTitle  implements LinearizationEvent {
 
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetUnspecifiedResidualTitle";
     private final String value;
 
-    public SetUnspecifiedResidualTitle(String value) {
+    @JsonCreator
+    public SetUnspecifiedResidualTitle(@JsonProperty("value") String value) {
         this.value = value;
     }
 

@@ -1,5 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
@@ -8,8 +10,12 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Util
 
 public class SetGrouping extends LinearizationSpecificationEvent {
 
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetGrouping";
+
     private final ThreeStateBoolean value;
-    public SetGrouping(ThreeStateBoolean value, IRI linearizationView) {
+
+    @JsonCreator
+    public SetGrouping(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") IRI linearizationView) {
         super(linearizationView);
         this.value = value;
     }
