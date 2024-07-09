@@ -1,15 +1,17 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.Set;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EntityLinearizationHistory {
 
-    private final HistoryId historyId;
     private final IRI whoficEntityIri;
 
     private final ProjectId projectId;
@@ -17,11 +19,9 @@ public class EntityLinearizationHistory {
     private final Set<LinearizationRevision> linearizationRevisions;
 
     @JsonCreator
-    public EntityLinearizationHistory(@JsonProperty("_id") HistoryId historyId,
-                                      @JsonProperty("whoficEntityIri")  IRI whoficEntityIri,
+    public EntityLinearizationHistory(@JsonProperty("whoficEntityIri")  IRI whoficEntityIri,
                                       @JsonProperty("projectId") ProjectId projectId,
                                       @JsonProperty("linearizationRevisions") Set<LinearizationRevision> linearizationRevisions) {
-        this.historyId = historyId;
         this.whoficEntityIri = whoficEntityIri;
         this.projectId = projectId;
         this.linearizationRevisions = linearizationRevisions;

@@ -89,8 +89,7 @@ public class UploadLinearizationCommandHandlerTest extends IntegrationTest {
         commandHandler.handleRequest(new UploadLinearizationRequest("testDocumentLocation",  ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
                 new ExecutionContext(UserId.valueOf("alexsilaghi"),"" ));
 
-        Document filter = new Document("projectId", "ecc61e85-bdb6-47f6-9bb1-664b64558f2b");
-
+        Document filter = new Document("whoficEntityIri", "http://id.who.int/icd/entity/979278646");
         FindIterable<Document> documents = mongoTemplate.getCollection("EntityLinearizationHistories").find(filter);
         Stream<Document> docs = stream(documents.spliterator(), false);
 

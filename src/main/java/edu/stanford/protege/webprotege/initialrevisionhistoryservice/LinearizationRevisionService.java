@@ -56,7 +56,7 @@ public class LinearizationRevisionService {
 
         var linearizationRevision = new LinearizationRevision(new Date().getTime(), userId, linearizationEvents);
 
-        return new EntityLinearizationHistory(new HistoryId("668d009620d6a71e9c8f762e"), linearizationSpecification.entityIRI(), projectId, new HashSet<>(List.of(linearizationRevision)));
+        return new EntityLinearizationHistory(linearizationSpecification.entityIRI(), projectId, new HashSet<>(List.of(linearizationRevision)));
     }
 
 
