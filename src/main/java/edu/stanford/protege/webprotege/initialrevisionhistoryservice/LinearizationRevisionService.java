@@ -5,20 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationRevision;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
-import org.semanticweb.owlapi.model.IRI;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.PROJECT_ID;
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.WHOFIC_ENTITY_IRI_KEY;
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -27,14 +23,11 @@ public class LinearizationRevisionService {
 
     private final static String REVISION_HISTORY_COLLECTION = "EntityLinearizationHistories";
 
-    private final LinearizationDocumentRepository linearizationRepository;
-
     private final MongoTemplate mongoTemplate;
 
     private final ObjectMapper objectMapper;
 
-    public LinearizationRevisionService(LinearizationDocumentRepository linearizationRepository, MongoTemplate mongoTemplate, ObjectMapper objectMapper) {
-        this.linearizationRepository = linearizationRepository;
+    public LinearizationRevisionService(MongoTemplate mongoTemplate, ObjectMapper objectMapper) {
         this.mongoTemplate = mongoTemplate;
         this.objectMapper = objectMapper;
     }
@@ -66,7 +59,24 @@ public class LinearizationRevisionService {
 
     public EntityLinearizationHistory getExistingHistory(String entityIri, ProjectId projectId) {
         var query = query(where(WHOFIC_ENTITY_IRI_KEY).is(entityIri).and(PROJECT_ID).is(projectId).in(REVISION_HISTORY_COLLECTION));
-        return mongoTemplate.findOne(query, EntityLinearizationHistory.class);
+        EntityLinearizationHistory history = mongoTemplate.findOne(query, EntityLinearizationHistory.class);
+
+        /*
+        ToDo:
+            make test for this
+         */
+        if (history != null) {
+            // Sort the linearizationRevisions by timestamp
+            Set<LinearizationRevision> sortedRevisions = history.linearizationRevisions()
+                    .stream()
+                    .sorted(Comparator.comparingLong(LinearizationRevision::timestamp))
+                    .collect(Collectors.toCollection(TreeSet::new));
+
+            // Return a new EntityLinearizationHistory object with the sorted revisions
+            return new EntityLinearizationHistory(history.whoficEntityIri(), history.projectId(), sortedRevisions);
+        }
+
+        return null;
     }
 
     public void saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory) {
@@ -76,11 +86,11 @@ public class LinearizationRevisionService {
     private Set<LinearizationEvent> mapLinearizationResidualsEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
         Set<LinearizationEvent> residuals = new HashSet<>();
 
-        if(linearizationSpecification.linearizationResiduals() != null) {
-            if(linearizationSpecification.linearizationResiduals().getSuppressSpecifiedResidual() != null) {
+        if (linearizationSpecification.linearizationResiduals() != null) {
+            if (linearizationSpecification.linearizationResiduals().getSuppressSpecifiedResidual() != null) {
                 residuals.add(new SetSuppressedSpecifiedResidual(linearizationSpecification.linearizationResiduals().getSuppressSpecifiedResidual()));
             }
-            if(linearizationSpecification.linearizationResiduals().getUnspecifiedResidualTitle() != null) {
+            if (linearizationSpecification.linearizationResiduals().getUnspecifiedResidualTitle() != null) {
                 residuals.add(new SetUnspecifiedResidualTitle(linearizationSpecification.linearizationResiduals().getUnspecifiedResidualTitle()));
             }
         }
@@ -102,10 +112,10 @@ public class LinearizationRevisionService {
                     if (specification.getLinearizationParent() != null) {
                         response.add(new SetLinearizationParent(specification.getLinearizationParent(), specification.getLinearizationView()));
                     }
-                    if(specification.getIsGrouping() != null) {
+                    if (specification.getIsGrouping() != null) {
                         response.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView()));
                     }
-                    if(specification.getCodingNote() != null) {
+                    if (specification.getCodingNote() != null) {
                         response.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView()));
                     }
 
@@ -115,9 +125,9 @@ public class LinearizationRevisionService {
 
     public void saveAll(Set<EntityLinearizationHistory> historiesToBeSaved) {
         var collection = mongoTemplate.getCollection(REVISION_HISTORY_COLLECTION);
-        /** THIS WORKS IF THE RECEIVED HISTORIES ARE UNIQUE **/
+        /* THIS WORKS IF THE RECEIVED HISTORIES ARE UNIQUE */
         var documents = historiesToBeSaved.stream()
-                .map(history ->  new InsertOneModel<>(objectMapper.convertValue(history, Document.class)))
+                .map(history -> new InsertOneModel<>(objectMapper.convertValue(history, Document.class)))
                 .collect(Collectors.toList());
 
         var result = collection.bulkWrite(documents);

@@ -1,12 +1,15 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
 import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
 
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
+
 public class SetCodingNote  extends LinearizationSpecificationEvent {
 
-    private String value;
+    private final String value;
 
     public SetCodingNote(String value, IRI linearizationView) {
         super(linearizationView);
@@ -14,13 +17,21 @@ public class SetCodingNote  extends LinearizationSpecificationEvent {
     }
 
     @Override
-    public LinearizationEvent applyEvent(LinearizationEvent event) {
-
-        if(event.getValue().equals(this.value)){
-            return this;
+    public EventProcesableParameter applyEvent(EventProcesableParameter event) {
+        if(!(event instanceof LinearizationSpecification specification)){
+            throw new RuntimeException("Error! Trying to parse event"+LinearizationSpecification.class.getName());
         }
-        this.value = event.getValue();
-        return this;
+
+        if (isNotEquals(specification.getIsAuxiliaryAxisChild(), value)){
+            return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
+                    specification.getIsGrouping(),
+                    specification.getIsIncludedInLinearization(),
+                    specification.getLinearizationParent(),
+                    specification.getLinearizationView(),
+                    value);
+        }
+
+        return specification;
     }
 
     @Override

@@ -1,13 +1,14 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.jetbrains.annotations.NotNull;
+
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
 
 public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
 
-    private ThreeStateBoolean value;
+    private final ThreeStateBoolean value;
 
     public SetSuppressedSpecifiedResidual(ThreeStateBoolean value) {
         this.value = value;
@@ -19,14 +20,16 @@ public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
     }
 
     @Override
-    public LinearizationEvent applyEvent(LinearizationEvent event) {
-
-        if(event.getValue().equals(this.value.name())){
-            return this;
+    public EventProcesableParameter applyEvent(EventProcesableParameter event) {
+        if(!(event instanceof LinearizationResiduals residual)){
+            throw new RuntimeException("Error! Trying to parse event that is not "+LinearizationResiduals.class.getName());
         }
 
-        this.value = ThreeStateBoolean.valueOf(event.getValue());
-        return this;
+        if (isNotEquals(residual.getSuppressSpecifiedResidual(), value)){
+            return new LinearizationResiduals(value, residual.getUnspecifiedResidualTitle());
+        }
+
+        return residual;
     }
 
     @Override

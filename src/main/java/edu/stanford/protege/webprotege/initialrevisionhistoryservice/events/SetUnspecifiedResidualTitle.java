@@ -1,11 +1,14 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.jetbrains.annotations.NotNull;
+
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
 
 public class SetUnspecifiedResidualTitle  implements LinearizationEvent {
 
-    private String value;
+    private final String value;
 
     public SetUnspecifiedResidualTitle(String value) {
         this.value = value;
@@ -17,14 +20,16 @@ public class SetUnspecifiedResidualTitle  implements LinearizationEvent {
     }
 
     @Override
-    public LinearizationEvent applyEvent(LinearizationEvent event) {
-
-        if(event.getValue().equals(this.value)){
-            return this;
+    public EventProcesableParameter applyEvent(EventProcesableParameter event) {
+        if(!(event instanceof LinearizationResiduals residual)){
+            throw new RuntimeException("Error! Trying to parse event that is not "+LinearizationResiduals.class.getName());
         }
 
-        this.value = event.getValue();
-        return this;
+        if (isNotEquals(residual.getSuppressSpecifiedResidual(), value)){
+            return new LinearizationResiduals(residual.getSuppressSpecifiedResidual(), value);
+        }
+
+        return residual;
     }
 
     @Override
