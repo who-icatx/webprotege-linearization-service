@@ -1,13 +1,17 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.semanticweb.owlapi.model.IRI;
 
 public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetLinearizationParent";
     public final IRI value;
-    public SetLinearizationParent(IRI linearizationParent, IRI linearizationView) {
+
+    @JsonCreator
+    public SetLinearizationParent(@JsonProperty("linearizationParent") IRI linearizationParent,@JsonProperty("linearizationView") IRI linearizationView) {
         super(linearizationView);
         this.value = linearizationParent;
     }

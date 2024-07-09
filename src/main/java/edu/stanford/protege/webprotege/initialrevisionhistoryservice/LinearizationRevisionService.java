@@ -6,6 +6,7 @@ import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.HistoryId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationRevision;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import org.bson.Document;
@@ -46,7 +47,7 @@ public class LinearizationRevisionService {
         Set<LinearizationEvent> linearizationEvents = mapLinearizationSpecificationsToEvents(linearizationSpecification);
         linearizationEvents.addAll(mapLinearizationResidualsEvents(linearizationSpecification));
 
-        existingHistory.linearizationRevisions().add(new LinearizationRevision(new Date().getTime(), userId, linearizationEvents));
+        existingHistory.getLinearizationRevisions().add(new LinearizationRevision(new Date().getTime(), userId, linearizationEvents));
 
         return existingHistory;
     }
@@ -60,7 +61,7 @@ public class LinearizationRevisionService {
 
         var linearizationRevision = new LinearizationRevision(new Date().getTime(), userId, linearizationEvents);
 
-        return new EntityLinearizationHistory(linearizationSpecification.entityIRI(), projectId, new HashSet<>(List.of(linearizationRevision)));
+        return new EntityLinearizationHistory(new HistoryId("668d009620d6a71e9c8f762e"), linearizationSpecification.entityIRI(), projectId, new HashSet<>(List.of(linearizationRevision)));
     }
 
 
@@ -120,7 +121,6 @@ public class LinearizationRevisionService {
                 .map(history ->  new InsertOneModel<>(objectMapper.convertValue(history, Document.class)))
                 .collect(Collectors.toList());
 
-        var result = collection.bulkWrite(documents);
-        System.out.println(result);
+        collection.bulkWrite(documents);
     }
 }

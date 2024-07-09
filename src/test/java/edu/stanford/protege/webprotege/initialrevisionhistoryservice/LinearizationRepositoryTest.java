@@ -1,12 +1,15 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.BlobLocation;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.config.ApplicationBeans;
+import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +31,7 @@ public class LinearizationRepositoryTest {
     @Before
     public void setUp(){
         when(minioLinearizationDocumentLoader.fetchLinearizationDocument(any())).thenReturn(new ByteArrayInputStream(LINEARIZATION_SPECIFICATIONS.getBytes(StandardCharsets.UTF_8)));
-        linearizationRepository = new LinearizationDocumentRepository(minioLinearizationDocumentLoader, new ApplicationBeans().objectMapper());
+        linearizationRepository = new LinearizationDocumentRepository(minioLinearizationDocumentLoader, new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl()));
     }
 
     @Test
