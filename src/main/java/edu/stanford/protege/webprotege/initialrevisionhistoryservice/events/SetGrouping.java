@@ -44,7 +44,7 @@ public class SetGrouping extends LinearizationSpecificationEvent {
     }
 
     @Override
-    public void accept(@Nonnull EventChangeVisitor visitor){
+    public void accept(@Nonnull EventVisitor visitor){
         visitor.visit(this);
     }
 

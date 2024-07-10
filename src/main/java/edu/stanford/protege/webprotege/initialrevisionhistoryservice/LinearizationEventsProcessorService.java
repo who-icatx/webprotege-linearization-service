@@ -3,29 +3,29 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEmpty;
 
 @Service
 public class LinearizationEventsProcessorService {
 
-    private final ObjectFactory<EventChangeVisitorImpl> eventChangeVisitorFactory;
 
-    public LinearizationEventsProcessorService(ObjectFactory<EventChangeVisitorImpl> eventChangeVisitorFactory) {
-        this.eventChangeVisitorFactory = eventChangeVisitorFactory;
+    public LinearizationEventsProcessorService() {
     }
 
     public WhoficEntityLinearizationSpecification processHistory(EntityLinearizationHistory linearizationHistory) {
 
-        EventChangeVisitorImpl eventChangeVisitor = eventChangeVisitorFactory.getObject();
 
         Map<IRI, Queue<LinearizationSpecificationEvent>> allEventsThatHappenedPerIRI = new HashMap<>();
+        Map<IRI, List<LinearizationSpecificationEvent>> mapOfViewsWithSpecList = new HashMap<>();
+        List<LinearizationEvent> linearizationResidualEvents = new ArrayList<>();
+
 
         List<LinearizationSpecification> linearizationSpecifications = new ArrayList<>();
-        List<LinearizationEvent> otherEvents = new ArrayList<>();
         /*
         ToDo:
             Investigate to see if it's possible if we have this service scaled horizontally and two users create a new revision at the same time, one on each service.
@@ -33,49 +33,66 @@ public class LinearizationEventsProcessorService {
             Will we have this service scaled horizontally?
          */
 
-        // Process each revision in the sorted order
+//        linearizationHistory.getLinearizationRevisions()
+//                .forEach(linearizationRevision ->
+//                        linearizationRevision.linearizationEvents()
+//                                .forEach(event -> {
+//                                    if (event instanceof LinearizationSpecificationEvent currentEvent) {
+//                                        var aLinearizationView = mapOfViewsWithSpecList.get(currentEvent.getLinearizationView());
+//                                        if (aLinearizationView != null) {
+//                                            aLinearizationView.add(currentEvent);
+//                                        } else {
+//                                            mapOfViewsWithSpecList.put(currentEvent.getLinearizationView(), List.of(currentEvent));
+//                                        }
+//                                    } else {
+//                                        linearizationResidualEvents.add(event);
+//                                    }
+//                                }));
+//
+//
+//        linearizationSpecifications = mapEventsToSpecifications(mapOfViewsWithSpecList);
+
         linearizationHistory.getLinearizationRevisions()
                 .forEach(linearizationRevision ->
-                linearizationRevision.linearizationEvents()
-                        .forEach(event -> event.accept(eventChangeVisitor))
-        );
+                        linearizationRevision.linearizationEvents()
+                                .forEach(event -> {
+                                            if (event instanceof LinearizationSpecificationEvent currentEvent) {
+                                                Queue<LinearizationSpecificationEvent> eventQueue = allEventsThatHappenedPerIRI.get(currentEvent.getLinearizationView());
+                                                if (eventQueue == null) {
+                                                    eventQueue = new ConcurrentLinkedQueue<>();
+                                                }
+                                                eventQueue.add(currentEvent);
+                                                allEventsThatHappenedPerIRI.put(currentEvent.getLinearizationView(), eventQueue);
+                                            } else {
+                                                linearizationResidualEvents.add(event);
+                                            }
+                                        }
+                                )
 
-        for(LinearizationRevision revision : linearizationHistory.getLinearizationRevisions()){
-            for (LinearizationEvent event: revision.linearizationEvents()){
-                if(event instanceof LinearizationSpecificationEvent){
-                    LinearizationSpecificationEvent currentEvent = (LinearizationSpecificationEvent) event;
-                    Queue<LinearizationSpecificationEvent> eventQueue = allEventsThatHappenedPerIRI.get(currentEvent.getLinearizationView());
-                    if(eventQueue==null){
-                        eventQueue = new ConcurrentLinkedQueue<>();
+                );
+
+
+        allEventsThatHappenedPerIRI.forEach(
+                (viewIRI, specQueue) -> {
+                    LinearizationSpecification response = new LinearizationSpecification(null, null, null, null, viewIRI, null);
+
+                    while (isNotEmpty(specQueue)) {
+                        LinearizationSpecificationEvent event = specQueue.remove();
+                        response = (LinearizationSpecification) event.applyEvent(response);
                     }
-                    eventQueue.add(currentEvent);
-                    allEventsThatHappenedPerIRI.put(currentEvent.getLinearizationView(),eventQueue);
+                    linearizationSpecifications.add(response);
                 }
-                else  {
-                    otherEvents.add(event);
-                }
-            }
-        }
-
-        for(IRI linearizationView: allEventsThatHappenedPerIRI.keySet()){
-            LinearizationSpecification response = new LinearizationSpecification(null, null, null,null, linearizationView, null) ;
-
-            while (!allEventsThatHappenedPerIRI.get(linearizationView).isEmpty()){
-                LinearizationSpecificationEvent event = allEventsThatHappenedPerIRI.get(linearizationView).remove();
-                response = (LinearizationSpecification) event.applyEvent(response);
-            }
-            linearizationSpecifications.add(response);
-        }
+        );
 
 
         LinearizationResiduals residuals = new LinearizationResiduals(null, null);
-        for(LinearizationEvent event : otherEvents) {
+        for (LinearizationEvent event : linearizationResidualEvents) {
             residuals = (LinearizationResiduals) event.applyEvent(residuals);
         }
 
 
         return new WhoficEntityLinearizationSpecification(linearizationHistory.getWhoficEntityIri(),
-                    residuals,
-               linearizationSpecifications);
+                residuals,
+                linearizationSpecifications);
     }
 }

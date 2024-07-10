@@ -2,7 +2,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
 import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
@@ -45,7 +44,7 @@ public class SetCodingNote  extends LinearizationSpecificationEvent {
     }
 
     @Override
-    public void accept(@Nonnull EventChangeVisitor visitor){
+    public void accept(@Nonnull EventVisitor visitor){
         visitor.visit(this);
     }
 

@@ -3,7 +3,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +37,7 @@ public class SetUnspecifiedResidualTitle  implements LinearizationEvent {
     }
 
     @Override
-    public void accept(@NotNull EventChangeVisitor visitor) {
+    public void accept(@NotNull EventVisitor visitor) {
         visitor.visit(this);
     }
 

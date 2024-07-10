@@ -38,7 +38,7 @@ public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
     }
 
     @Override
-    public void accept(@NotNull EventChangeVisitor visitor) {
+    public void accept(@NotNull EventVisitor visitor) {
         visitor.visit(this);
     }
 

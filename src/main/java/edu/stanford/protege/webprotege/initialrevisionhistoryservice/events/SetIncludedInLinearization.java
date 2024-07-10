@@ -3,7 +3,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
@@ -46,7 +45,7 @@ public class SetIncludedInLinearization extends LinearizationSpecificationEvent 
     }
 
     @Override
-    public void accept(@Nonnull EventChangeVisitor visitor){
+    public void accept(@Nonnull EventVisitor visitor){
         visitor.visit(this);
     }
 

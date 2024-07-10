@@ -47,7 +47,7 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
     }
 
     @Override
-    public void accept(EventChangeVisitor visitor) {
+    public void accept(EventVisitor visitor) {
         visitor.visit(this);
     }
 

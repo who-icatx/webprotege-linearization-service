@@ -26,7 +26,7 @@ public interface LinearizationEvent {
 
     EventProcesableParameter applyEvent(EventProcesableParameter input);
 
-    void accept(EventChangeVisitor visitor);
+    void accept(EventVisitor visitor);
 
     String getValue();
 }

@@ -7,7 +7,7 @@ import org.semanticweb.owlapi.model.IRI;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class LinearizationSpecificationMapper implements EventChangeVisitor {
+public class LinearizationSpecificationMapper implements EventVisitor {
     private ThreeStateBoolean isAuxiliaryAxisChild;
     private ThreeStateBoolean isGrouping;
     private ThreeStateBoolean isIncludedInLinearization;
@@ -18,7 +18,7 @@ public class LinearizationSpecificationMapper implements EventChangeVisitor {
     public LinearizationSpecificationMapper() {
     }
 
-    public LinearizationSpecification getLinearizationSpecification() {
+    private LinearizationSpecification getLinearizationSpecification() {
         return new LinearizationSpecification(
                 isAuxiliaryAxisChild,
                 isGrouping,
@@ -54,7 +54,7 @@ public class LinearizationSpecificationMapper implements EventChangeVisitor {
         this.linearizationParent = IRI.create(event.getValue());
     }
 
-    public static LinearizationSpecification mapEventToSpecification(List<LinearizationSpecificationEvent> events, IRI linearizationView) {
+    public static LinearizationSpecification mapEventsToSpecification(List<LinearizationSpecificationEvent> events, IRI linearizationView) {
         LinearizationSpecificationMapper mapper = new LinearizationSpecificationMapper();
         mapper.linearizationView = linearizationView;
         for (LinearizationSpecificationEvent event : events) {
@@ -63,9 +63,10 @@ public class LinearizationSpecificationMapper implements EventChangeVisitor {
         return mapper.getLinearizationSpecification();
     }
 
+    // We asume the list of LinearizationSpecificationEvents is ordered from oldest to newest
     public static List<LinearizationSpecification> mapEventsToSpecifications(Map<IRI, List<LinearizationSpecificationEvent>> linearizationEventsMaps) {
         return linearizationEventsMaps.entrySet().stream()
-                .map(entry -> mapEventToSpecification(entry.getValue(), entry.getKey()))
+                .map((entry) -> mapEventsToSpecification(entry.getValue(), entry.getKey()))
                 .collect(Collectors.toList());
     }
 }
