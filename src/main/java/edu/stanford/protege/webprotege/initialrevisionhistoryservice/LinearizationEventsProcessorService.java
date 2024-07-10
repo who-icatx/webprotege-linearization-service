@@ -13,15 +13,10 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Util
 @Service
 public class LinearizationEventsProcessorService {
 
-
-    public LinearizationEventsProcessorService() {
-    }
-
     public WhoficEntityLinearizationSpecification processHistory(EntityLinearizationHistory linearizationHistory) {
 
 
         Map<IRI, Queue<LinearizationSpecificationEvent>> allEventsThatHappenedPerIRI = new HashMap<>();
-        Map<IRI, List<LinearizationSpecificationEvent>> mapOfViewsWithSpecList = new HashMap<>();
         List<LinearizationEvent> linearizationResidualEvents = new ArrayList<>();
 
 
@@ -32,25 +27,6 @@ public class LinearizationEventsProcessorService {
             Can we have two revisions with the exact same timestamp?
             Will we have this service scaled horizontally?
          */
-
-//        linearizationHistory.getLinearizationRevisions()
-//                .forEach(linearizationRevision ->
-//                        linearizationRevision.linearizationEvents()
-//                                .forEach(event -> {
-//                                    if (event instanceof LinearizationSpecificationEvent currentEvent) {
-//                                        var aLinearizationView = mapOfViewsWithSpecList.get(currentEvent.getLinearizationView());
-//                                        if (aLinearizationView != null) {
-//                                            aLinearizationView.add(currentEvent);
-//                                        } else {
-//                                            mapOfViewsWithSpecList.put(currentEvent.getLinearizationView(), List.of(currentEvent));
-//                                        }
-//                                    } else {
-//                                        linearizationResidualEvents.add(event);
-//                                    }
-//                                }));
-//
-//
-//        linearizationSpecifications = mapEventsToSpecifications(mapOfViewsWithSpecList);
 
         linearizationHistory.getLinearizationRevisions()
                 .forEach(linearizationRevision ->
@@ -74,7 +50,12 @@ public class LinearizationEventsProcessorService {
 
         allEventsThatHappenedPerIRI.forEach(
                 (viewIRI, specQueue) -> {
-                    LinearizationSpecification response = new LinearizationSpecification(null, null, null, null, viewIRI, null);
+                    LinearizationSpecification response = new LinearizationSpecification(null,
+                            null,
+                            null,
+                            null,
+                            viewIRI,
+                            null);
 
                     while (isNotEmpty(specQueue)) {
                         LinearizationSpecificationEvent event = specQueue.remove();

@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
+@WebProtegeHandler
 public class GetEntityLinearizationsCommandHandler implements CommandHandler<GetEntityLinearizationsRequest, GetEntityLinearizationsResponse> {
 
 
@@ -37,7 +38,7 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
     @Override
     public Mono<GetEntityLinearizationsResponse> handleRequest(GetEntityLinearizationsRequest request, ExecutionContext executionContext) {
 
-        EntityLinearizationHistory linearizationHistory = this.linearizationRevisionService.getExistingHistory(request.entityIRI(), request.projectId());
+        EntityLinearizationHistory linearizationHistory = this.linearizationRevisionService.getExistingHistoryOrderedByRevision(request.entityIRI(), request.projectId());
 
         WhoficEntityLinearizationSpecification processedSpec = linearizationEventsProcessor.processHistory(linearizationHistory);
 
