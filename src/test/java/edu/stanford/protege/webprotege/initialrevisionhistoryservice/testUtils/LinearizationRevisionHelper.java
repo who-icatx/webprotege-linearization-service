@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils;
 
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationRevision;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,7 @@ public class LinearizationRevisionHelper {
         int iteration = 0;
         while (numberOfRevisions > iteration) {
             long timestamp = iteration;
-            listOfRevisions.add(new LinearizationRevision(timestamp, "user" + numberOfRevisions, getRandomLinearizationEvents()));
+            listOfRevisions.add(new LinearizationRevision(timestamp, "user" + Instant.now(), getRandomLinearizationEvents()));
             iteration++;
         }
 

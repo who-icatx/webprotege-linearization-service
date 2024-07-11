@@ -25,8 +25,7 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (specification.getIsAuxiliaryAxisChild() == null ||
-                isNotEquals(specification.getIsAuxiliaryAxisChild(), value)) {
+        if (isNotEquals(specification.getIsAuxiliaryAxisChild(), value)) {
             return new LinearizationSpecification(value,
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),

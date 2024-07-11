@@ -9,6 +9,13 @@ import java.util.stream.Collectors;
 public class Utils {
 
     public static <T> boolean isNotEquals(T a, T b) {
+        if( a == null && b == null){
+            return false;
+        }else if(a == null){
+            return true;
+        }else if(b == null){
+            return true;
+        }
         return !a.equals(b);
     }
 

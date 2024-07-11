@@ -24,8 +24,7 @@ public class SetGrouping extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (specification.getIsGrouping() == null ||
-                isNotEquals(specification.getIsGrouping(), value)) {
+        if (isNotEquals(specification.getIsGrouping(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     value,
                     specification.getIsIncludedInLinearization(),

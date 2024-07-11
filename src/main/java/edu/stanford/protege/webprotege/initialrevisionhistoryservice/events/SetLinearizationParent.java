@@ -24,8 +24,7 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (specification.getLinearizationParent() == null ||
-                isNotEquals(specification.getLinearizationParent(), value)) {
+        if (isNotEquals(specification.getLinearizationParent(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),

@@ -10,7 +10,7 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.test
 public class RandomHelper {
     private static final Random RANDOM = new Random();
 
-    private static final List<String> SAMPLE_STRINGS = List.of("string1", "string2", "string3");
+    private static final List<String> SAMPLE_STRINGS = List.of("string1", "string2", "string3", "string4", "string5", "string6");
 
     private static final List<ThreeStateBoolean> SAMPLE_BOOLS = List.of(ThreeStateBoolean.TRUE, ThreeStateBoolean.FALSE, ThreeStateBoolean.UNKNOWN);
 

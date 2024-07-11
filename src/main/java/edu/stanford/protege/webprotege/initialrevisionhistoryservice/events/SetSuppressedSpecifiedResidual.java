@@ -27,8 +27,7 @@ public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
             throw new RuntimeException("Error! Trying to parse event that is not " + LinearizationResiduals.class.getName());
         }
 
-        if (residual.getSuppressSpecifiedResidual() == null ||
-                isNotEquals(residual.getSuppressSpecifiedResidual(), value)) {
+        if (isNotEquals(residual.getSuppressSpecifiedResidual(), value)) {
             return new LinearizationResiduals(value, residual.getUnspecifiedResidualTitle());
         }
 

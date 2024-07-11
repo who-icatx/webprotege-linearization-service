@@ -24,8 +24,7 @@ public class SetIncludedInLinearization extends LinearizationSpecificationEvent 
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (specification.getIsIncludedInLinearization() == null ||
-                isNotEquals(specification.getIsIncludedInLinearization(), value)) {
+        if (isNotEquals(specification.getIsIncludedInLinearization(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     value,

@@ -26,8 +26,7 @@ public class SetUnspecifiedResidualTitle implements LinearizationEvent {
             throw new RuntimeException("Error! Trying to parse event that is not " + LinearizationResiduals.class.getName());
         }
 
-        if (residual.getUnspecifiedResidualTitle() == null ||
-                isNotEquals(residual.getUnspecifiedResidualTitle(), value)) {
+        if (isNotEquals(residual.getUnspecifiedResidualTitle(), value)) {
             return new LinearizationResiduals(residual.getSuppressSpecifiedResidual(), value);
         }
 

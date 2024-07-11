@@ -24,8 +24,7 @@ public class SetCodingNote extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (specification.getCodingNote() == null ||
-                isNotEquals(specification.getCodingNote(), value)) {
+        if (isNotEquals(specification.getCodingNote(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),
