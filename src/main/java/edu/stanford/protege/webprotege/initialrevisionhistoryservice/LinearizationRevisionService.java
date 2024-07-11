@@ -4,38 +4,25 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationRevision;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.bson.Document;
-import org.jetbrains.annotations.NotNull;
-import org.semanticweb.owlapi.model.IRI;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.PROJECT_ID;
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.WHOFIC_ENTITY_IRI_KEY;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.*;
 
 @Service
 public class LinearizationRevisionService {
 
-    private final static String REVISION_HISTORY_COLLECTION = "EntityLinearizationHistories";
-
-    private final LinearizationDocumentRepository linearizationRepository;
-
-    private final MongoTemplate mongoTemplate;
+    private final LinearizationRevisionRepository linearizationRevisionRepo;
 
     private final ObjectMapper objectMapper;
 
-    public LinearizationRevisionService(LinearizationDocumentRepository linearizationRepository, MongoTemplate mongoTemplate, ObjectMapper objectMapper) {
-        this.linearizationRepository = linearizationRepository;
-        this.mongoTemplate = mongoTemplate;
+    public LinearizationRevisionService(LinearizationRevisionRepository linearizationRevisionRepo, ObjectMapper objectMapper) {
+        this.linearizationRevisionRepo = linearizationRevisionRepo;
         this.objectMapper = objectMapper;
     }
 
@@ -43,9 +30,10 @@ public class LinearizationRevisionService {
                                                                       EntityLinearizationHistory existingHistory,
                                                                       String userId) {
 
-        var linearizationEvents = mapLinearizationSpecificationsToEvents(linearizationSpecification);
+        Set<LinearizationEvent> linearizationEvents = mapLinearizationSpecificationsToEvents(linearizationSpecification);
+        linearizationEvents.addAll(mapLinearizationResidualsEvents(linearizationSpecification));
 
-        existingHistory.linearizationRevisions().add(new LinearizationRevision(new Date().getTime(), userId, linearizationEvents));
+        existingHistory.getLinearizationRevisions().add(new LinearizationRevision(new Date().getTime(), userId, linearizationEvents));
 
         return existingHistory;
     }
@@ -55,56 +43,35 @@ public class LinearizationRevisionService {
                                                                  String userId) {
 
         var linearizationEvents = mapLinearizationSpecificationsToEvents(linearizationSpecification);
+        linearizationEvents.addAll(mapLinearizationSpecificationsToEvents(linearizationSpecification));
 
         var linearizationRevision = new LinearizationRevision(new Date().getTime(), userId, linearizationEvents);
 
         return new EntityLinearizationHistory(linearizationSpecification.entityIRI(), projectId, new HashSet<>(List.of(linearizationRevision)));
     }
 
+    public EntityLinearizationHistory getExistingHistoryOrderedByRevision(String entityIri, ProjectId projectId) {
 
-    public EntityLinearizationHistory getExistingHistory(String entityIri, ProjectId projectId) {
-        var query = query(where(WHOFIC_ENTITY_IRI_KEY).is(entityIri).and(PROJECT_ID).is(projectId).in(REVISION_HISTORY_COLLECTION));
-        return mongoTemplate.findOne(query, EntityLinearizationHistory.class);
+        EntityLinearizationHistory history = linearizationRevisionRepo.getExistingHistory(entityIri, projectId);
+
+        if (history != null) {
+            // Sort the linearizationRevisions by timestamp
+            Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
+                    .stream()
+                    .sorted(Comparator.comparingLong(LinearizationRevision::timestamp))
+                    .collect(Collectors.toCollection(TreeSet::new));
+
+            // Return a new EntityLinearizationHistory object with the sorted revisions
+            return new EntityLinearizationHistory(history.getWhoficEntityIri(), history.getProjectId(), sortedRevisions);
+        }
+
+        return null;
     }
 
-    public void saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory) {
-        mongoTemplate.save(entityLinearizationHistory, REVISION_HISTORY_COLLECTION);
-    }
-
-    @NotNull
-    private Set<LinearizationEvent> mapLinearizationSpecificationsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
-        return linearizationSpecification.linearizationSpecifications().stream()
-                .flatMap(specification -> {
-                    List<LinearizationEvent> response = new ArrayList<>();
-
-                    if (specification.getIsIncludedInLinearization() != null) {
-                        response.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView()));
-                    }
-                    if (specification.getIsAuxiliaryAxisChild() != null) {
-                        response.add(new SetAuxiliaryAxisChild(specification.getIsAuxiliaryAxisChild(), specification.getLinearizationView()));
-                    }
-                    if (specification.getLinearizationParent() != null) {
-                        response.add(new SetLinearizationParent(specification.getLinearizationParent(), specification.getLinearizationView()));
-                    }
-                    if(specification.getIsGrouping() != null) {
-                        response.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView()));
-                    }
-                    if(specification.getCodingNote() != null) {
-                        response.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView()));
-                    }
-
-                    return response.stream();
-                }).collect(Collectors.toSet());
-    }
-
-    public void saveAll(Set<EntityLinearizationHistory> historiesToBeSaved) {
-        var collection = mongoTemplate.getCollection(REVISION_HISTORY_COLLECTION);
-        /** THIS WORKS IF THE RECEIVED HISTORIES ARE UNIQUE **/
+    public void saveEntityLinearizationHistory(Set<EntityLinearizationHistory> historiesToBeSaved) {
         var documents = historiesToBeSaved.stream()
-                .map(history ->  new InsertOneModel<>(objectMapper.convertValue(history, Document.class)))
-                .collect(Collectors.toList());
-
-        var result = collection.bulkWrite(documents);
-        System.out.println(result);
+                .map(history -> new InsertOneModel<>(objectMapper.convertValue(history, Document.class)))
+                .toList();
+        linearizationRevisionRepo.bulkWriteDocuments(documents);
     }
 }

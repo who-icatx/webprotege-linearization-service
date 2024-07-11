@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -45,10 +47,53 @@ public class LinearizationDocumentRepository {
             JsonFactory jsonFactory = new JsonFactory();
             JsonParser jsonParser = jsonFactory.createParser(minioLinearizationDocumentLoader.fetchLinearizationDocument(location));
 
+            if (jsonParser.nextToken() == JsonToken.START_ARRAY) {
+                throw new IllegalStateException("Unexpected array");
+            }
+
+            jsonParser.nextToken();
+
+            if(!jsonParser.getCurrentName().equals("whoficEntityLinearizationSpecification") && jsonParser.nextToken() != JsonToken.START_ARRAY) {
+                throw new IllegalStateException("Expected the array of linearization specificaitons");
+            }
+
+            jsonParser.nextToken();
+
+            return StreamSupport.stream(
+                    new Spliterators.AbstractSpliterator<>(Long.MAX_VALUE, Spliterator.ORDERED) {
+                        @Override
+                        public boolean tryAdvance(Consumer<? super WhoficEntityLinearizationSpecification> action) {
+                            try {
+
+                                if (jsonParser.nextToken() == JsonToken.END_ARRAY) {
+                                    return false;
+                                }
+
+                                JsonNode node = objectMapper.readTree(jsonParser);
+                                WhoficEntityLinearizationSpecification person = objectMapper.treeToValue(node, WhoficEntityLinearizationSpecification.class);
+                                action.accept(person);
+                                return true;
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
+                        }
+                    }, false);
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /*
+                if (jsonParser.nextToken() != JsonToken.START_ARRAY) {
+                throw new RuntimeException("Expected start of array");
+            }
             Iterator<WhoficEntityLinearizationSpecification> iterator = new Iterator<>() {
                 @Override
                 public boolean hasNext() {
-                   return jsonParser.currentToken() != null && jsonParser.currentToken() != JsonToken.END_ARRAY;
+                    return jsonParser.currentToken() != null && jsonParser.currentToken() != JsonToken.END_ARRAY;
                 }
 
                 @Override
@@ -62,10 +107,6 @@ public class LinearizationDocumentRepository {
                 }
             };
 
-            if (jsonParser.nextToken() != JsonToken.START_ARRAY) {
-                throw new RuntimeException("Expected start of array");
-            }
-
             Spliterator<WhoficEntityLinearizationSpecification> spliterator = Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED);
             return StreamSupport.stream(spliterator, false).onClose(() -> {
                 try {
@@ -75,9 +116,5 @@ public class LinearizationDocumentRepository {
                     throw new RuntimeException(e);
                 }
             });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+     */
 }

@@ -3,22 +3,22 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
-import org.semanticweb.owlapi.model.IRI;
 import reactor.core.publisher.Mono;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
+@WebProtegeHandler
 public class GetEntityLinearizationsCommandHandler implements CommandHandler<GetEntityLinearizationsRequest, GetEntityLinearizationsResponse> {
 
 
     private final LinearizationRevisionService linearizationRevisionService;
 
 
-    private final LinearizationEventsProcessor linearizationEventsProcessor;
+    private final LinearizationEventsProcessorService linearizationEventsProcessor;
 
     public GetEntityLinearizationsCommandHandler(LinearizationRevisionService linearizationRevisionService,
-                                                 LinearizationEventsProcessor linearizationEventsProcessor) {
+                                                 LinearizationEventsProcessorService linearizationEventsProcessor) {
         this.linearizationRevisionService = checkNotNull(linearizationRevisionService);
         this.linearizationEventsProcessor = checkNotNull(linearizationEventsProcessor);
     }
@@ -37,11 +37,8 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
 
     @Override
     public Mono<GetEntityLinearizationsResponse> handleRequest(GetEntityLinearizationsRequest request, ExecutionContext executionContext) {
-        /*
-        am iri și project id
-        vreau sa le iau din baza de date și să le pun într-un LinearizationChangeManager și să le aplic
-         */
-        EntityLinearizationHistory linearizationHistory = this.linearizationRevisionService.getExistingHistory(request.entityIRI(), request.projectId());
+
+        EntityLinearizationHistory linearizationHistory = this.linearizationRevisionService.getExistingHistoryOrderedByRevision(request.entityIRI(), request.projectId());
 
         WhoficEntityLinearizationSpecification processedSpec = linearizationEventsProcessor.processHistory(linearizationHistory);
 

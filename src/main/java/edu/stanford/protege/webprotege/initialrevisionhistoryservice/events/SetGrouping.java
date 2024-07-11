@@ -1,21 +1,41 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
+import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
 
-import javax.annotation.Nonnull;
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
 
-public class SetGrouping extends LinearizationEvent {
+public class SetGrouping extends LinearizationSpecificationEvent {
 
-    public final ThreeStateBoolean value;
-    public SetGrouping(ThreeStateBoolean value, IRI linearizationView) {
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetGrouping";
+
+    private final ThreeStateBoolean value;
+
+    @JsonCreator
+    public SetGrouping(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") IRI linearizationView) {
         super(linearizationView);
         this.value = value;
     }
 
     @Override
-    public LinearizationEvent applyEvent() {
-        return this;
+    public EventProcesableParameter applyEvent(EventProcesableParameter event) {
+        if(!(event instanceof LinearizationSpecification specification)){
+            throw new RuntimeException("Error! Trying to parse event"+LinearizationSpecification.class.getName());
+        }
+
+        if (isNotEquals(specification.getIsAuxiliaryAxisChild(), value)){
+            return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
+                    value,
+                    specification.getIsIncludedInLinearization(),
+                    specification.getLinearizationParent(),
+                    specification.getLinearizationView(),
+                    specification.getCodingNote());
+        }
+
+        return specification;
     }
 
     @Override
@@ -24,7 +44,11 @@ public class SetGrouping extends LinearizationEvent {
     }
 
     @Override
-    public void accept(@Nonnull EventChangeVisitor visitor){
+    public void accept(@Nonnull EventVisitor visitor){
         visitor.visit(this);
+    }
+
+    public String getValue(){
+        return this.value.name();
     }
 }

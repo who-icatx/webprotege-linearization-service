@@ -1,21 +1,41 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
+import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
 
-import javax.annotation.Nonnull;
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
 
-public class SetCodingNote  extends LinearizationEvent {
+public class SetCodingNote  extends LinearizationSpecificationEvent {
 
-    public final String value;
+    private final String value;
 
-    public SetCodingNote(String value, IRI linearizationView) {
+    public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetCodingNote";
+
+    @JsonCreator
+    public SetCodingNote(@JsonProperty("value") String value,@JsonProperty("linearizationView") IRI linearizationView) {
         super(linearizationView);
         this.value = value;
     }
 
     @Override
-    public LinearizationEvent applyEvent() {
-        return this;
+    public EventProcesableParameter applyEvent(EventProcesableParameter event) {
+        if(!(event instanceof LinearizationSpecification specification)){
+            throw new RuntimeException("Error! Trying to parse event"+LinearizationSpecification.class.getName());
+        }
+
+        if (isNotEquals(specification.getIsAuxiliaryAxisChild(), value)){
+            return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
+                    specification.getIsGrouping(),
+                    specification.getIsIncludedInLinearization(),
+                    specification.getLinearizationParent(),
+                    specification.getLinearizationView(),
+                    value);
+        }
+
+        return specification;
     }
 
     @Override
@@ -24,7 +44,12 @@ public class SetCodingNote  extends LinearizationEvent {
     }
 
     @Override
-    public void accept(@Nonnull EventChangeVisitor visitor){
+    public void accept(@Nonnull EventVisitor visitor){
         visitor.visit(this);
+    }
+
+    @JsonProperty("value")
+    public String getValue(){
+        return this.value;
     }
 }

@@ -1,31 +1,32 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
-import edu.stanford.protege.webprotege.change.OntologyChangeVisitor;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.semanticweb.owlapi.model.IRI;
 
-import javax.annotation.Nonnull;
+import com.fasterxml.jackson.annotation.*;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 
 @BsonDiscriminator(key = "type")
-public abstract class LinearizationEvent {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "type"
+)
+@JsonSubTypes(value = {
+        @JsonSubTypes.Type(value = SetAuxiliaryAxisChild.class, name = SetAuxiliaryAxisChild.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetCodingNote.class, name = SetCodingNote.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetGrouping.class, name = SetGrouping.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetIncludedInLinearization.class, name = SetIncludedInLinearization.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetLinearizationParent.class, name = SetLinearizationParent.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetSuppressedSpecifiedResidual.class, name = SetSuppressedSpecifiedResidual.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetUnspecifiedResidualTitle.class, name = SetUnspecifiedResidualTitle.CLASS_TYPE),
+})
 
-    private final IRI linearizationView;
+public interface LinearizationEvent {
 
+    String getType();
 
-    protected LinearizationEvent(IRI linearizationView) {
-        this.linearizationView = linearizationView;
-    }
+    EventProcesableParameter applyEvent(EventProcesableParameter input);
 
-    public abstract LinearizationEvent applyEvent();
+    void accept(EventVisitor visitor);
 
-
-    abstract String getType();
-
-    IRI getLinearizationView() {
-        return linearizationView;
-    }
-
-    public abstract void accept(@Nonnull EventChangeVisitor visitor);
-
+    String getValue();
 }
