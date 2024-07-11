@@ -3,7 +3,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
-import org.jetbrains.annotations.NotNull;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
 
@@ -34,11 +33,6 @@ public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
         }
 
         return residual;
-    }
-
-    @Override
-    public void accept(@NotNull EventVisitor visitor) {
-        visitor.visit(this);
     }
 
     public String getValue() {

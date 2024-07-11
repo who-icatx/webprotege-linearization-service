@@ -2,7 +2,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
-import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
@@ -41,11 +40,6 @@ public class SetIncludedInLinearization extends LinearizationSpecificationEvent 
     @Override
     public String getType() {
         return SetIncludedInLinearization.class.getName();
-    }
-
-    @Override
-    public void accept(@Nonnull EventVisitor visitor) {
-        visitor.visit(this);
     }
 
     @JsonProperty("value")

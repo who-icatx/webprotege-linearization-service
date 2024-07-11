@@ -47,11 +47,6 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
         return SetAuxiliaryAxisChild.class.getName();
     }
 
-    @Override
-    public void accept(EventVisitor visitor) {
-        visitor.visit(this);
-    }
-
     public String getValue() {
         return this.value.name();
     }
