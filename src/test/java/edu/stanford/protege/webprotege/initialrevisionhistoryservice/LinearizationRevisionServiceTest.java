@@ -32,7 +32,7 @@ class LinearizationRevisionServiceTest {
     }
 
     @Test
-    void getExistingHistoryOrderedByRevision() {
+    void GIVEN_linearizationRevisionsListUnordered_WHEN_requestedFromRepo_THEN_listWillBeOrderedByTimestamp() {
         IRI entityIri = IRI.create("http://example.com/entity");
         ProjectId projectId = ProjectId.generate();
 

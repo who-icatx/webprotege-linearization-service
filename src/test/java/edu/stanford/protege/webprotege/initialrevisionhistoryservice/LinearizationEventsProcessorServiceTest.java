@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.ProjectId;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +12,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.LinearizationEventHelper.mapLinearizationSpecificationsToEvents;
 import static org.junit.Assert.assertTrue;
 
 @SpringBootTest
@@ -32,10 +32,49 @@ class LinearizationEventsProcessorServiceTest {
         var lastRevision = revisions.stream().toList().get(revisions.size() - 1);
         WhoficEntityLinearizationSpecification response = eventsProcessorService.processHistory(linearizationHistory);
 
-        var processedSpecEvents = mapLinearizationSpecificationsToEvents(response);
 
-        lastRevision.linearizationEvents().forEach(lastRevisionEvent -> {
-            assertTrue(processedSpecEvents.stream().anyMatch(processedEvent -> processedEvent.getValue().equals(lastRevisionEvent.getValue())));
-        });
+        lastRevision.linearizationEvents()
+                .forEach(event -> {
+                    if (event instanceof SetIncludedInLinearization includedInLinearizationEvent) {
+                        var eventFoundInResponse = response.linearizationSpecifications()
+                                .stream()
+                                .filter(spec -> spec.getLinearizationView().equals(includedInLinearizationEvent.getLinearizationView()))
+                                .anyMatch(spec -> {
+                                    return includedInLinearizationEvent.getValue().equals(spec.getIsIncludedInLinearization().name());
+                                });
+                        assertTrue("SetIncludedInLinearization not found in response even though we have it in latest revision",
+                                eventFoundInResponse);
+                    } else if (event instanceof SetAuxiliaryAxisChild auxiliaryAxisChildEvent) {
+                        var eventFoundInResponse = response.linearizationSpecifications()
+                                .stream()
+                                .filter(spec -> spec.getLinearizationView().equals(auxiliaryAxisChildEvent.getLinearizationView()))
+                                .anyMatch(spec -> auxiliaryAxisChildEvent.getValue().equals(spec.getIsAuxiliaryAxisChild().name()));
+                        assertTrue("SetAuxiliaryAxisChild not found in response even though we have it in latest revision",
+                                eventFoundInResponse);
+                    } else if (event instanceof SetLinearizationParent linearizationParentEvent) {
+                        var eventFoundInResponse = response.linearizationSpecifications()
+                                .stream()
+                                .filter(spec -> spec.getLinearizationView().equals(linearizationParentEvent.getLinearizationView()))
+                                .anyMatch(spec -> linearizationParentEvent.getValue().equals(spec.getLinearizationParent().toString()));
+                        assertTrue("SetLinearizationParent not found in response even though we have it in latest revision",
+                                eventFoundInResponse);
+                    } else if (event instanceof SetGrouping setGroupingEvent) {
+                        var eventFoundInResponse = response.linearizationSpecifications()
+                                .stream()
+                                .filter(spec -> spec.getLinearizationView().equals(setGroupingEvent.getLinearizationView()))
+                                .anyMatch(spec -> {
+                                    return setGroupingEvent.getValue().equals(spec.getIsGrouping().name());
+                                });
+                        assertTrue("SetGrouping not found in response even though we have it in latest revision",
+                                eventFoundInResponse);
+                    } else if (event instanceof SetCodingNote setCodingNoteEvent) {
+                        var eventFoundInResponse = response.linearizationSpecifications()
+                                .stream()
+                                .filter(spec -> spec.getLinearizationView().equals(setCodingNoteEvent.getLinearizationView()))
+                                .anyMatch(spec -> setCodingNoteEvent.getValue().equals(spec.getCodingNote()));
+                        assertTrue("SetCodingNote not found in response even though we have it in latest revision",
+                                eventFoundInResponse);
+                    }
+                });
     }
 }
