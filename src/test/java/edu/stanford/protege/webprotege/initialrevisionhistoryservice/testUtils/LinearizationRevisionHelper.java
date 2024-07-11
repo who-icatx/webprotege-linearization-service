@@ -12,7 +12,7 @@ public class LinearizationRevisionHelper {
     //Revisions must be sorted by timestamp
     public static Set<LinearizationRevision> getLinearizationRevisions(int numberOfRevisions) {
         Set<LinearizationRevision> listOfRevisions = new HashSet<>();
-        int iteration = 1;
+        int iteration = 0;
         while (numberOfRevisions > iteration) {
             long timestamp = iteration;
             listOfRevisions.add(new LinearizationRevision(timestamp, "user" + numberOfRevisions, getRandomLinearizationEvents()));

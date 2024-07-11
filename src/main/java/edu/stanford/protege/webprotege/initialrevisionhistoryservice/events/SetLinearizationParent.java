@@ -1,8 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
 import jakarta.annotation.Nonnull;
 import org.semanticweb.owlapi.model.IRI;
@@ -15,18 +14,19 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
     private final IRI value;
 
     @JsonCreator
-    public SetLinearizationParent(@JsonProperty("linearizationParent") IRI linearizationParent,@JsonProperty("linearizationView") IRI linearizationView) {
+    public SetLinearizationParent(@JsonProperty("linearizationParent") IRI linearizationParent, @JsonProperty("linearizationView") IRI linearizationView) {
         super(linearizationView);
         this.value = linearizationParent;
     }
 
     @Override
     public EventProcesableParameter applyEvent(EventProcesableParameter event) {
-        if(!(event instanceof LinearizationSpecification specification)){
-            throw new RuntimeException("Error! Trying to parse event"+LinearizationSpecification.class.getName());
+        if (!(event instanceof LinearizationSpecification specification)) {
+            throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (isNotEquals(specification.getIsAuxiliaryAxisChild(), value)){
+        if (specification.getLinearizationParent() == null ||
+                isNotEquals(specification.getLinearizationParent(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),
