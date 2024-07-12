@@ -46,7 +46,9 @@ public class LinearizationHistoryRepositoryCustomImpl implements LinearizationHi
         UpdateResult result = mongoTemplate.updateFirst(query, update, EntityLinearizationHistory.class);
 
         if (result.getMatchedCount() == 0) {
-            throw new IllegalArgumentException("EntityLinearizationHistory not found for the given whoficEntityIri:" + whoficEntityIri + " and projectId:" + projectId + ".");
+            throw new IllegalArgumentException(REVISION_HISTORY_COLLECTION + " not found for the given " +
+                    WOFIC_ENTITY_IRI_PARAMETER + ":" + whoficEntityIri + " and " + PROJECT_ID_PARAMETER +
+                    ":" + projectId + ".");
         }
     }
 }
