@@ -4,49 +4,29 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
-import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.common.UserId;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.config.ApplicationBeans;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationRevision;
+import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
-import jakarta.ws.rs.core.Application;
 import org.bson.Document;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.internal.verification.Times;
-import org.mockito.verification.VerificationMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.List;
+import java.io.*;
 import java.util.stream.Stream;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.PROJECT_ID;
 import static java.util.stream.StreamSupport.stream;
 import static junit.framework.TestCase.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
 
 @SpringBootTest
 @Import({WebprotegeLinearizationServiceServiceApplication.class})
@@ -78,16 +58,17 @@ public class UploadLinearizationCommandHandlerTest extends IntegrationTest {
     @Test
     public void GIVEN_largeLinearization_WHEN_savingTheInitialRevisions_THEN_paginationWorks() {
         commandHandler.handleRequest(new UploadLinearizationRequest("testDocumentLocation",
-                ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
-                new ExecutionContext(UserId.valueOf("alexsilaghi"),"" ));
+                        ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
+                new ExecutionContext(UserId.valueOf("alexsilaghi"), ""));
 
         verify(mongoTemplate, times(2)).getCollection(any());
     }
 
     @Test
     public void GIVEN_largeLinearization_WHEN_savingTheInitialRevision_THEN_eventsAreSavedIntoDatabase() throws JsonProcessingException {
-        commandHandler.handleRequest(new UploadLinearizationRequest("testDocumentLocation",  ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
-                new ExecutionContext(UserId.valueOf("alexsilaghi"),"" ));
+        UserId userId = UserId.valueOf("alexsilaghi");
+        commandHandler.handleRequest(new UploadLinearizationRequest("testDocumentLocation", ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
+                new ExecutionContext(userId, ""));
 
         Document filter = new Document("whoficEntityIri", "http://id.who.int/icd/entity/979278646");
         FindIterable<Document> documents = mongoTemplate.getCollection("EntityLinearizationHistories").find(filter);
@@ -98,12 +79,12 @@ public class UploadLinearizationCommandHandlerTest extends IntegrationTest {
 
         assertNotNull(savedHistory);
         assertEquals("http://id.who.int/icd/entity/979278646", savedHistory.getWhoficEntityIri().toString());
-        assertEquals(1 , savedHistory.getLinearizationRevisions().size());
+        assertEquals(1, savedHistory.getLinearizationRevisions().size());
         LinearizationRevision revision = (LinearizationRevision) savedHistory.getLinearizationRevisions().toArray()[0];
-        assertEquals("alexsilaghi", revision.userId());
+        assertEquals(userId, revision.userId());
         assertEquals(86, revision.linearizationEvents().size());
         assertTrue(revision.linearizationEvents().stream()
                 .noneMatch(linearizationEvent -> linearizationEvent.getType() == null && linearizationEvent.getType().isEmpty()));
 
     }
- }
+}
