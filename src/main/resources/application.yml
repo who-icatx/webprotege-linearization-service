@@ -26,3 +26,10 @@ webprotege:
         timeout: 60000
     linearization:
         batch-size: 100
+    redis:
+        address: redis://localhost:6379
+        #time units should be in MILISECONDS
+        waitTime: 1000
+        leaseTime: 1000
+        maxRetries: 1000
+        retryDelay: 1000

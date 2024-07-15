@@ -4,17 +4,23 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.IriDeserializer;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.ThreeStateBooleanDeserializer;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.ThreeStateBoolean;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.semanticweb.owlapi.model.IRI;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 @Configuration
 public class ApplicationBeans {
+
+    @Autowired
+    RedissonConfiguration redisConfig;
 
 
     @Bean
@@ -27,6 +33,16 @@ public class ApplicationBeans {
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         return objectMapper;
+    }
+
+    @Bean
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress(redisConfig.getRedisAddress())
+                .setRetryAttempts(redisConfig.getMaxRetries())
+                .setRetryInterval(redisConfig.getRetryDelay());
+        return Redisson.create(config);
     }
 
 
