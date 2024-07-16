@@ -25,7 +25,10 @@ public class LinearizationHistoryService {
 
     private final RedissonService redissonService;
 
-    public LinearizationHistoryService(ObjectMapper objectMapper, EntityLinearizationHistoryRepository linearizationHistoryRepository, LinearizationEventMapper eventMapper, RedissonService redissonService) {
+    public LinearizationHistoryService(ObjectMapper objectMapper,
+                                       EntityLinearizationHistoryRepository linearizationHistoryRepository,
+                                       LinearizationEventMapper eventMapper,
+                                       RedissonService redissonService) {
         this.objectMapper = objectMapper;
         this.linearizationHistoryRepository = linearizationHistoryRepository;
         this.eventMapper = eventMapper;
@@ -68,14 +71,31 @@ public class LinearizationHistoryService {
     public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
                             ProjectId projectId, UserId userId) {
 
-        String lockKey = "linearizationHistory:" + linearizationSpecification.entityIRI().toString();
-        Callable<Void> addRevisionCallable = getAddRevisionCallable(linearizationSpecification, projectId, userId);
-        try {
-            redissonService.executeWithLock(lockKey, addRevisionCallable);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add revision", e);
+        var existingHistory = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
+        if (existingHistory != null) {
+            Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
+            linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
+
+            var newRevision = LinearizationRevision.create(userId, linearizationEvents);
+
+            linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI(), projectId, newRevision);
+        } else {
+            var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
+            linearizationHistoryRepository.save(newHistory);
         }
     }
+
+//    public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
+//                            ProjectId projectId, UserId userId) {
+//
+//        String lockKey = "linearizationHistory:" + linearizationSpecification.entityIRI().toString();
+//        Callable<Void> addRevisionCallable = getAddRevisionCallable(linearizationSpecification, projectId, userId);
+//        try {
+//            redissonService.executeWithLock(lockKey, addRevisionCallable);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Failed to add revision", e);
+//        }
+//    }
 
     private Callable<Void> getAddRevisionCallable(WhoficEntityLinearizationSpecification linearizationSpecification,
                                                   ProjectId projectId, UserId userId) {

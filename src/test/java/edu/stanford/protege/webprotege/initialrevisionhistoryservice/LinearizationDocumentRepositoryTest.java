@@ -1,7 +1,6 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.BlobLocation;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.config.ApplicationBeans;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
-public class LinearizationRepositoryTest {
+public class LinearizationDocumentRepositoryTest {
 
     @Mock
     private MinioLinearizationDocumentLoader minioLinearizationDocumentLoader;

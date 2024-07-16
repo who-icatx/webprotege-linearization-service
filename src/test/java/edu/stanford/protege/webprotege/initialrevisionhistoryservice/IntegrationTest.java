@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.jupiter.api.extension.Extension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
@@ -12,9 +13,9 @@ import org.testcontainers.utility.DockerImageName;
  * Stanford Center for Biomedical Informatics Research
  * 2023-06-06
  */
-public abstract class IntegrationTest {
+public abstract class IntegrationTest implements Extension {
 
-    private static Logger logger = LoggerFactory.getLogger(IntegrationTest.class);
+    private final static Logger logger = LoggerFactory.getLogger(IntegrationTest.class);
 
     private static MongoDBContainer mongoDBContainer;
 
