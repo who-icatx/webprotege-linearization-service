@@ -17,30 +17,19 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 @Configuration
 public class ApplicationBeans {
 
-    @Autowired
-    RedissonConfiguration redisConfig;
-
 
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
-        SimpleModule module = new SimpleModule();
+        SimpleModule module = new SimpleModule("GEO");
         module.addDeserializer(ThreeStateBoolean.class, new ThreeStateBooleanDeserializer());
+        module.addSerializer(ThreeStateBoolean.class, new ThreeStateBooleanSerializer());
         module.addDeserializer(IRI.class, new IriDeserializer());
+        module.addSerializer(IRI.class, new IriSerializer());
         objectMapper.registerModule(module);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         return objectMapper;
-    }
-
-    @Bean
-    public RedissonClient redissonClient() {
-        Config config = new Config();
-        config.useSingleServer()
-                .setAddress(redisConfig.getRedisAddress())
-                .setRetryAttempts(redisConfig.getMaxRetries())
-                .setRetryInterval(redisConfig.getRetryDelay());
-        return Redisson.create(config);
     }
 
 

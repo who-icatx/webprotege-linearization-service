@@ -1,18 +1,18 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.EntityLinearizationHistoryRepository;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import org.bson.Document;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -20,19 +20,16 @@ import java.util.stream.Collectors;
 public class LinearizationHistoryService {
 
     private final ObjectMapper objectMapper;
-    private final EntityLinearizationHistoryRepository linearizationHistoryRepository;
+    private final LinearizationHistoryRepository linearizationHistoryRepository;
     private final LinearizationEventMapper eventMapper;
 
-    private final RedissonService redissonService;
 
     public LinearizationHistoryService(ObjectMapper objectMapper,
-                                       EntityLinearizationHistoryRepository linearizationHistoryRepository,
-                                       LinearizationEventMapper eventMapper,
-                                       RedissonService redissonService) {
+                                       LinearizationHistoryRepository linearizationHistoryRepository,
+                                       LinearizationEventMapper eventMapper) {
         this.objectMapper = objectMapper;
         this.linearizationHistoryRepository = linearizationHistoryRepository;
         this.eventMapper = eventMapper;
-        this.redissonService = redissonService;
     }
 
     private EntityLinearizationHistory createNewEntityLinearizationHistory(WhoficEntityLinearizationSpecification linearizationSpecification,
@@ -55,7 +52,7 @@ public class LinearizationHistoryService {
     }
 
     public EntityLinearizationHistory getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
-        EntityLinearizationHistory history = linearizationHistoryRepository.findByWhoficEntityIriAndProjectId(entityIri, projectId);
+        EntityLinearizationHistory history = linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri, projectId);
         if (history != null) {
             // Sort the linearizationRevisions by timestamp
             Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
@@ -71,6 +68,10 @@ public class LinearizationHistoryService {
     public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
                             ProjectId projectId, UserId userId) {
 
+        /*
+        ToDo:
+            add a readWriteLock for any database operations
+         */
         var existingHistory = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
         if (existingHistory != null) {
             Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
@@ -81,40 +82,8 @@ public class LinearizationHistoryService {
             linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI(), projectId, newRevision);
         } else {
             var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
-            linearizationHistoryRepository.save(newHistory);
+            linearizationHistoryRepository.saveLinearizationHistory(newHistory);
         }
-    }
-
-//    public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
-//                            ProjectId projectId, UserId userId) {
-//
-//        String lockKey = "linearizationHistory:" + linearizationSpecification.entityIRI().toString();
-//        Callable<Void> addRevisionCallable = getAddRevisionCallable(linearizationSpecification, projectId, userId);
-//        try {
-//            redissonService.executeWithLock(lockKey, addRevisionCallable);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to add revision", e);
-//        }
-//    }
-
-    private Callable<Void> getAddRevisionCallable(WhoficEntityLinearizationSpecification linearizationSpecification,
-                                                  ProjectId projectId, UserId userId) {
-        return () ->
-        {
-            var existingHistory = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
-            if (existingHistory != null) {
-                Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
-                linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
-
-                var newRevision = LinearizationRevision.create(userId, linearizationEvents);
-
-                linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI(), projectId, newRevision);
-            } else {
-                var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
-                linearizationHistoryRepository.save(newHistory);
-            }
-            return null;
-        };
     }
 
 

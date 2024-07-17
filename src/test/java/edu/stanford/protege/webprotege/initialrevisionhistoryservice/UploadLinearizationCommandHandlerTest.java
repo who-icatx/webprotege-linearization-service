@@ -61,7 +61,7 @@ public class UploadLinearizationCommandHandlerTest extends IntegrationTest {
                         ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
                 new ExecutionContext(UserId.valueOf("alexsilaghi"), ""));
 
-        verify(mongoTemplate, times(2)).getCollection(any());
+        verify(mongoTemplate, times(1)).getCollection(any());
     }
 
     @Test

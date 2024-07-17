@@ -8,11 +8,16 @@ import org.semanticweb.owlapi.model.IRI;
 
 import java.util.List;
 
-public interface LinearizationHistoryRepositoryCustom {
+public interface LinearizationHistoryRepository {
 
-    void saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory);
+    EntityLinearizationHistory saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory);
 
     void bulkWriteDocuments(List<InsertOneModel<Document>> listOfInsertOneModelDocument);
 
     void addRevision(IRI whoficEntityIri, ProjectId projectId, LinearizationRevision newRevision);
+
+    EntityLinearizationHistory findHistoryByEntityIriAndProjectId(IRI entityIri, ProjectId projectId);
+
+    EntityLinearizationHistory findWithSpringData(IRI entityIri, ProjectId projectId);
+    void writeSingleHistory(EntityLinearizationHistory histories);
 }

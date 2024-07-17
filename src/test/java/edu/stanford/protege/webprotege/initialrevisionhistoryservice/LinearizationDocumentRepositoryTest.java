@@ -25,17 +25,17 @@ public class LinearizationDocumentRepositoryTest {
     @Mock
     private MinioLinearizationDocumentLoader minioLinearizationDocumentLoader;
 
-    private LinearizationDocumentRepository linearizationRepository;
+    private LinearizationDocumentRepository linearizationDocumentRepo;
 
     @Before
     public void setUp(){
         when(minioLinearizationDocumentLoader.fetchLinearizationDocument(any())).thenReturn(new ByteArrayInputStream(LINEARIZATION_SPECIFICATIONS.getBytes(StandardCharsets.UTF_8)));
-        linearizationRepository = new LinearizationDocumentRepository(minioLinearizationDocumentLoader, new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl()));
+        linearizationDocumentRepo = new LinearizationDocumentRepository(minioLinearizationDocumentLoader, new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl()));
     }
 
     @Test
     public void test(){
-       var response = linearizationRepository.fetchFromDocument(new BlobLocation("asdasd", "asdasd")).collect(Collectors.toSet());
+       var response = linearizationDocumentRepo.fetchFromDocument(new BlobLocation("asdasd", "asdasd")).collect(Collectors.toSet());
         System.out.println(response);
     }
 

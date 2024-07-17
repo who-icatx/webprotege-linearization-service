@@ -1,5 +1,6 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils;
 
+import edu.stanford.protege.webprotege.common.UserId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationRevision;
 
 import java.time.Instant;
@@ -13,10 +14,11 @@ public class LinearizationRevisionHelper {
     //Revisions must be sorted by timestamp
     public static Set<LinearizationRevision> getLinearizationRevisions(int numberOfRevisions) {
         Set<LinearizationRevision> listOfRevisions = new HashSet<>();
+        UserId userId = UserId.valueOf("user"+Instant.now());
         int iteration = 0;
         while (numberOfRevisions > iteration) {
             long timestamp = iteration;
-            listOfRevisions.add(new LinearizationRevision(timestamp, "user" + Instant.now(), getRandomLinearizationEvents()));
+            listOfRevisions.add(new LinearizationRevision(timestamp, userId, getRandomLinearizationEvents()));
             iteration++;
         }
 
