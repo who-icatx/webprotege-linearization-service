@@ -1,91 +1,20 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.semanticweb.owlapi.model.IRI;
 
-import java.util.*;
+import java.util.List;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.*;
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.*;
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.getRandomString;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilsTest {
-
-
-    @Test
-    public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allSpecificationEventsAreCreated() {
-        String linearizationView = getRandomIri();
-        String linearizationParent = getRandomIri();
-        String codingNote = getRandomString();
-        String entityIri = getRandomIri();
-        LinearizationSpecification spec = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.UNKNOWN,
-                IRI.create(linearizationParent),
-                IRI.create(linearizationView),
-                codingNote
-        );
-
-        WhoficEntityLinearizationSpecification entityLinearizationSpecification = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
-                null,
-                List.of(spec)
-        );
-
-        Set<LinearizationEvent> events = mapLinearizationSpecificationsToEvents(entityLinearizationSpecification);
-
-        assertEquals(5, events.size());
-        events.forEach(event -> {
-            if (event instanceof SetIncludedInLinearization includedInLinearizationEvent) {
-                assertEquals(includedInLinearizationEvent.getValue(), spec.getIsIncludedInLinearization().name());
-            } else if (event instanceof SetAuxiliaryAxisChild auxiliaryAxisChildEvent) {
-                assertEquals(auxiliaryAxisChildEvent.getValue(), spec.getIsAuxiliaryAxisChild().name());
-            } else if (event instanceof SetLinearizationParent linearizationParentEvent) {
-                assertEquals(linearizationParentEvent.getValue(), spec.getLinearizationParent().toString());
-            } else if (event instanceof SetGrouping setGroupingEvent) {
-                assertEquals(setGroupingEvent.getValue(), spec.getIsGrouping().name());
-            } else if (event instanceof SetCodingNote setCodingNoteEvent) {
-                assertEquals(setCodingNoteEvent.getValue(), spec.getCodingNote());
-            }
-        });
-    }
-
-    @Test
-    public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allResidualEventsAreCreated() {
-        String residualTitle = getRandomString();
-        String entityIri = getRandomIri();
-
-        LinearizationResiduals residuals = new LinearizationResiduals(
-                ThreeStateBoolean.TRUE,
-                residualTitle
-        );
-
-        WhoficEntityLinearizationSpecification specification = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
-                residuals,
-                List.of()
-        );
-
-        Set<LinearizationEvent> events = mapLinearizationResidualsEvents(specification);
-
-        assertEquals(2, events.size());
-        events.forEach(event -> {
-            if (event instanceof SetSuppressedSpecifiedResidual suppressedSpecifiedResidualEvent) {
-                assertEquals(suppressedSpecifiedResidualEvent.getValue(), residuals.getSuppressSpecifiedResidual().name());
-            } else if (event instanceof SetUnspecifiedResidualTitle unspecifiedResidualTitleEvent) {
-                assertEquals(unspecifiedResidualTitleEvent.getValue(), residuals.getUnspecifiedResidualTitle());
-            }
-        });
-    }
-
     @Test
     public void GIVEN_twoObjects_WHEN_oneIsNullAndTheOtherIsNot_THEN_isNotEqualReturnsTrue() {
         var string1 = getRandomString();
@@ -97,15 +26,15 @@ public class UtilsTest {
         var history1 = getEntityLinearizationHistory(ProjectId.generate(), 3);
         EntityLinearizationHistory history2 = null;
 
-        assertTrue(isNotEquals(string1,stringNull));
-        assertTrue(isNotEquals(stringNull,string1));
+        assertTrue(isNotEquals(string1, stringNull));
+        assertTrue(isNotEquals(stringNull, string1));
 
-        assertTrue(isNotEquals(stringList,nullList));
-        assertTrue(isNotEquals(nullList,stringList));
+        assertTrue(isNotEquals(stringList, nullList));
+        assertTrue(isNotEquals(nullList, stringList));
 
 
-        assertFalse(isNotEquals(null,null));
-        assertFalse(isNotEquals(string1,string1));
+        assertFalse(isNotEquals(null, null));
+        assertFalse(isNotEquals(string1, string1));
 
         assertTrue(isNotEquals(history1, history2));
         assertTrue(isNotEquals(history2, history1));
