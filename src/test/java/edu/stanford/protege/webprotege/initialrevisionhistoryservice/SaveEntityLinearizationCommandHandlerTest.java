@@ -1,11 +1,8 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetIncludedInLinearization;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -14,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.*;
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.*;
 import static org.junit.Assert.assertEquals;
 
@@ -34,18 +33,12 @@ public class SaveEntityLinearizationCommandHandlerTest extends IntegrationTest {
     @Autowired
     private SaveEntityLinearizationCommandHandler commandHandler;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private LinearizationHistoryRepository repoCustom;
-
     @Before
     public void setUp() {
     }
 
     @Test
-    public void GIVEN_entityWithNoLinearizationHistory_WHEN_savingNewEntityLinearization_THEN_createNewHistoryWithNewRevision() throws JsonProcessingException {
+    public void GIVEN_entityWithNoLinearizationHistory_WHEN_savingNewEntityLinearization_THEN_createNewHistoryWithNewRevision() {
         var userId = UserId.valueOf("user1");
         var linearizationView = getRandomIri();
         var linearizationParent = getRandomIri();
@@ -72,7 +65,11 @@ public class SaveEntityLinearizationCommandHandlerTest extends IntegrationTest {
 
         commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec), executionContext);
 
-        var newHistory = repoCustom.findHistoryByEntityIriAndProjectId(entityIri, projectId);
+        Query query = new Query();
+        query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
+                .and(PROJECT_ID).is(projectId.value()));
+
+        var newHistory = mongoTemplate.findOne(query, EntityLinearizationHistory.class);
 
         assertEquals(woficEntitySpec.entityIRI().toString(), newHistory.getWhoficEntityIri());
 
@@ -86,7 +83,7 @@ public class SaveEntityLinearizationCommandHandlerTest extends IntegrationTest {
     }
 
     @Test
-    public void GIVEN_entityWithLinearizationHistory_WHEN_savingEntityLinearization_THEN_createNewRevisionAndAddToExistingHistory(){
+    public void GIVEN_entityWithLinearizationHistory_WHEN_savingEntityLinearization_THEN_createNewRevisionAndAddToExistingHistory() {
         var userId = UserId.valueOf("user1");
         var linearizationView = getRandomIri();
         var linearizationParent = getRandomIri();
@@ -132,7 +129,11 @@ public class SaveEntityLinearizationCommandHandlerTest extends IntegrationTest {
 
         commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec2), executionContext);
 
-        var newHistory = repoCustom.findHistoryByEntityIriAndProjectId(entityIri, projectId);
+        Query query = new Query();
+        query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
+                .and(PROJECT_ID).is(projectId.value()));
+
+        var newHistory = mongoTemplate.findOne(query, EntityLinearizationHistory.class);
 
         assertEquals(woficEntitySpec1.entityIRI().toString(), newHistory.getWhoficEntityIri());
 

@@ -62,8 +62,6 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
         query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
                 .and(PROJECT_ID).is(projectId.value()));
 
-        EntityLinearizationHistory result = mongoTemplate.findOne(query, EntityLinearizationHistory.class);
-        System.out.println("Retrieved EntityLinearizationHistory: " + result);
-        return result;
+        return mongoTemplate.findOne(query, EntityLinearizationHistory.class);
     }
 }
