@@ -32,7 +32,7 @@ public class MinioLinearizationDocumentLoader {
     public InputStream fetchLinearizationDocument(@Nonnull BlobLocation location) throws StorageException {
         try {
             return minioClient.getObject(GetObjectArgs.builder()
-                                                            .bucket(minioProperties.getLinearizationDocumentBucketName())
+                                                            .bucket(minioProperties.getBucketName())
                                                             .object(location.name())
                                                             .build());
         } catch (ErrorResponseException | XmlParserException | ServerException | NoSuchAlgorithmException |

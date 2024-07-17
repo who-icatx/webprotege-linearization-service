@@ -7,6 +7,8 @@ import edu.stanford.protege.webprotege.ipc.CommandHandler;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.ipc.WebProtegeHandler;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
@@ -25,11 +27,13 @@ import java.util.stream.Collectors;
 @WebProtegeHandler
 public class UploadLinearizationCommandHandler implements CommandHandler<UploadLinearizationRequest, UploadLinearizationResponse> {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(UploadLinearizationCommandHandler.class);
+
     private String bucket = "webprotege-uploads";
 
     private final LinearizationDocumentRepository linearizationRepository;
 
-    @Value("${webprotege.linearization.batch-size}")
+    @Value("${webprotege.linearization.batch-size:500}")
     private int batchSize;
 
     private final LinearizationRevisionService linearizationRevisionService;
@@ -54,7 +58,7 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
     public Mono<UploadLinearizationResponse> handleRequest(UploadLinearizationRequest request,
                                                            ExecutionContext executionContext) {
 
-        var stream = linearizationRepository.fetchFromDocument(new BlobLocation(request.documentLocation(), this.bucket));
+        var stream = linearizationRepository.fetchFromDocument(new BlobLocation(this.bucket, request.documentId().id()));
 
         Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = page -> {
             var historiesToBeSaved = page.stream()
@@ -66,7 +70,7 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
         stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
 
-
+        LOGGER.info("Finished processing request for project: {} and document : {}", request.projectId(), request.documentId());
         return Mono.empty();
     }
 
