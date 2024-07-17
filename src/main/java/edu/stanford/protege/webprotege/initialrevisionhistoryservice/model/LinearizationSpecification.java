@@ -2,7 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.EventProcesableParameter;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationResponse;
 import org.semanticweb.owlapi.model.IRI;
 
 import javax.annotation.Nonnull;
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
-public class LinearizationSpecification extends EventProcesableParameter {
+public class LinearizationSpecification extends LinearizationResponse {
 
     private final ThreeStateBoolean isAuxiliaryAxisChild;
 

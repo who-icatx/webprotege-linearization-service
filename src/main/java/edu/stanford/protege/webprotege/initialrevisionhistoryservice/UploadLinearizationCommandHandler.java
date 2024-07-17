@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.BlobLocation;
+import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.ipc.CommandHandler;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
@@ -9,7 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -57,7 +61,7 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
                     .map(specification -> linearizationRevisionService.addNewRevisionToNewHistory(specification, request.projectId(), executionContext.userId().id()))
                     .collect(Collectors.toSet());
 
-            linearizationRevisionService.saveEntityLinearizationHistory(historiesToBeSaved);
+            linearizationRevisionService.saveAll(historiesToBeSaved);
         };
 
         stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));

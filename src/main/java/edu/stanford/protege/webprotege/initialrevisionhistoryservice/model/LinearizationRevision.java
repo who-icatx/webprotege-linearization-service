@@ -1,14 +1,10 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.model;
 
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
-import org.jetbrains.annotations.NotNull;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationResponse;
 
 import java.util.Set;
 
-public record LinearizationRevision(long timestamp, String userId, Set<LinearizationEvent> linearizationEvents) implements Comparable<LinearizationRevision>{
+public record LinearizationRevision(long timestamp, String userId, Set<LinearizationEvent> linearizationEvents) {
 
-    @Override
-    public int compareTo(@NotNull LinearizationRevision other) {
-        return Long.compare(this.timestamp, other.timestamp);
-    }
 }

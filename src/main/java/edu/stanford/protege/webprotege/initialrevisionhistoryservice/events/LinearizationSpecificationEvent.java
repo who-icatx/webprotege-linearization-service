@@ -15,7 +15,7 @@ public abstract class LinearizationSpecificationEvent implements LinearizationEv
 
 
     @JsonProperty("linearizationView")
-    public IRI getLinearizationView() {
+    IRI getLinearizationView() {
         return linearizationView;
     }
 

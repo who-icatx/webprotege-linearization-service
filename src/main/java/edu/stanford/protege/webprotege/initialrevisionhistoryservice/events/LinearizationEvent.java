@@ -1,15 +1,14 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 
 @BsonDiscriminator(key = "type")
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type"
-)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes(value = {
         @JsonSubTypes.Type(value = SetAuxiliaryAxisChild.class, name = SetAuxiliaryAxisChild.CLASS_TYPE),
         @JsonSubTypes.Type(value = SetCodingNote.class, name = SetCodingNote.CLASS_TYPE),
@@ -22,11 +21,9 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 public interface LinearizationEvent {
 
+
+    @JsonProperty("@type")
     String getType();
+    LinearizationResponse applyEvent(LinearizationResponse input);
 
-    EventProcesableParameter applyEvent(EventProcesableParameter input);
-
-    void accept(EventVisitor visitor);
-
-    String getValue();
 }
