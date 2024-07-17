@@ -1,12 +1,6 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.stanford.protege.webprotege.common.ProjectId;
-import org.jetbrains.annotations.NotNull;
-import org.semanticweb.owlapi.model.IRI;
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.*;
 import org.springframework.data.mongodb.core.mapping.*;
 
 import java.util.*;
@@ -23,17 +17,17 @@ public class EntityLinearizationHistory {
     public static final String LINEARIZATION_REVISIONS = "linearizationRevisions";
 
     @Field("whoficEntityIri")
-    private final IRI whoficEntityIri;
+    private final String whoficEntityIri;
 
     @Field("projectId")
-    private final ProjectId projectId;
+    private final String projectId;
 
     @Field("linearizationRevisions")
     private final Set<LinearizationRevision> linearizationRevisions;
 
     @JsonCreator
-    public EntityLinearizationHistory(@JsonProperty("whoficEntityIri") IRI whoficEntityIri,
-                                      @JsonProperty("projectId") ProjectId projectId,
+    public EntityLinearizationHistory(@JsonProperty("whoficEntityIri") String whoficEntityIri,
+                                      @JsonProperty("projectId") String projectId,
                                       @JsonProperty("linearizationRevisions") Set<LinearizationRevision> linearizationRevisions) {
         this.whoficEntityIri = whoficEntityIri;
         this.projectId = projectId;
@@ -41,11 +35,11 @@ public class EntityLinearizationHistory {
     }
 
 
-    public IRI getWhoficEntityIri() {
+    public String getWhoficEntityIri() {
         return whoficEntityIri;
     }
 
-    public ProjectId getProjectId() {
+    public String getProjectId() {
         return projectId;
     }
 

@@ -5,16 +5,11 @@ import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationHistoryService;
-import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.semanticweb.owlapi.model.IRI;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
@@ -25,11 +20,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
-@SpringBootTest
-@Import({WebprotegeLinearizationServiceServiceApplication.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@RunWith(SpringRunner.class)
-class LinearizationHistoryServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class LinearizationHistoryServiceTest {
 
     @Mock
     private LinearizationHistoryRepository linearizationHistoryRepo;
@@ -46,11 +38,12 @@ class LinearizationHistoryServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        linearizationHistoryService = new LinearizationHistoryService(objectMapper, linearizationHistoryRepo, eventMapper);
     }
 
     @Test
-    void GIVEN_linearizationRevisionsListUnordered_WHEN_requestedFromRepo_THEN_listWillBeOrderedByTimestamp() {
-        IRI entityIri = IRI.create("http://example.com/entity");
+    public void GIVEN_linearizationRevisionsListUnordered_WHEN_requestedFromRepo_THEN_listWillBeOrderedByTimestamp() {
+        String entityIri = getRandomIri();
         UserId userid = UserId.valueOf("user1");
         ProjectId projectId = ProjectId.generate();
 
@@ -61,13 +54,13 @@ class LinearizationHistoryServiceTest {
 
         Set<LinearizationRevision> unsortedRevisions = new HashSet<>(Arrays.asList(revision1, revision2, revision3));
 
-        EntityLinearizationHistory unsortedHistory = new EntityLinearizationHistory(entityIri, projectId, unsortedRevisions);
+        EntityLinearizationHistory unsortedHistory = new EntityLinearizationHistory(entityIri, projectId.id(), unsortedRevisions);
 
         // Mock the repository to return the unsorted history
         when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(entityIri, projectId)).thenReturn(unsortedHistory);
 
         // Call the method to be tested
-        EntityLinearizationHistory sortedHistory = linearizationHistoryService.getExistingHistoryOrderedByRevision(entityIri, projectId);
+        EntityLinearizationHistory sortedHistory = linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(entityIri), projectId);
 
         // Verify the revisions are sorted by timestamp
         List<LinearizationRevision> sortedRevisions = new ArrayList<>(sortedHistory.getLinearizationRevisions());
@@ -78,7 +71,7 @@ class LinearizationHistoryServiceTest {
     }
 
     @Test
-    void GIVEN_entityWithNoLinearizationHistory_WHEN_savingNewRevision_THEN_newHistoryWithRevisionIsCreated() {
+    public void GIVEN_entityWithNoLinearizationHistory_WHEN_savingNewRevision_THEN_newHistoryWithRevisionIsCreated() {
         var userId = UserId.valueOf("user1");
         var linearizationView = getRandomIri();
         var linearizationParent = getRandomIri();
@@ -89,15 +82,15 @@ class LinearizationHistoryServiceTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                linearizationParent,
-                linearizationView,
+                IRI.create(linearizationParent),
+                IRI.create(linearizationView),
                 codingNote
         );
 
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
 
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
-                entityIri,
+                IRI.create(entityIri),
                 residual,
                 List.of(spec)
         );
@@ -109,7 +102,7 @@ class LinearizationHistoryServiceTest {
     }
 
     @Test
-    void GIVEN_entityWithALinearizationHistory_WHEN_savingNewRevision_THEN_addnewRevisionToHistory() {
+    public void GIVEN_entityWithALinearizationHistory_WHEN_savingNewRevision_THEN_addnewRevisionToHistory() {
         var userId = UserId.valueOf("user1");
         var linearizationView = getRandomIri();
         var linearizationParent = getRandomIri();
@@ -120,17 +113,17 @@ class LinearizationHistoryServiceTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                linearizationParent,
-                linearizationView,
+                IRI.create(linearizationParent),
+                IRI.create(linearizationView),
                 codingNote
         );
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
-                entityIri,
+                IRI.create(entityIri),
                 residual,
                 List.of(spec)
         );
-        var existingHistory = getEntityLinearizationHistory(projectId,2);
+        var existingHistory = getEntityLinearizationHistory(projectId, 2);
         when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(any(), any())).thenReturn(existingHistory);
         linearizationHistoryService.addRevision(woficEntitySpec, projectId, userId);
 

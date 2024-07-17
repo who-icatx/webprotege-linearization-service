@@ -2,7 +2,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
-import org.semanticweb.owlapi.model.IRI;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
 
@@ -13,7 +12,7 @@ public class SetCodingNote extends LinearizationSpecificationEvent {
     public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetCodingNote";
 
     @JsonCreator
-    public SetCodingNote(@JsonProperty("value") String value, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetCodingNote(@JsonProperty("value") String value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }

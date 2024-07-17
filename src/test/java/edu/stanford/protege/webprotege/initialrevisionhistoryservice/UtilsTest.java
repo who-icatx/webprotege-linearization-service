@@ -3,7 +3,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.semanticweb.owlapi.model.IRI;
@@ -16,26 +16,26 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.test
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
-class UtilsTest {
+public class UtilsTest {
 
 
     @Test
-    void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allSpecificationEventsAreCreated() {
-        IRI linearizationView = getRandomIri();
-        IRI linearizationParent = getRandomIri();
+    public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allSpecificationEventsAreCreated() {
+        String linearizationView = getRandomIri();
+        String linearizationParent = getRandomIri();
         String codingNote = getRandomString();
-        IRI entityIri = getRandomIri();
+        String entityIri = getRandomIri();
         LinearizationSpecification spec = new LinearizationSpecification(
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                linearizationParent,
-                linearizationView,
+                IRI.create(linearizationParent),
+                IRI.create(linearizationView),
                 codingNote
         );
 
         WhoficEntityLinearizationSpecification entityLinearizationSpecification = new WhoficEntityLinearizationSpecification(
-                entityIri,
+                IRI.create(entityIri),
                 null,
                 List.of(spec)
         );
@@ -59,9 +59,9 @@ class UtilsTest {
     }
 
     @Test
-    void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allResidualEventsAreCreated() {
+    public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allResidualEventsAreCreated() {
         String residualTitle = getRandomString();
-        IRI entityIri = getRandomIri();
+        String entityIri = getRandomIri();
 
         LinearizationResiduals residuals = new LinearizationResiduals(
                 ThreeStateBoolean.TRUE,
@@ -69,7 +69,7 @@ class UtilsTest {
         );
 
         WhoficEntityLinearizationSpecification specification = new WhoficEntityLinearizationSpecification(
-                entityIri,
+                IRI.create(entityIri),
                 residuals,
                 List.of()
         );
@@ -87,7 +87,7 @@ class UtilsTest {
     }
 
     @Test
-    void GIVEN_twoObjects_WHEN_oneIsNullAndTheOtherIsNot_THEN_isNotEqualReturnsTrue() {
+    public void GIVEN_twoObjects_WHEN_oneIsNullAndTheOtherIsNot_THEN_isNotEqualReturnsTrue() {
         var string1 = getRandomString();
         String stringNull = null;
 
@@ -114,12 +114,12 @@ class UtilsTest {
     }
 
     @Test
-    void GIVEN_twoObjects_WHEN_theObjectsAreNotEqual_THEN_isNotEqualReturnsTrue() {
+    public void GIVEN_twoObjects_WHEN_theObjectsAreNotEqual_THEN_isNotEqualReturnsTrue() {
         String string1 = getRandomString();
         String string2 = getRandomString();
 
-        var stringList1 = List.of(string1, string2, getRandomString());
-        var stringList2 = List.of(string1, getRandomString(), string2);
+        var stringList1 = List.of("someString", getRandomString(), getRandomString());
+        var stringList2 = List.of("someOtherString", getRandomString(), getRandomString());
 
         var history1 = getEntityLinearizationHistory(ProjectId.generate(), 3);
         var history2 = getEntityLinearizationHistory(ProjectId.generate(), 3);
@@ -136,7 +136,7 @@ class UtilsTest {
     }
 
     @Test
-    void GIVEN_twoObjects_WHEN_theObjectsAreEqual_THEN_isNotEqualReturnsFalse() {
+    public void GIVEN_twoObjects_WHEN_theObjectsAreEqual_THEN_isNotEqualReturnsFalse() {
         String string1 = getRandomString();
         String string2 = getRandomString();
         String string3 = getRandomString();

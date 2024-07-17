@@ -14,20 +14,20 @@ public class RandomHelper {
 
     private static final List<ThreeStateBoolean> SAMPLE_BOOLS = List.of(ThreeStateBoolean.TRUE, ThreeStateBoolean.FALSE, ThreeStateBoolean.UNKNOWN);
 
-    private static final List<IRI> SAMPLE_IRIS = List.of(
-            IRI.create("http://id.who.int/icd/entity/iri1"),
-            IRI.create("http://id.who.int/icd/entity/iri2"),
-            IRI.create("http://id.who.int/icd/entity/iri3"),
-            IRI.create("http://id.who.int/icd/entity/iri4"),
-            IRI.create("http://id.who.int/icd/entity/iri5"),
-            IRI.create("http://id.who.int/icd/entity/iri6"),
-            IRI.create("http://id.who.int/icd/entity/iri7"),
-            IRI.create("http://id.who.int/icd/entity/iri8"),
-            IRI.create("http://id.who.int/icd/entity/iri9"),
-            IRI.create("http://id.who.int/icd/entity/iri10")
+    private static final List<String> SAMPLE_IRIS = List.of(
+            "http://id.who.int/icd/entity/iri1",
+            "http://id.who.int/icd/entity/iri2",
+            "http://id.who.int/icd/entity/iri3",
+            "http://id.who.int/icd/entity/iri4",
+            "http://id.who.int/icd/entity/iri5",
+            "http://id.who.int/icd/entity/iri6",
+            "http://id.who.int/icd/entity/iri7",
+            "http://id.who.int/icd/entity/iri8",
+            "http://id.who.int/icd/entity/iri9",
+            "http://id.who.int/icd/entity/iri10"
     );
 
-    public static IRI getRandomIri() {
+    public static String getRandomIri() {
         return SAMPLE_IRIS.get(RANDOM.nextInt(SAMPLE_IRIS.size()));
     }
 

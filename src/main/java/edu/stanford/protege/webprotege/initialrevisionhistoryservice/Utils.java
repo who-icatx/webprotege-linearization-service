@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 public class Utils {
 
     public static <T> boolean isNotEquals(T a, T b) {
-        if( a == null && b == null){
+        if (a == null && b == null) {
             return false;
-        }else if(a == null){
+        } else if (a == null) {
             return true;
-        }else if(b == null){
+        } else if (b == null) {
             return true;
         }
         return !a.equals(b);
@@ -29,19 +29,19 @@ public class Utils {
                     List<LinearizationSpecificationEvent> response = new ArrayList<>();
 
                     if (specification.getIsIncludedInLinearization() != null) {
-                        response.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView()));
+                        response.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));
                     }
                     if (specification.getIsAuxiliaryAxisChild() != null) {
-                        response.add(new SetAuxiliaryAxisChild(specification.getIsAuxiliaryAxisChild(), specification.getLinearizationView()));
+                        response.add(new SetAuxiliaryAxisChild(specification.getIsAuxiliaryAxisChild(), specification.getLinearizationView().toString()));
                     }
                     if (specification.getLinearizationParent() != null) {
-                        response.add(new SetLinearizationParent(specification.getLinearizationParent(), specification.getLinearizationView()));
+                        response.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
                     }
                     if (specification.getIsGrouping() != null) {
-                        response.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView()));
+                        response.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView().toString()));
                     }
                     if (specification.getCodingNote() != null) {
-                        response.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView()));
+                        response.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView().toString()));
                     }
 
                     return response.stream();

@@ -10,6 +10,6 @@ public class EntityLinearizationHistoryHelper {
 
     public static EntityLinearizationHistory getEntityLinearizationHistory(ProjectId projectId, int numberOfRevisions) {
 
-        return new EntityLinearizationHistory(getRandomIri(), projectId, getLinearizationRevisions(numberOfRevisions));
+        return new EntityLinearizationHistory(getRandomIri(), projectId.id(), getLinearizationRevisions(numberOfRevisions));
     }
 }

@@ -4,7 +4,6 @@ import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.bson.Document;
-import org.semanticweb.owlapi.model.IRI;
 
 import java.util.List;
 
@@ -14,10 +13,7 @@ public interface LinearizationHistoryRepository {
 
     void bulkWriteDocuments(List<InsertOneModel<Document>> listOfInsertOneModelDocument);
 
-    void addRevision(IRI whoficEntityIri, ProjectId projectId, LinearizationRevision newRevision);
+    void addRevision(String whoficEntityIri, ProjectId projectId, LinearizationRevision newRevision);
 
-    EntityLinearizationHistory findHistoryByEntityIriAndProjectId(IRI entityIri, ProjectId projectId);
-
-    EntityLinearizationHistory findWithSpringData(IRI entityIri, ProjectId projectId);
-    void writeSingleHistory(EntityLinearizationHistory histories);
+    EntityLinearizationHistory findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId);
 }

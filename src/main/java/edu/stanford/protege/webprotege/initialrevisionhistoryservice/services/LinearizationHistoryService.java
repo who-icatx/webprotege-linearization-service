@@ -41,7 +41,7 @@ public class LinearizationHistoryService {
 
         var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents);
 
-        return new EntityLinearizationHistory(linearizationSpecification.entityIRI(), projectId, new HashSet<>(List.of(linearizationRevision)));
+        return new EntityLinearizationHistory(linearizationSpecification.entityIRI().toString(), projectId.id(), new HashSet<>(List.of(linearizationRevision)));
     }
 
     public void saveMultipleEntityLinearizationHistories(Set<EntityLinearizationHistory> historiesToBeSaved) {
@@ -52,7 +52,7 @@ public class LinearizationHistoryService {
     }
 
     public EntityLinearizationHistory getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
-        EntityLinearizationHistory history = linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri, projectId);
+        EntityLinearizationHistory history = linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri.toString(), projectId);
         if (history != null) {
             // Sort the linearizationRevisions by timestamp
             Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
@@ -79,7 +79,7 @@ public class LinearizationHistoryService {
 
             var newRevision = LinearizationRevision.create(userId, linearizationEvents);
 
-            linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI(), projectId, newRevision);
+            linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
         } else {
             var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
             linearizationHistoryRepository.saveLinearizationHistory(newHistory);

@@ -1,13 +1,13 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WebprotegeInitialRevisionHistoryServiceApplicationTests {
+public class WebprotegeInitialRevisionHistoryServiceApplicationTests{
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
     }
 
 }

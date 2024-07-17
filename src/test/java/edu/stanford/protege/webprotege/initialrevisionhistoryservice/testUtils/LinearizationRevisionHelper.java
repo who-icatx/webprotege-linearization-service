@@ -14,12 +14,9 @@ public class LinearizationRevisionHelper {
     //Revisions must be sorted by timestamp
     public static Set<LinearizationRevision> getLinearizationRevisions(int numberOfRevisions) {
         Set<LinearizationRevision> listOfRevisions = new HashSet<>();
-        UserId userId = UserId.valueOf("user"+Instant.now());
-        int iteration = 0;
-        while (numberOfRevisions > iteration) {
-            long timestamp = iteration;
-            listOfRevisions.add(new LinearizationRevision(timestamp, userId, getRandomLinearizationEvents()));
-            iteration++;
+        while (numberOfRevisions > 0) {
+            listOfRevisions.add(getLinearizationRevision());
+            numberOfRevisions--;
         }
 
         var sortedRevisions = listOfRevisions.stream()
@@ -27,5 +24,10 @@ public class LinearizationRevisionHelper {
                 .collect(Collectors.toCollection(TreeSet::new));
 
         return sortedRevisions;
+    }
+
+    public static LinearizationRevision getLinearizationRevision() {
+        UserId userId = UserId.valueOf("user" + Instant.now());
+        return new LinearizationRevision(Instant.now().toEpochMilli(), userId, getRandomLinearizationEvents());
     }
 }

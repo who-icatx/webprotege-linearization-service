@@ -16,7 +16,7 @@ public class LinearizationEventsProcessorService {
     public WhoficEntityLinearizationSpecification processHistory(EntityLinearizationHistory linearizationHistory) {
 
 
-        Map<IRI, Queue<LinearizationSpecificationEvent>> allEventsThatHappenedPerIRI = new HashMap<>();
+        Map<String, Queue<LinearizationSpecificationEvent>> allEventsThatHappenedPerIRI = new HashMap<>();
         List<LinearizationEvent> linearizationResidualEvents = new ArrayList<>();
 
 
@@ -54,7 +54,7 @@ public class LinearizationEventsProcessorService {
                             null,
                             null,
                             null,
-                            viewIRI,
+                            IRI.create(viewIRI),
                             null);
 
                     while (isNotEmpty(specQueue)) {
@@ -72,7 +72,7 @@ public class LinearizationEventsProcessorService {
         }
 
 
-        return new WhoficEntityLinearizationSpecification(linearizationHistory.getWhoficEntityIri(),
+        return new WhoficEntityLinearizationSpecification(IRI.create(linearizationHistory.getWhoficEntityIri()),
                 residuals,
                 linearizationSpecifications);
     }

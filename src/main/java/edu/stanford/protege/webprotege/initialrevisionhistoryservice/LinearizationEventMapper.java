@@ -33,31 +33,31 @@ public class LinearizationEventMapper {
 
     private void addIncludedInLinearizationEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getIsIncludedInLinearization() != null) {
-            events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView()));
+            events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));
         }
     }
 
     private void addAuxiliaryAxisChildEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getIsAuxiliaryAxisChild() != null) {
-            events.add(new SetAuxiliaryAxisChild(specification.getIsAuxiliaryAxisChild(), specification.getLinearizationView()));
+            events.add(new SetAuxiliaryAxisChild(specification.getIsAuxiliaryAxisChild(), specification.getLinearizationView().toString()));
         }
     }
 
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getLinearizationParent() != null) {
-            events.add(new SetLinearizationParent(specification.getLinearizationParent(), specification.getLinearizationView()));
+            events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
     }
 
     private void addGroupingEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getIsGrouping() != null) {
-            events.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView()));
+            events.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView().toString()));
         }
     }
 
     private void addCodingNoteEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getCodingNote() != null) {
-            events.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView()));
+            events.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView().toString()));
         }
     }
 

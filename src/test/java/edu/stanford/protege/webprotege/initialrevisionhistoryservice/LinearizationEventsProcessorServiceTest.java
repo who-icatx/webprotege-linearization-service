@@ -1,38 +1,36 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
+
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationEventsProcessorService;
-import org.junit.jupiter.api.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.slf4j.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.text.MessageFormat;
+import java.util.logging.Logger;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
 import static org.junit.Assert.assertTrue;
 
-@SpringBootTest
-@Import({WebprotegeLinearizationServiceServiceApplication.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@RunWith(SpringRunner.class)
-class LinearizationEventsProcessorServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class LinearizationEventsProcessorServiceTest {
 
     public String eventInLatestRevisionNotFoundInResult = "{0} change not found in response even though we have it in latest revision";
 
-    private static final Logger logger = LoggerFactory.getLogger(LinearizationEventsProcessorServiceTest.class);
+    private static final Logger logger = Logger.getLogger(LinearizationEventsProcessorServiceTest.class.getName());
 
-    @Autowired
     private LinearizationEventsProcessorService eventsProcessorService;
 
+    @Before
+    public void setUp() {
+        eventsProcessorService = new LinearizationEventsProcessorService();
+    }
+
     @Test
-    void GIVEN_aLinearizationHistory_WHEN_processingTheHistory_THEN_resultContainsLatestChanges() {
+    public void GIVEN_aLinearizationHistory_WHEN_processingTheHistory_THEN_resultContainsLatestChanges() {
         var projectId = ProjectId.generate();
         //revisions must be sorted chronologically by timestamp
         var linearizationHistory = getEntityLinearizationHistory(projectId, 33);
@@ -48,7 +46,7 @@ class LinearizationEventsProcessorServiceTest {
 
                                 var eventFoundInResponse = response.linearizationSpecifications()
                                         .stream()
-                                        .filter(spec -> spec.getLinearizationView().equals(includedInLinearizationEvent.getLinearizationView()))
+                                        .filter(spec -> spec.getLinearizationView().toString().equals(includedInLinearizationEvent.getLinearizationView()))
                                         .anyMatch(spec -> includedInLinearizationEvent.getValue().equals(spec.getIsIncludedInLinearization().name()));
 
                                 assertTrue(MessageFormat.format(eventInLatestRevisionNotFoundInResult, includedInLinearizationEvent.getType()),
@@ -57,7 +55,7 @@ class LinearizationEventsProcessorServiceTest {
 
                                 var eventFoundInResponse = response.linearizationSpecifications()
                                         .stream()
-                                        .filter(spec -> spec.getLinearizationView().equals(auxiliaryAxisChildEvent.getLinearizationView()))
+                                        .filter(spec -> spec.getLinearizationView().toString().equals(auxiliaryAxisChildEvent.getLinearizationView()))
                                         .anyMatch(spec -> auxiliaryAxisChildEvent.getValue().equals(spec.getIsAuxiliaryAxisChild().name()));
 
                                 assertTrue(MessageFormat.format(eventInLatestRevisionNotFoundInResult, auxiliaryAxisChildEvent.getType()),
@@ -66,7 +64,7 @@ class LinearizationEventsProcessorServiceTest {
 
                                 var eventFoundInResponse = response.linearizationSpecifications()
                                         .stream()
-                                        .filter(spec -> spec.getLinearizationView().equals(linearizationParentEvent.getLinearizationView()))
+                                        .filter(spec -> spec.getLinearizationView().toString().equals(linearizationParentEvent.getLinearizationView()))
                                         .anyMatch(spec -> linearizationParentEvent.getValue().equals(spec.getLinearizationParent().toString()));
 
                                 assertTrue(MessageFormat.format(eventInLatestRevisionNotFoundInResult, linearizationParentEvent.getType()),
@@ -75,7 +73,7 @@ class LinearizationEventsProcessorServiceTest {
 
                                 var eventFoundInResponse = response.linearizationSpecifications()
                                         .stream()
-                                        .filter(spec -> spec.getLinearizationView().equals(setGroupingEvent.getLinearizationView()))
+                                        .filter(spec -> spec.getLinearizationView().toString().equals(setGroupingEvent.getLinearizationView()))
                                         .anyMatch(spec -> setGroupingEvent.getValue().equals(spec.getIsGrouping().name()));
 
                                 assertTrue(MessageFormat.format(eventInLatestRevisionNotFoundInResult, setGroupingEvent.getType()),
@@ -84,7 +82,7 @@ class LinearizationEventsProcessorServiceTest {
 
                                 var eventFoundInResponse = response.linearizationSpecifications()
                                         .stream()
-                                        .filter(spec -> spec.getLinearizationView().equals(setCodingNoteEvent.getLinearizationView()))
+                                        .filter(spec -> spec.getLinearizationView().toString().equals(setCodingNoteEvent.getLinearizationView()))
                                         .anyMatch(spec -> setCodingNoteEvent.getValue().equals(spec.getCodingNote()));
 
                                 assertTrue(MessageFormat.format(eventInLatestRevisionNotFoundInResult, setCodingNoteEvent.getType()),
