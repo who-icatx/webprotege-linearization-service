@@ -18,14 +18,13 @@ class ReadWriteLockServiceTest {
 
     private ReadWriteLockService readWriteLockService;
     private ReadWriteLockConfig config;
-    private ReentrantReadWriteLock readWriteLock;
     private ReentrantReadWriteLock.ReadLock readLock;
     private ReentrantReadWriteLock.WriteLock writeLock;
 
     @BeforeEach
     void setUp() {
         config = mock(ReadWriteLockConfig.class);
-        readWriteLock = mock(ReentrantReadWriteLock.class);
+        ReentrantReadWriteLock readWriteLock = mock(ReentrantReadWriteLock.class);
         readLock = mock(ReentrantReadWriteLock.ReadLock.class);
         writeLock = mock(ReentrantReadWriteLock.WriteLock.class);
 
