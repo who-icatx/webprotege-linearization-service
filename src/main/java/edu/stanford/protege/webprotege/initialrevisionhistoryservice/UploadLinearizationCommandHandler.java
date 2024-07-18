@@ -3,7 +3,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 import edu.stanford.protege.webprotege.common.BlobLocation;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.document.LinearizationDocumentRepository;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationHistoryService;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +29,14 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
     private final LinearizationHistoryService linearizationHistoryService;
 
-    public UploadLinearizationCommandHandler(LinearizationDocumentRepository linearizationRepository, LinearizationHistoryService linearizationHistoryService) {
+    private final ReadWriteLockService readWriteLock;
+
+    public UploadLinearizationCommandHandler(LinearizationDocumentRepository linearizationRepository,
+                                             LinearizationHistoryService linearizationHistoryService,
+                                             ReadWriteLockService readWriteLock) {
         this.linearizationRepository = linearizationRepository;
         this.linearizationHistoryService = linearizationHistoryService;
+        this.readWriteLock = readWriteLock;
     }
 
     @NotNull
@@ -51,9 +56,10 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
         var stream = linearizationRepository.fetchFromDocument(new BlobLocation(request.documentLocation(), this.bucket));
 
-        Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
-
-        stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+        readWriteLock.executeWriteLock(() -> {
+            Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
+            stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+        });
 
 
         return Mono.just(UploadLinearizationResponse.create());

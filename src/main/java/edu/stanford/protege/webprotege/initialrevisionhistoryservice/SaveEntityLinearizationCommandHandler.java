@@ -1,6 +1,6 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationHistoryService;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;

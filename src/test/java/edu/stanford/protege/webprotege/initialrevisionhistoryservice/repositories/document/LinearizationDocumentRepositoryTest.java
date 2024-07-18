@@ -1,7 +1,7 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.document;
 
 import edu.stanford.protege.webprotege.common.BlobLocation;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.document.LinearizationDocumentRepository;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.MinioLinearizationDocumentLoader;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -44,6 +44,6 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
 
         WhoficEntityLinearizationSpecification processedSpec = linearizationEventsProcessor.processHistory(linearizationHistory);
 
-        return Mono.just(new GetEntityLinearizationsResponse(processedSpec.entityIRI().toString(),processedSpec));
+        return Mono.just(new GetEntityLinearizationsResponse(processedSpec.entityIRI().toString(), processedSpec));
     }
 }

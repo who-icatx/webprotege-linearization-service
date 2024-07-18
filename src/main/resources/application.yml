@@ -27,13 +27,6 @@ webprotege:
     timeout: 60000
   linearization:
     batch-size: 100
-
-logging:
-  level:
-    org:
-      springframework:
-        data:
-          mongodb:
-            core:
-              org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-              convert: DEBUG
+  readWriteLock:
+    timeoutInMillies: 1000
+    maxRetries: 5

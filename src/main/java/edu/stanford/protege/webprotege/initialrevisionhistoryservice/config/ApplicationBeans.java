@@ -11,6 +11,8 @@ import org.semanticweb.owlapi.model.IRI;
 import org.springframework.context.annotation.*;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 @Configuration
 public class ApplicationBeans {
 
@@ -29,6 +31,11 @@ public class ApplicationBeans {
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
         return objectMapper;
+    }
+
+    @Bean
+    public ReentrantReadWriteLock readWriteLock(){
+        return new ReentrantReadWriteLock(true);
     }
 
 

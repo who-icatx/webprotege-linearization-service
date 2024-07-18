@@ -1,10 +1,9 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 
 
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationEventsProcessorService;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -26,7 +25,7 @@ public class LinearizationEventsProcessorServiceTest {
 
     @Before
     public void setUp() {
-        eventsProcessorService = new LinearizationEventsProcessorService();
+        eventsProcessorService = new LinearizationEventsProcessorServiceImpl();
     }
 
     @Test

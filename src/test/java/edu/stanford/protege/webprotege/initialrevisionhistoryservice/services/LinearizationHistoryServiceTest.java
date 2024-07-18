@@ -1,10 +1,10 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationHistoryService;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -32,13 +32,21 @@ public class LinearizationHistoryServiceTest {
     @Mock
     private LinearizationEventMapper eventMapper;
 
+    @Mock
+    private ReadWriteLockService readWriteLock;
+
     @InjectMocks
     private LinearizationHistoryService linearizationHistoryService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        linearizationHistoryService = new LinearizationHistoryService(objectMapper, linearizationHistoryRepo, eventMapper);
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(readWriteLock).executeWriteLock(any(Runnable.class));
+        linearizationHistoryService = new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock);
     }
 
     @Test
