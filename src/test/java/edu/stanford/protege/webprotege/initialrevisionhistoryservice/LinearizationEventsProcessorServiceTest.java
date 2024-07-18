@@ -6,8 +6,8 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationEventsProcessorService;
 import org.junit.*;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.MessageFormat;
 import java.util.logging.Logger;
@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LinearizationEventsProcessorServiceTest {
 
     public String eventInLatestRevisionNotFoundInResult = "{0} change not found in response even though we have it in latest revision";

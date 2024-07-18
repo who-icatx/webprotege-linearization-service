@@ -6,9 +6,9 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationHistoryService;
 import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LinearizationHistoryServiceTest {
 
     @Mock

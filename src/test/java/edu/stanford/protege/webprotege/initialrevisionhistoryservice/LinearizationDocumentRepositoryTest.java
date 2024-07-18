@@ -2,12 +2,10 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.BlobLocation;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.ByteArrayInputStream;
@@ -18,8 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
-@SpringBootTest
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LinearizationDocumentRepositoryTest {
 
     @Mock
@@ -27,15 +24,15 @@ public class LinearizationDocumentRepositoryTest {
 
     private LinearizationDocumentRepository linearizationDocumentRepo;
 
-    @Before
-    public void setUp(){
+    @BeforeEach
+    public void setUp() {
         when(minioLinearizationDocumentLoader.fetchLinearizationDocument(any())).thenReturn(new ByteArrayInputStream(LINEARIZATION_SPECIFICATIONS.getBytes(StandardCharsets.UTF_8)));
         linearizationDocumentRepo = new LinearizationDocumentRepository(minioLinearizationDocumentLoader, new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl()));
     }
 
     @Test
-    public void test(){
-       var response = linearizationDocumentRepo.fetchFromDocument(new BlobLocation("asdasd", "asdasd")).collect(Collectors.toSet());
+    public void test() {
+        var response = linearizationDocumentRepo.fetchFromDocument(new BlobLocation("asdasd", "asdasd")).collect(Collectors.toSet());
         System.out.println(response);
     }
 

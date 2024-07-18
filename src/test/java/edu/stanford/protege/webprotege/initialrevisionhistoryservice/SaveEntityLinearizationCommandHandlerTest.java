@@ -4,8 +4,8 @@ import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetIncludedInLinearization;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,29 +13,25 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.*;
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Import({WebprotegeLinearizationServiceServiceApplication.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@RunWith(SpringRunner.class)
-public class SaveEntityLinearizationCommandHandlerTest extends IntegrationTest {
+@ExtendWith({SpringExtension.class, IntegrationTest.class})
+public class SaveEntityLinearizationCommandHandlerTest {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
     private SaveEntityLinearizationCommandHandler commandHandler;
-
-    @Before
-    public void setUp() {
-    }
 
     @Test
     public void GIVEN_entityWithNoLinearizationHistory_WHEN_savingNewEntityLinearization_THEN_createNewHistoryWithNewRevision() {

@@ -3,22 +3,22 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.junit.*;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LinearizationEventMapperTest {
 
     private LinearizationEventMapper eventMapper;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         eventMapper = new LinearizationEventMapper();
     }
 

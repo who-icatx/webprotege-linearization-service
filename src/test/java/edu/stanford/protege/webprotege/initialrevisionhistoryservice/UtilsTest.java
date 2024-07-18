@@ -2,9 +2,9 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.test
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.getRandomString;
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class UtilsTest {
     @Test
     public void GIVEN_twoObjects_WHEN_oneIsNullAndTheOtherIsNot_THEN_isNotEqualReturnsTrue() {

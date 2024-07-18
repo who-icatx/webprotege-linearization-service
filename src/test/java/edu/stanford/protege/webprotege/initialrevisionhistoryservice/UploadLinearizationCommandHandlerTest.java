@@ -9,30 +9,30 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import org.bson.Document;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.StreamSupport.stream;
-import static junit.framework.TestCase.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @Import({WebprotegeLinearizationServiceServiceApplication.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@RunWith(SpringRunner.class)
-public class UploadLinearizationCommandHandlerTest extends IntegrationTest {
+@ExtendWith({SpringExtension.class, IntegrationTest.class})
+public class UploadLinearizationCommandHandlerTest {
 
 
     @MockBean
@@ -46,7 +46,7 @@ public class UploadLinearizationCommandHandlerTest extends IntegrationTest {
 
     private ObjectMapper objectMapper;
 
-    @Before
+    @BeforeEach
     public void setUp() throws FileNotFoundException {
         File initialFile = new File("src/test/resources/TestLinearization.json");
         InputStream targetStream = new FileInputStream(initialFile);

@@ -2,27 +2,28 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositori
 
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.LinearizationRevisionHelper.getLinearizationRevision;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SpringBootTest
-@Import({WebprotegeLinearizationServiceServiceApplication.class})
+@SpringBootTest(classes = WebprotegeLinearizationServiceServiceApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-@RunWith(SpringRunner.class)
-public class LinearizationHistoryRepositoryImplTest extends IntegrationTest {
+@ExtendWith({SpringExtension.class, IntegrationTest.class})
+public class LinearizationHistoryRepositoryImplTest {
 
     @Autowired
     private LinearizationHistoryRepository linearizationHistoryRepository;
+
+    public LinearizationHistoryRepositoryImplTest() {
+    }
 
     @Test
     public void GIVEN_newLinearizationHistory_WHEN_historyIsSaved_THEN_weGetBackSavedHistory() {
