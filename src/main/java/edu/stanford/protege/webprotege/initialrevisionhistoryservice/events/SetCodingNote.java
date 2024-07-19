@@ -2,9 +2,8 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
-import org.semanticweb.owlapi.model.IRI;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetCodingNote extends LinearizationSpecificationEvent {
 
@@ -13,7 +12,7 @@ public class SetCodingNote extends LinearizationSpecificationEvent {
     public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetCodingNote";
 
     @JsonCreator
-    public SetCodingNote(@JsonProperty("value") String value, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetCodingNote(@JsonProperty("value") String value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }
@@ -24,7 +23,7 @@ public class SetCodingNote extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (isNotEquals(specification.getCodingNote(), value)) {
+        if (notEqual(specification.getCodingNote(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),

@@ -5,17 +5,18 @@ import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
 import org.semanticweb.owlapi.model.IRI;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
+
 
 public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
     public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetLinearizationParent";
-    private final IRI value;
+    private final String value;
 
     @JsonCreator
-    public SetLinearizationParent(@JsonProperty("linearizationParent") IRI linearizationParent, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetLinearizationParent(@JsonProperty("value") String value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
-        this.value = linearizationParent;
+        this.value = value;
     }
 
     @Override
@@ -24,11 +25,11 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (isNotEquals(specification.getLinearizationParent(), value)) {
+        if (notEqual(specification.getLinearizationParent(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),
-                    value,
+                    IRI.create(value),
                     specification.getLinearizationView(),
                     specification.getCodingNote());
         }
@@ -43,7 +44,7 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
     @JsonProperty("value")
     public String getValue() {
-        return this.value.toString();
+        return this.value;
     }
 
 }

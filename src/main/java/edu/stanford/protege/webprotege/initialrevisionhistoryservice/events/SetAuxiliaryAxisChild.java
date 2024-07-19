@@ -2,9 +2,8 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
-import org.semanticweb.owlapi.model.IRI;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
 
@@ -13,7 +12,7 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
     public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetAuxiliaryAxisChild";
 
     @JsonCreator
-    public SetAuxiliaryAxisChild(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetAuxiliaryAxisChild(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }
@@ -25,7 +24,7 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (isNotEquals(specification.getIsAuxiliaryAxisChild(), value)) {
+        if (notEqual(specification.getIsAuxiliaryAxisChild(), value)) {
             return new LinearizationSpecification(value,
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),

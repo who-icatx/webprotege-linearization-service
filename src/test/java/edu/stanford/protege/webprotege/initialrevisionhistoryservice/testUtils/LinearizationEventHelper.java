@@ -27,23 +27,23 @@ public class LinearizationEventHelper {
     }
 
     private static SetAuxiliaryAxisChild getSetAuxAxisChildEvent(IRI viewIRI) {
-        return new SetAuxiliaryAxisChild(getRandomThreeStateBoolean(), viewIRI);
+        return new SetAuxiliaryAxisChild(getRandomThreeStateBoolean(), viewIRI.toString());
     }
 
     private static SetCodingNote getSetCodingNoteEvent(IRI viewIRI) {
-        return new SetCodingNote(getRandomString(), viewIRI);
+        return new SetCodingNote(getRandomString(), viewIRI.toString());
     }
 
     private static SetGrouping getSetGroupingEvent(IRI viewIRI) {
-        return new SetGrouping(getRandomThreeStateBoolean(), viewIRI);
+        return new SetGrouping(getRandomThreeStateBoolean(), viewIRI.toString());
     }
 
     private static SetIncludedInLinearization getSetIncludedInLinearizationEvent(IRI viewIRI) {
-        return new SetIncludedInLinearization(getRandomThreeStateBoolean(), viewIRI);
+        return new SetIncludedInLinearization(getRandomThreeStateBoolean(), viewIRI.toString());
     }
 
     private static SetLinearizationParent getSetLinearizationParentEvent(IRI viewIRI) {
-        return new SetLinearizationParent(getRandomIri(), viewIRI);
+        return new SetLinearizationParent(getRandomIri(), viewIRI.toString());
     }
 
     private static SetSuppressedSpecifiedResidual getSetSuppressedSpecifiedResidualEvent() {
