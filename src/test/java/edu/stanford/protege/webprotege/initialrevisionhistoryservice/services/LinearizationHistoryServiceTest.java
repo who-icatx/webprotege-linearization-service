@@ -62,16 +62,16 @@ public class LinearizationHistoryServiceTest {
 
         Set<LinearizationRevision> unsortedRevisions = new HashSet<>(Arrays.asList(revision1, revision2, revision3));
 
-        EntityLinearizationHistory unsortedHistory = new EntityLinearizationHistory(entityIri, projectId.id(), unsortedRevisions);
+        var unsortedHistory = Optional.of(new EntityLinearizationHistory(entityIri, projectId.id(), unsortedRevisions));
 
         // Mock the repository to return the unsorted history
         when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(entityIri, projectId)).thenReturn(unsortedHistory);
 
         // Call the method to be tested
-        EntityLinearizationHistory sortedHistory = linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(entityIri), projectId);
+        var sortedHistoryOptional = linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(entityIri), projectId);
 
         // Verify the revisions are sorted by timestamp
-        List<LinearizationRevision> sortedRevisions = new ArrayList<>(sortedHistory.getLinearizationRevisions());
+        List<LinearizationRevision> sortedRevisions = new ArrayList<>(sortedHistoryOptional.get().getLinearizationRevisions());
         assertEquals(3, sortedRevisions.size());
         assertEquals(1L, sortedRevisions.get(0).timestamp());
         assertEquals(2L, sortedRevisions.get(1).timestamp());
@@ -132,7 +132,7 @@ public class LinearizationHistoryServiceTest {
                 List.of(spec)
         );
         var existingHistory = getEntityLinearizationHistory(projectId, 2);
-        when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(any(), any())).thenReturn(existingHistory);
+        when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(any(), any())).thenReturn(Optional.of(existingHistory));
         linearizationHistoryService.addRevision(woficEntitySpec, projectId, userId);
 
         verify(linearizationHistoryRepo, times(0)).saveLinearizationHistory(any());

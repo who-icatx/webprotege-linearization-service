@@ -157,6 +157,7 @@ class ReadWriteLockServiceTest {
         Future<String> firstThreadFuture = executor.submit(firstThreadTask);
         firstThreadAcquiredLock.await(); // Wait for the first thread to acquire the lock
         Future<String> secondThreadFuture = executor.submit(secondThreadTask);
+        firstThreadCompleted.await();
 
         // Verify the first thread completed successfully
         String firstThreadResult = firstThreadFuture.get();

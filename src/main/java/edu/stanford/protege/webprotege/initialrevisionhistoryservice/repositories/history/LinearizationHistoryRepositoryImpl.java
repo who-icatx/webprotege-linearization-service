@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.*;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.*;
 
@@ -50,7 +50,7 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
         update.push(LINEARIZATION_REVISIONS, newRevision);
 
         readWriteLock.executeWriteLock(() -> {
-            UpdateResult result = mongoTemplate.updateFirst(query, update, EntityLinearizationHistory.class);
+            UpdateResult result = mongoTemplate.updateFirst(query, update, EntityLinearizationHistory.class, REVISION_HISTORY_COLLECTION);
             if (result.getMatchedCount() == 0) {
                 throw new IllegalArgumentException(REVISION_HISTORY_COLLECTION + " not found for the given " +
                         WHOFIC_ENTITY_IRI + ":" + whoficEntityIri + " and " + PROJECT_ID +
@@ -60,12 +60,12 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
     }
 
     @Override
-    public EntityLinearizationHistory findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId) {
+    public Optional<EntityLinearizationHistory> findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId) {
 
         Query query = new Query();
         query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
                 .and(PROJECT_ID).is(projectId.value()));
 
-        return readWriteLock.executeReadLock(() -> mongoTemplate.findOne(query, EntityLinearizationHistory.class));
+        return readWriteLock.executeReadLock(() -> Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, REVISION_HISTORY_COLLECTION)));
     }
 }

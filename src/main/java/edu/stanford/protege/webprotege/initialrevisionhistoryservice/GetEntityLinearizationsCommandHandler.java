@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
@@ -40,9 +42,8 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
     @Override
     public Mono<GetEntityLinearizationsResponse> handleRequest(GetEntityLinearizationsRequest request, ExecutionContext executionContext) {
 
-        EntityLinearizationHistory linearizationHistory = this.linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(request.entityIRI()), request.projectId());
-
-        WhoficEntityLinearizationSpecification processedSpec = linearizationEventsProcessor.processHistory(linearizationHistory);
+        WhoficEntityLinearizationSpecification processedSpec =
+        this.linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(request.entityIRI()), request.projectId()).map(linearizationEventsProcessor::processHistory).orElseGet(() -> new WhoficEntityLinearizationSpecification(null, null, Collections.emptyList()));
 
         return Mono.just(new GetEntityLinearizationsResponse(request.entityIRI(), processedSpec));
     }

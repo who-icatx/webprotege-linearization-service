@@ -5,7 +5,7 @@ import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.bson.Document;
 
-import java.util.List;
+import java.util.*;
 
 public interface LinearizationHistoryRepository {
 
@@ -15,5 +15,5 @@ public interface LinearizationHistoryRepository {
 
     void addRevision(String whoficEntityIri, ProjectId projectId, LinearizationRevision newRevision);
 
-    EntityLinearizationHistory findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId);
+    Optional<EntityLinearizationHistory> findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId);
 }

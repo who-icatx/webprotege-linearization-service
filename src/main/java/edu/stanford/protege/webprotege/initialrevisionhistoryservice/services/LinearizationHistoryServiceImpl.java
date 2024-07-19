@@ -55,37 +55,38 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     }
 
     @Override
-    public EntityLinearizationHistory getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
-        EntityLinearizationHistory history = linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri.toString(), projectId);
-        if (history != null) {
-            // Sort the linearizationRevisions by timestamp
-            Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
-                    .stream()
-                    .sorted(Comparator.comparingLong(LinearizationRevision::timestamp))
-                    .collect(Collectors.toCollection(TreeSet::new));
-            // Return a new EntityLinearizationHistory object with the sorted revisions
-            return new EntityLinearizationHistory(history.getWhoficEntityIri(), history.getProjectId(), sortedRevisions);
-        }
-        return null;
+    public Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
+        return linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri.toString(), projectId)
+                .map(history -> {
+                    Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
+                            .stream()
+                            .sorted(Comparator.comparingLong(LinearizationRevision::timestamp))
+                            .collect(Collectors.toCollection(TreeSet::new));
+                    // Return a new EntityLinearizationHistory object with the sorted revisions
+                    return new EntityLinearizationHistory(history.getWhoficEntityIri(), history.getProjectId(), sortedRevisions);
+                });
+
     }
 
     @Override
     public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
                             ProjectId projectId, UserId userId) {
         readWriteLock.executeWriteLock(() -> {
-            var existingHistory = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
-            if (existingHistory != null) {
-                Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
-                linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
+                    var existingHistoryOptional = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
+                    existingHistoryOptional.ifPresentOrElse(history -> {
+                                Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
+                                linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
 
-                var newRevision = LinearizationRevision.create(userId, linearizationEvents);
+                                var newRevision = LinearizationRevision.create(userId, linearizationEvents);
 
-                linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
-            } else {
-                var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
-                linearizationHistoryRepository.saveLinearizationHistory(newHistory);
-            }
-        });
+                                linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
+                            }, () -> {
+                                var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
+                                linearizationHistoryRepository.saveLinearizationHistory(newHistory);
+                            }
+                    );
+                }
+        );
     }
 
 
