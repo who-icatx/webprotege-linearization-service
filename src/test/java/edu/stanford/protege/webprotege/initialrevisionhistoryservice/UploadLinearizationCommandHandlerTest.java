@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.*;
 @Import({WebprotegeLinearizationServiceServiceApplication.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @ExtendWith({SpringExtension.class, IntegrationTest.class})
+@ActiveProfiles("test")
 public class UploadLinearizationCommandHandlerTest {
 
 
@@ -61,7 +63,7 @@ public class UploadLinearizationCommandHandlerTest {
                         ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
                 new ExecutionContext(UserId.valueOf("alexsilaghi"), ""));
 
-        verify(mongoTemplate, times(1)).getCollection(any());
+        verify(mongoTemplate, times(2)).getCollection(any());
     }
 
     @Test
@@ -74,11 +76,13 @@ public class UploadLinearizationCommandHandlerTest {
         FindIterable<Document> documents = mongoTemplate.getCollection("EntityLinearizationHistories").find(filter);
         Stream<Document> docs = stream(documents.spliterator(), false);
 
+        assertTrue(docs.findFirst().isPresent());
+
         Document doc = docs.findFirst().get();
         EntityLinearizationHistory savedHistory = objectMapper.readValue(doc.toJson(), EntityLinearizationHistory.class);
 
         assertNotNull(savedHistory);
-        assertEquals("http://id.who.int/icd/entity/979278646", savedHistory.getWhoficEntityIri().toString());
+        assertEquals("http://id.who.int/icd/entity/979278646", savedHistory.getWhoficEntityIri());
         assertEquals(1, savedHistory.getLinearizationRevisions().size());
         LinearizationRevision revision = (LinearizationRevision) savedHistory.getLinearizationRevisions().toArray()[0];
         assertEquals(userId, revision.userId());

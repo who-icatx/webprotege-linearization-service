@@ -4,7 +4,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
 
@@ -27,7 +27,7 @@ public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
             throw new RuntimeException("Error! Trying to parse event that is not " + LinearizationResiduals.class.getName());
         }
 
-        if (isNotEquals(residual.getSuppressSpecifiedResidual(), value)) {
+        if (notEqual(residual.getSuppressSpecifiedResidual(), value)) {
             return new LinearizationResiduals(value, residual.getUnspecifiedResidualTitle());
         }
 

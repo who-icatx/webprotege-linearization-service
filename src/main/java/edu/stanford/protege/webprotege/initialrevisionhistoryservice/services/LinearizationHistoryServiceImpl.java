@@ -16,6 +16,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+
 @Service
 public class LinearizationHistoryServiceImpl implements LinearizationHistoryService {
 
@@ -93,11 +95,13 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     @Override
     public Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId) {
         return page -> {
-            var historiesToBeSaved = page.stream()
-                    .map(specification -> createNewEntityLinearizationHistory(specification, projectId, userId))
-                    .collect(Collectors.toSet());
+            if (isNotEmpty(page)) {
+                var historiesToBeSaved = page.stream()
+                        .map(specification -> createNewEntityLinearizationHistory(specification, projectId, userId))
+                        .collect(Collectors.toSet());
 
-            saveMultipleEntityLinearizationHistories(historiesToBeSaved);
+                saveMultipleEntityLinearizationHistories(historiesToBeSaved);
+            }
         };
     }
 }

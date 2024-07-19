@@ -12,7 +12,6 @@ spring:
       port: 27017
       database: webprotege
       auto-index-creation: true
-      uri: mongodb://${spring.data.mongodb.host}:${spring.data.mongodb.port}/${spring.data.mongodb.database}
 
 webprotege:
   minio:

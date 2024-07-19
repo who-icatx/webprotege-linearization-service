@@ -8,10 +8,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ReadWriteLockConfig {
 
-    @Value("${webprotege.readWriteLock.maxRetries}")
+    @Value("${webprotege.readWriteLock.maxRetries:5}")
     private int maxRetries;
 
-    @Value("${webprotege.readWriteLock.timeoutInMillies}")
+    @Value("${webprotege.readWriteLock.timeoutInMillies:1000}")
     private int timeout;
 
     private final TimeUnit timeUnit = TimeUnit.MILLISECONDS;

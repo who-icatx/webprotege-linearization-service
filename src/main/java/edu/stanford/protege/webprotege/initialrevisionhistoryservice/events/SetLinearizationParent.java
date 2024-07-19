@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationSpecification;
 import org.semanticweb.owlapi.model.IRI;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
+
 
 public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
@@ -24,7 +25,7 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (isNotEquals(specification.getLinearizationParent(), value)) {
+        if (notEqual(specification.getLinearizationParent(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),

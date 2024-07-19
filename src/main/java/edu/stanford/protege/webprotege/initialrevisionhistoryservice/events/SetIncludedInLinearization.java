@@ -3,7 +3,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetIncludedInLinearization extends LinearizationSpecificationEvent {
 
@@ -23,7 +23,7 @@ public class SetIncludedInLinearization extends LinearizationSpecificationEvent 
             throw new RuntimeException("Error! Trying to parse event" + LinearizationSpecification.class.getName());
         }
 
-        if (isNotEquals(specification.getIsIncludedInLinearization(), value)) {
+        if (notEqual(specification.getIsIncludedInLinearization(), value)) {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     value,

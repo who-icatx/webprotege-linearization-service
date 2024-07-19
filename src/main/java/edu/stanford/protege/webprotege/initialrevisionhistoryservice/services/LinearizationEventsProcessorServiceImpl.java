@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Utils.isNotEmpty;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 @Service
 public class LinearizationEventsProcessorServiceImpl implements LinearizationEventsProcessorService {
@@ -48,7 +48,7 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
                             null,
                             IRI.create(viewIRI),
                             null);
-                    while (isNotEmpty(specQueue)) {
+                    while (isNotEmpty(specQueue.isEmpty())) {
                         LinearizationSpecificationEvent event = specQueue.remove();
                         response = (LinearizationSpecification) event.applyEvent(response);
                     }
