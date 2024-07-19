@@ -1,9 +1,13 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
+import org.semanticweb.owlapi.model.IRI;
 import reactor.core.publisher.Mono;
+
+import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -12,14 +16,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class GetEntityLinearizationsCommandHandler implements CommandHandler<GetEntityLinearizationsRequest, GetEntityLinearizationsResponse> {
 
 
-    private final LinearizationRevisionService linearizationRevisionService;
+    private final LinearizationHistoryService linearizationHistoryService;
 
 
     private final LinearizationEventsProcessorService linearizationEventsProcessor;
 
-    public GetEntityLinearizationsCommandHandler(LinearizationRevisionService linearizationRevisionService,
+    public GetEntityLinearizationsCommandHandler(LinearizationHistoryService linearizationHistoryService,
                                                  LinearizationEventsProcessorService linearizationEventsProcessor) {
-        this.linearizationRevisionService = checkNotNull(linearizationRevisionService);
+        this.linearizationHistoryService = checkNotNull(linearizationHistoryService);
         this.linearizationEventsProcessor = checkNotNull(linearizationEventsProcessor);
     }
 
@@ -38,9 +42,11 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
     @Override
     public Mono<GetEntityLinearizationsResponse> handleRequest(GetEntityLinearizationsRequest request, ExecutionContext executionContext) {
 
-        EntityLinearizationHistory linearizationHistory = this.linearizationRevisionService.getExistingHistoryOrderedByRevision(request.entityIRI(), request.projectId());
+        WhoficEntityLinearizationSpecification processedSpec =
+                this.linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(request.entityIRI()), request.projectId())
+                        .map(linearizationEventsProcessor::processHistory)
+                        .orElseGet(() -> new WhoficEntityLinearizationSpecification(null, null, Collections.emptyList()));
 
-        WhoficEntityLinearizationSpecification processedSpec = linearizationEventsProcessor.processHistory(linearizationHistory);
-        return Mono.just(new GetEntityLinearizationsResponse(request.entityIRI(),processedSpec));
+        return Mono.just(new GetEntityLinearizationsResponse(request.entityIRI(), processedSpec));
     }
 }

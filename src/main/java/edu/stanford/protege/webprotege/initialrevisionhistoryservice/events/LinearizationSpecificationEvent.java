@@ -1,7 +1,6 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.semanticweb.owlapi.model.IRI;
 
 
 public abstract class LinearizationSpecificationEvent implements LinearizationEvent {

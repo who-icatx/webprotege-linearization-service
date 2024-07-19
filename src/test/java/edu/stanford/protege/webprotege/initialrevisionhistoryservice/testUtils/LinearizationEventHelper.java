@@ -26,24 +26,24 @@ public class LinearizationEventHelper {
         return linearizationEvents;
     }
 
-    private static SetAuxiliaryAxisChild getSetAuxAxisChildEvent(String viewIRI) {
-        return new SetAuxiliaryAxisChild(getRandomThreeStateBoolean(), viewIRI);
+    private static SetAuxiliaryAxisChild getSetAuxAxisChildEvent(IRI viewIRI) {
+        return new SetAuxiliaryAxisChild(getRandomThreeStateBoolean(), viewIRI.toString());
     }
 
-    private static SetCodingNote getSetCodingNoteEvent(String viewIRI) {
-        return new SetCodingNote(getRandomString(), viewIRI);
+    private static SetCodingNote getSetCodingNoteEvent(IRI viewIRI) {
+        return new SetCodingNote(getRandomString(), viewIRI.toString());
     }
 
-    private static SetGrouping getSetGroupingEvent(String viewIRI) {
-        return new SetGrouping(getRandomThreeStateBoolean(), viewIRI);
+    private static SetGrouping getSetGroupingEvent(IRI viewIRI) {
+        return new SetGrouping(getRandomThreeStateBoolean(), viewIRI.toString());
     }
 
-    private static SetIncludedInLinearization getSetIncludedInLinearizationEvent(String viewIRI) {
-        return new SetIncludedInLinearization(getRandomThreeStateBoolean(), viewIRI);
+    private static SetIncludedInLinearization getSetIncludedInLinearizationEvent(IRI viewIRI) {
+        return new SetIncludedInLinearization(getRandomThreeStateBoolean(), viewIRI.toString());
     }
 
-    private static SetLinearizationParent getSetLinearizationParentEvent(String viewIRI) {
-        return new SetLinearizationParent(getRandomIri(), viewIRI);
+    private static SetLinearizationParent getSetLinearizationParentEvent(IRI viewIRI) {
+        return new SetLinearizationParent(getRandomIri(), viewIRI.toString());
     }
 
     private static SetSuppressedSpecifiedResidual getSetSuppressedSpecifiedResidualEvent() {

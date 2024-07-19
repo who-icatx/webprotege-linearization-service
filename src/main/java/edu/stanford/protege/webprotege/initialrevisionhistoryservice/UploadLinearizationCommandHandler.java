@@ -2,9 +2,9 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.BlobLocation;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
-import edu.stanford.protege.webprotege.ipc.CommandHandler;
-import edu.stanford.protege.webprotege.ipc.ExecutionContext;
-import edu.stanford.protege.webprotege.ipc.WebProtegeHandler;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.document.LinearizationDocumentRepository;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.*;
+import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Matthew Horridge
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
 @WebProtegeHandler
 public class UploadLinearizationCommandHandler implements CommandHandler<UploadLinearizationRequest, UploadLinearizationResponse> {
 
+    private final String bucket = "webprotege-uploads";
     private final static Logger LOGGER = LoggerFactory.getLogger(UploadLinearizationCommandHandler.class);
 
     private String bucket = "webprotege-uploads";
@@ -32,11 +32,16 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
     @Value("${webprotege.linearization.batch-size:500}")
     private int batchSize;
 
-    private final LinearizationRevisionService linearizationRevisionService;
+    private final LinearizationHistoryService linearizationHistoryService;
 
-    public UploadLinearizationCommandHandler(LinearizationDocumentRepository linearizationRepository, LinearizationRevisionService linearizationRevisionService) {
+    private final ReadWriteLockService readWriteLock;
+
+    public UploadLinearizationCommandHandler(LinearizationDocumentRepository linearizationRepository,
+                                             LinearizationHistoryService linearizationHistoryService,
+                                             ReadWriteLockService readWriteLock) {
         this.linearizationRepository = linearizationRepository;
-        this.linearizationRevisionService = linearizationRevisionService;
+        this.linearizationHistoryService = linearizationHistoryService;
+        this.readWriteLock = readWriteLock;
     }
 
     @NotNull
@@ -56,18 +61,13 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
         var stream = linearizationRepository.fetchFromDocument(new BlobLocation(this.bucket, request.documentId().id()));
 
-        Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = page -> {
-            var historiesToBeSaved = page.stream()
-                    .map(specification -> linearizationRevisionService.addNewRevisionToNewHistory(specification, request.projectId(), executionContext.userId().id()))
-                    .collect(Collectors.toSet());
-
-            linearizationRevisionService.saveEntityLinearizationHistory(historiesToBeSaved);
-        };
-
-        stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+        readWriteLock.executeWriteLock(() -> {
+            Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
+            stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+        });
 
         LOGGER.info("Finished processing request for project: {} and document : {}", request.projectId(), request.documentId());
-        return Mono.just(new UploadLinearizationResponse(new BlobLocation(this.bucket, request.documentId().id())));
+        return Mono.just(UploadLinearizationResponse.create());
     }
 
 

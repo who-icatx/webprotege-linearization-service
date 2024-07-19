@@ -1,28 +1,31 @@
 spring:
-    application:
-        name: webprotege-linearization-service
-    rabbitmq:
-        host: rabbitmq
-        port: 5672
-        password: guest
-        username: guest
-    data:
-        mongodb:
-            host: localhost
-            port: 27017
-            database: webprotege
-            auto-index-creation: true
+  application:
+    name: webprotege-linearization-service
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    password: guest
+    username: guest
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: webprotege
+      auto-index-creation: true
 
 webprotege:
-    minio:
-        accessKey: webprotege
-        endPoint: http://webprotege-local.edu:9000
-        secretKey: webprotege
-        bucketName: webprotege-uploads
-        revision-history-documents-bucket-name: webprotege-revision-history-documents
-    rabbitmq:
-        requestqueue: webprotege-linearization-service-queue
-        responsequeue: webprotege-linearization-service-response-queue
-        timeout: 60000
-    linearization:
-        batch-size: 100
+  minio:
+    access-key: webprotege
+    end-point: http://localhost:9000
+    secret-key: webprotege
+    linearization-document-bucket-name: webprotege-linearizations
+    revision-history-documents-bucket-name: webprotege-revision-history-documents
+  rabbitmq:
+    requestqueue: webprotege-linearization-service-queue
+    responsequeue: webprotege-linearization-service-response-queue
+    timeout: 60000
+  linearization:
+    batch-size: 100
+  readWriteLock:
+    timeoutInMillies: 1000
+    maxRetries: 5
