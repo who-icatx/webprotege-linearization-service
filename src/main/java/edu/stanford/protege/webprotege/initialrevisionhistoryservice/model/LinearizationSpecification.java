@@ -2,7 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationResponse;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.EventProcesableParameter;
 import org.semanticweb.owlapi.model.IRI;
 
 import javax.annotation.Nonnull;
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
-public class LinearizationSpecification extends LinearizationResponse {
+public class LinearizationSpecification extends EventProcesableParameter {
 
     private final ThreeStateBoolean isAuxiliaryAxisChild;
 
@@ -18,9 +18,9 @@ public class LinearizationSpecification extends LinearizationResponse {
 
     private final ThreeStateBoolean isIncludedInLinearization;
 
-    private final IRI linearizationParent;
+    private final String linearizationParent;
 
-    private final IRI linearizationView;
+    private final String linearizationView;
 
     private final String codingNote;
 
@@ -28,8 +28,8 @@ public class LinearizationSpecification extends LinearizationResponse {
     public LinearizationSpecification(@JsonProperty("isAuxiliaryAxisChild") ThreeStateBoolean isAuxiliaryAxisChild,
                                       @JsonProperty("isGrouping") ThreeStateBoolean isGrouping,
                                       @JsonProperty("isIncludedInLinearization") ThreeStateBoolean isIncludedInLinearization,
-                                      @JsonProperty("linearizationParent") IRI linearizationParent,
-                                      @JsonProperty("linearizationView") @Nonnull IRI linearizationView,
+                                      @JsonProperty("linearizationParent") String linearizationParent,
+                                      @JsonProperty("linearizationView") @Nonnull String linearizationView,
                                       @JsonProperty("codingNote") String codingNote) {
         this.isAuxiliaryAxisChild = isAuxiliaryAxisChild;
         this.isGrouping = isGrouping;
@@ -52,11 +52,11 @@ public class LinearizationSpecification extends LinearizationResponse {
         return isIncludedInLinearization;
     }
 
-    public IRI getLinearizationParent() {
+    public String getLinearizationParent() {
         return linearizationParent;
     }
 
-    public IRI getLinearizationView() {
+    public String getLinearizationView() {
         return linearizationView;
     }
 

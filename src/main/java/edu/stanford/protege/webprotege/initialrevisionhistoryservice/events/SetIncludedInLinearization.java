@@ -13,7 +13,7 @@ public class SetIncludedInLinearization extends LinearizationSpecificationEvent 
     private final ThreeStateBoolean value;
 
     @JsonCreator
-    public SetIncludedInLinearization(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetIncludedInLinearization(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }

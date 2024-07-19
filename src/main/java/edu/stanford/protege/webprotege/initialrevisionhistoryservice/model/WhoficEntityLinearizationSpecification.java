@@ -5,8 +5,7 @@ import org.semanticweb.owlapi.model.IRI;
 
 import java.util.List;
 
-public record WhoficEntityLinearizationSpecification(@JsonProperty("whoficEntityIri") IRI entityIRI,
+public record WhoficEntityLinearizationSpecification(@JsonProperty("whoficEntityIri") String entityIRI,
                                                      @JsonProperty("linearizationResiduals") LinearizationResiduals linearizationResiduals,
                                                      @JsonProperty("linearizationSpecifications") List<LinearizationSpecification> linearizationSpecifications) {
-
 }

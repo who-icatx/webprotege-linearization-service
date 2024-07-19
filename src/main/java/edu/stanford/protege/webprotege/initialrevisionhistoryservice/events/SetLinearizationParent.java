@@ -10,10 +10,10 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.Util
 public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
     public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetLinearizationParent";
-    private final IRI value;
+    private final String value;
 
     @JsonCreator
-    public SetLinearizationParent(@JsonProperty("linearizationParent") IRI linearizationParent, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetLinearizationParent(@JsonProperty("linearizationParent") String linearizationParent, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = linearizationParent;
     }

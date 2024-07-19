@@ -12,14 +12,14 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntityLinearizationHistory {
 
-    private final IRI whoficEntityIri;
+    private final String whoficEntityIri;
 
     private final ProjectId projectId;
 
     private final Set<LinearizationRevision> linearizationRevisions;
 
     @JsonCreator
-    public EntityLinearizationHistory(@JsonProperty("whoficEntityIri")  IRI whoficEntityIri,
+    public EntityLinearizationHistory(@JsonProperty("whoficEntityIri")  String whoficEntityIri,
                                       @JsonProperty("projectId") ProjectId projectId,
                                       @JsonProperty("linearizationRevisions") Set<LinearizationRevision> linearizationRevisions) {
         this.whoficEntityIri = whoficEntityIri;
@@ -32,7 +32,7 @@ public class EntityLinearizationHistory {
     public static final String PROJECT_ID = "projectId";
 
 
-    public IRI getWhoficEntityIri() {
+    public String getWhoficEntityIri() {
         return whoficEntityIri;
     }
 

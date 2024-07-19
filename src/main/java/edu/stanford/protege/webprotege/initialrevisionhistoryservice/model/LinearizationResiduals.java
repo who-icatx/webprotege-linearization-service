@@ -2,9 +2,9 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationResponse;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.EventProcesableParameter;
 
-public class LinearizationResiduals extends LinearizationResponse {
+public class LinearizationResiduals extends EventProcesableParameter {
 
     private final ThreeStateBoolean suppressSpecifiedResidual;
     private final String unspecifiedResidualTitle;

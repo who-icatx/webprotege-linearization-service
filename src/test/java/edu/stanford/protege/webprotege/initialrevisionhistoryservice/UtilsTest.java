@@ -21,10 +21,10 @@ class UtilsTest {
 
     @Test
     void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allSpecificationEventsAreCreated() {
-        IRI linearizationView = getRandomIri();
-        IRI linearizationParent = getRandomIri();
+        String linearizationView = getRandomIri();
+        String linearizationParent = getRandomIri();
         String codingNote = getRandomString();
-        IRI entityIri = getRandomIri();
+        String entityIri = getRandomIri();
         LinearizationSpecification spec = new LinearizationSpecification(
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
@@ -61,7 +61,7 @@ class UtilsTest {
     @Test
     void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allResidualEventsAreCreated() {
         String residualTitle = getRandomString();
-        IRI entityIri = getRandomIri();
+        String entityIri = getRandomIri();
 
         LinearizationResiduals residuals = new LinearizationResiduals(
                 ThreeStateBoolean.TRUE,

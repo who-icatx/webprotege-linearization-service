@@ -13,7 +13,7 @@ public class SetGrouping extends LinearizationSpecificationEvent {
     private final ThreeStateBoolean value;
 
     @JsonCreator
-    public SetGrouping(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetGrouping(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }

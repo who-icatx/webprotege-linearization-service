@@ -6,16 +6,16 @@ import org.semanticweb.owlapi.model.IRI;
 
 public abstract class LinearizationSpecificationEvent implements LinearizationEvent {
 
-    private final IRI linearizationView;
+    private final String linearizationView;
 
 
-    protected LinearizationSpecificationEvent(IRI linearizationView) {
+    protected LinearizationSpecificationEvent(String linearizationView) {
         this.linearizationView = linearizationView;
     }
 
 
     @JsonProperty("linearizationView")
-    IRI getLinearizationView() {
+    public String getLinearizationView() {
         return linearizationView;
     }
 

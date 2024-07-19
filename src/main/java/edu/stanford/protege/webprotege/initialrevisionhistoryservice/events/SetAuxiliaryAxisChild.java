@@ -13,7 +13,7 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
     public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetAuxiliaryAxisChild";
 
     @JsonCreator
-    public SetAuxiliaryAxisChild(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") IRI linearizationView) {
+    public SetAuxiliaryAxisChild(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }

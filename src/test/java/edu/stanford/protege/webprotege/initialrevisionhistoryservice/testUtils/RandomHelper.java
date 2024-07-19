@@ -27,11 +27,11 @@ public class RandomHelper {
             IRI.create("http://id.who.int/icd/entity/iri10")
     );
 
-    public static IRI getRandomIri() {
-        return SAMPLE_IRIS.get(RANDOM.nextInt(SAMPLE_IRIS.size()));
+    public static String getRandomIri() {
+        return SAMPLE_IRIS.get(RANDOM.nextInt(SAMPLE_IRIS.size())).toString();
     }
 
-    public static IRI getRandomLinearizationView() {
+    public static String getRandomLinearizationView() {
         var iriList = getLinearizationViewIris();
         int randomIndex = RANDOM.nextInt(iriList.size());
         return iriList.get(randomIndex);
