@@ -1,8 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 
@@ -24,6 +23,8 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 public interface LinearizationEvent {
 
     String getType();
-    LinearizationResponse applyEvent(LinearizationResponse input);
 
+    EventProcesableParameter applyEvent(EventProcesableParameter input);
+
+    String getValue();
 }
