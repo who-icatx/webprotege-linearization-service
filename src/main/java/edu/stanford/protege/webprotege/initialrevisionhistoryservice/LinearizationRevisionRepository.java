@@ -31,8 +31,8 @@ public class LinearizationRevisionRepository {
 
 
     public EntityLinearizationHistory getExistingHistory(String entityIri, ProjectId projectId) {
-        var query = query(where(WHOFIC_ENTITY_IRI_KEY).is(entityIri).and(PROJECT_ID).is(projectId).in(REVISION_HISTORY_COLLECTION));
-        return mongoTemplate.findOne(query, EntityLinearizationHistory.class);
+        var query = query(where(WHOFIC_ENTITY_IRI_KEY).is(entityIri).and(PROJECT_ID).is(projectId.id()));
+        return mongoTemplate.findOne(query, EntityLinearizationHistory.class, REVISION_HISTORY_COLLECTION);
     }
 
     public void saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory) {
