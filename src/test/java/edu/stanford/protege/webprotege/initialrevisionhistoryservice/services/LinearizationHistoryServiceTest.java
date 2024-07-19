@@ -15,7 +15,7 @@ import java.util.*;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +35,6 @@ public class LinearizationHistoryServiceTest {
     @Mock
     private ReadWriteLockService readWriteLock;
 
-    @InjectMocks
     private LinearizationHistoryService linearizationHistoryService;
 
     @Before
@@ -70,6 +69,7 @@ public class LinearizationHistoryServiceTest {
         // Call the method to be tested
         var sortedHistoryOptional = linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(entityIri), projectId);
 
+        assertTrue(sortedHistoryOptional.isPresent());
         // Verify the revisions are sorted by timestamp
         List<LinearizationRevision> sortedRevisions = new ArrayList<>(sortedHistoryOptional.get().getLinearizationRevisions());
         assertEquals(3, sortedRevisions.size());
@@ -102,7 +102,7 @@ public class LinearizationHistoryServiceTest {
                 residual,
                 List.of(spec)
         );
-        when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(any(), any())).thenReturn(null);
+        when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(any(), any())).thenReturn(Optional.empty());
         linearizationHistoryService.addRevision(woficEntitySpec, projectId, userId);
 
         verify(linearizationHistoryRepo).saveLinearizationHistory(any());

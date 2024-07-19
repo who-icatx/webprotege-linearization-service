@@ -34,8 +34,8 @@ public class LinearizationHistoryRepositoryImplTest {
 
 
         var fetchedHistory = linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(newHistory.getWhoficEntityIri(), projectId);
-
-        assertEquals(newHistory, fetchedHistory);
+        assertTrue(fetchedHistory.isPresent());
+        assertEquals(newHistory, fetchedHistory.get());
     }
 
     @Test
