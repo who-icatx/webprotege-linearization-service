@@ -1,11 +1,11 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
-@Component
+@Configuration
 public class ReadWriteLockConfig {
 
     @Value("${webprotege.readWriteLock.maxRetries:5}")

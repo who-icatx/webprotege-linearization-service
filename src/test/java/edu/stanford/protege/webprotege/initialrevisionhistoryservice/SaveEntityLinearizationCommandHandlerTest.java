@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetIncludedInLinearization;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import java.util.List;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.*;
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.testUtils.RandomHelper.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Import({WebprotegeLinearizationServiceServiceApplication.class})
@@ -66,6 +67,8 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 .and(PROJECT_ID).is(projectId.value()));
 
         var newHistory = mongoTemplate.findOne(query, EntityLinearizationHistory.class);
+
+        assertNotNull(newHistory);
 
         assertEquals(woficEntitySpec.entityIRI().toString(), newHistory.getWhoficEntityIri());
 
@@ -131,6 +134,8 @@ public class SaveEntityLinearizationCommandHandlerTest {
 
         var newHistory = mongoTemplate.findOne(query, EntityLinearizationHistory.class);
 
+        assertNotNull(newHistory);
+
         assertEquals(woficEntitySpec1.entityIRI().toString(), newHistory.getWhoficEntityIri());
 
         var revisions = newHistory.getLinearizationRevisions().stream().toList();
@@ -142,6 +147,9 @@ public class SaveEntityLinearizationCommandHandlerTest {
         assertEquals(executionContext.userId(), revision2.userId());
 
         var revisions2IsIncludedEvent = revision2.linearizationEvents().stream().filter(event -> event instanceof SetIncludedInLinearization).findFirst();
+
+        assertTrue(revisions2IsIncludedEvent.isPresent());
+
         assertEquals(spec2.getIsIncludedInLinearization().name(), revisions2IsIncludedEvent.get().getValue());
     }
 }

@@ -1,14 +1,11 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import edu.stanford.protege.webprotege.common.BlobLocation;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.common.Request;
 
-import java.util.List;
-
-import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.UploadLinearizationRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers.UploadLinearizationRequest.CHANNEL;
 
 /**
  * Matthew Horridge
