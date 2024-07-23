@@ -127,6 +127,17 @@ class ReadWriteLockServiceTest {
     }
 
     @Test
+    void GIVEN_writeOperationRunnableWithRetries_WHEN_executeWriteLock_THEN_exceedsMaxRetries() throws InterruptedException {
+        Runnable writeOperation = mock(Runnable.class);
+        when(writeLock.tryLock(1, TimeUnit.SECONDS)).thenReturn(false);
+
+        assertThrows(RuntimeException.class, () -> readWriteLockService.executeWriteLock(writeOperation));
+
+        verify(writeLock, times(3)).tryLock(1, TimeUnit.SECONDS);
+        verify(writeOperation, never()).run();
+    }
+
+    @Test
     void GIVEN_multipleThreads_WHEN_executeWriteLock_THEN_onlyOneThreadExecutesAtATime() throws InterruptedException, ExecutionException {
         readWriteLockService = new ReadWriteLockServiceImpl(config, new ReentrantReadWriteLock(true));
 
@@ -179,5 +190,16 @@ class ReadWriteLockServiceTest {
         assertThrows(RuntimeException.class, () -> readWriteLockService.executeWriteLock(writeOperation));
 
         verify(writeLock, times(3)).tryLock(1, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void GIVEN_writeOperationRunnableFailsToAcquireLock_WHEN_executeWriteLock_THEN_throwTimeoutException() throws InterruptedException {
+        Runnable writeOperation = mock(Runnable.class);
+        when(writeLock.tryLock(1, TimeUnit.SECONDS)).thenReturn(false);
+
+        assertThrows(RuntimeException.class, () -> readWriteLockService.executeWriteLock(writeOperation));
+
+        verify(writeLock, times(3)).tryLock(1, TimeUnit.SECONDS);
+        verify(writeOperation, never()).run();
     }
 }

@@ -62,15 +62,20 @@ class CreateLinearizationFromParentCommandHandlerTest {
 
         var newEntityRevision = newHistory.getLinearizationRevisions().stream().toList().get(0);
 
+        /*
+        ToDo:
+            improve this check so we don't need to change it every time the default spec changes.
+         */
+        //here we are expecting the default values. If the default values change we need to also update this test.
         newEntityRevision.linearizationEvents().forEach(event -> {
             if (event instanceof SetAuxiliaryAxisChild) {
-                assertEquals(ThreeStateBoolean.UNKNOWN.name(), event.getValue());
+                assertEquals(ThreeStateBoolean.FALSE.name(), event.getValue());
             } else if (event instanceof SetCodingNote) {
                 assertEquals("", event.getValue());
             } else if (event instanceof SetGrouping) {
-                assertEquals(ThreeStateBoolean.UNKNOWN.name(), event.getValue());
-            } else if (event instanceof SetIncludedInLinearization) {
                 assertEquals(ThreeStateBoolean.FALSE.name(), event.getValue());
+            } else if (event instanceof SetIncludedInLinearization) {
+                assertEquals(ThreeStateBoolean.UNKNOWN.name(), event.getValue());
             } else if (event instanceof SetLinearizationParent) {
                 assertEquals("", event.getValue());
             } else if (event instanceof SetSuppressedSpecifiedResidual) {
