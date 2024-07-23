@@ -1,8 +1,8 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
 
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import org.junit.jupiter.api.Test;
