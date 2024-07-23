@@ -116,13 +116,14 @@ class ReadWriteLockServiceTest {
     }
 
     @Test
-    void GIVEN_writeOperationWithRetries_WHEN_executeWriteLock_THEN_exceedsMaxRetries() throws InterruptedException {
-        Callable<String> writeOperation = () -> "writeOperation";
+    void GIVEN_writeOperationWithRetries_WHEN_executeWriteLock_THEN_exceedsMaxRetries() throws Exception {
+        Callable<String> writeOperation = mock(Callable.class);
         when(writeLock.tryLock(1, TimeUnit.SECONDS)).thenReturn(false);
 
         assertThrows(RuntimeException.class, () -> readWriteLockService.executeWriteLock(writeOperation));
 
         verify(writeLock, times(3)).tryLock(1, TimeUnit.SECONDS);
+        verify(writeOperation, never()).call();
     }
 
     @Test
@@ -168,5 +169,15 @@ class ReadWriteLockServiceTest {
         assertEquals("secondThread", secondThreadResult);
 
         executor.shutdown();
+    }
+
+    @Test
+    void GIVEN_writeOperationFailsToAcquireLock_WHEN_executeWriteLock_THEN_throwTimeoutException() throws InterruptedException {
+        Callable<String> writeOperation = () -> "writeOperation";
+        when(writeLock.tryLock(1, TimeUnit.SECONDS)).thenReturn(false);
+
+        assertThrows(RuntimeException.class, () -> readWriteLockService.executeWriteLock(writeOperation));
+
+        verify(writeLock, times(3)).tryLock(1, TimeUnit.SECONDS);
     }
 }

@@ -46,9 +46,9 @@ class WhoficEntityLinearizationSpecificationMapperTest {
         assertEquals(1, defaultSpecifications.size());
 
         LinearizationSpecification defaultSpec = defaultSpecifications.get(0);
-        assertEquals(ThreeStateBoolean.UNKNOWN, defaultSpec.getIsAuxiliaryAxisChild());
-        assertEquals(ThreeStateBoolean.UNKNOWN, defaultSpec.getIsGrouping());
-        assertEquals(ThreeStateBoolean.FALSE, defaultSpec.getIsIncludedInLinearization());
+        assertEquals(ThreeStateBoolean.FALSE, defaultSpec.getIsAuxiliaryAxisChild());
+        assertEquals(ThreeStateBoolean.FALSE, defaultSpec.getIsGrouping());
+        assertEquals(ThreeStateBoolean.UNKNOWN, defaultSpec.getIsIncludedInLinearization());
         assertEquals(IRI.create(""), defaultSpec.getLinearizationParent());
         assertEquals(linearizationView, defaultSpec.getLinearizationView());
         assertEquals("", defaultSpec.getCodingNote());

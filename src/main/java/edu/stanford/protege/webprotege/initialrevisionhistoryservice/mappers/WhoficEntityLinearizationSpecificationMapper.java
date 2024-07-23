@@ -32,9 +32,9 @@ public class WhoficEntityLinearizationSpecificationMapper {
         return linearizationSpecifications.stream()
                 .map(spec ->
                         new LinearizationSpecification(
-                                ThreeStateBoolean.UNKNOWN,
-                                ThreeStateBoolean.UNKNOWN,
                                 ThreeStateBoolean.FALSE,
+                                ThreeStateBoolean.FALSE,
+                                ThreeStateBoolean.UNKNOWN,
                                 IRI.create(""),
                                 spec.getLinearizationView(),
                                 ""
