@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;

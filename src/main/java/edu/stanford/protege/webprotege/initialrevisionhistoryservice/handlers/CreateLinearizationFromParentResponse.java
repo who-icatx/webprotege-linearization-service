@@ -7,4 +7,7 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.hand
 
 @JsonTypeName(CHANNEL)
 public record CreateLinearizationFromParentResponse() implements Response {
+    public static CreateLinearizationFromParentResponse create() {
+        return new CreateLinearizationFromParentResponse();
+    }
 }

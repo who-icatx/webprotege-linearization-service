@@ -1,7 +1,7 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetIncludedInLinearization;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
@@ -79,6 +79,18 @@ public class SaveEntityLinearizationCommandHandlerTest {
         var revision = revisions.get(0);
 
         assertEquals(executionContext.userId(), revision.userId());
+
+        var revisionsIsIncludedEvent = revision.linearizationEvents().stream().filter(event -> event instanceof SetIncludedInLinearization).findFirst();
+
+        assertTrue(revisionsIsIncludedEvent.isPresent());
+
+        assertEquals(spec.getIsIncludedInLinearization().name(), revisionsIsIncludedEvent.get().getValue());
+
+        var revisionsResiduals = revision.linearizationEvents().stream().filter(event -> event instanceof SetUnspecifiedResidualTitle).findFirst();
+
+        assertTrue(revisionsResiduals.isPresent());
+
+        assertEquals(residual.getUnspecifiedResidualTitle(), revisionsResiduals.get().getValue());
     }
 
     @Test
@@ -151,5 +163,11 @@ public class SaveEntityLinearizationCommandHandlerTest {
         assertTrue(revisions2IsIncludedEvent.isPresent());
 
         assertEquals(spec2.getIsIncludedInLinearization().name(), revisions2IsIncludedEvent.get().getValue());
+
+        var revisions2Residuals = revision2.linearizationEvents().stream().filter(event -> event instanceof SetUnspecifiedResidualTitle).findFirst();
+
+        assertTrue(revisions2Residuals.isPresent());
+
+        assertEquals(residual2.getUnspecifiedResidualTitle(), revisions2Residuals.get().getValue());
     }
 }
