@@ -12,6 +12,7 @@ spring:
       port: 27017
       database: webprotege
       auto-index-creation: true
+      uri: mongodb://mongo:27017/webprotege
 
 webprotege:
   minio:
