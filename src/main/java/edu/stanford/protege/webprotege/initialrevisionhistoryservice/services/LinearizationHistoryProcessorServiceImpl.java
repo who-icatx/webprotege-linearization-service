@@ -52,10 +52,11 @@ public class LinearizationHistoryProcessorServiceImpl implements LinearizationHi
                         var newDefaultWhoficSpecs = whoficSpecMapper.mapToDefaultWhoficEntityLinearizationSpecification(currenteEtityIri, parentWhoficSpec);
 
                         return newDefaultWhoficSpecs.linearizationSpecifications().stream();
-                    }).forEach(newSpec -> {
-                        var viewNotFound = currentSpecs.linearizationSpecifications().stream().noneMatch(currSpec -> currSpec.getLinearizationView().equals(newSpec.getLinearizationView()));
+                    }).forEach(parentSpec -> {
+                        var viewNotFound = currentSpecs.linearizationSpecifications().stream().noneMatch(currSpec -> currSpec.getLinearizationView().equals(parentSpec.getLinearizationView())) &&
+                                missingSpecViews.stream().noneMatch(missingSpecView -> missingSpecView.getLinearizationView().equals(parentSpec.getLinearizationView()));
                         if (viewNotFound) {
-                            missingSpecViews.add(newSpec);
+                            missingSpecViews.add(parentSpec);
                         }
                     });
             if (missingSpecViews.isEmpty()) {
