@@ -16,12 +16,6 @@ public class RandomHelper {
         return "http://id.who.int/icd/entity/" + UUID.randomUUID();
     }
 
-    public static IRI getRandomLinearizationView() {
-        var iriList = getLinearizationViewIris();
-        int randomIndex = RANDOM.nextInt(iriList.size());
-        return iriList.get(randomIndex);
-    }
-
     public static String getRandomString() {
         return UUID.randomUUID().toString();
     }

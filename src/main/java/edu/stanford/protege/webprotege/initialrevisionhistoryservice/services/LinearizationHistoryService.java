@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 public interface LinearizationHistoryService {
     void saveMultipleEntityLinearizationHistories(Set<EntityLinearizationHistory> historiesToBeSaved);
 
-    Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId);
+    Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(String entityIri, ProjectId projectId);
 
     void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
                      ProjectId projectId, UserId userId);

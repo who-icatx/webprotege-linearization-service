@@ -67,7 +67,7 @@ public class LinearizationHistoryServiceTest {
         when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(entityIri, projectId)).thenReturn(unsortedHistory);
 
         // Call the method to be tested
-        var sortedHistoryOptional = linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(entityIri), projectId);
+        var sortedHistoryOptional = linearizationHistoryService.getExistingHistoryOrderedByRevision(entityIri, projectId);
 
         assertTrue(sortedHistoryOptional.isPresent());
         // Verify the revisions are sorted by timestamp
@@ -90,15 +90,15 @@ public class LinearizationHistoryServiceTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                IRI.create(linearizationParent),
-                IRI.create(linearizationView),
+                linearizationParent,
+                linearizationView,
                 codingNote
         );
 
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
 
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+                entityIri,
                 residual,
                 List.of(spec)
         );
@@ -121,13 +121,13 @@ public class LinearizationHistoryServiceTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                IRI.create(linearizationParent),
-                IRI.create(linearizationView),
+                linearizationParent,
+                linearizationView,
                 codingNote
         );
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+                entityIri,
                 residual,
                 List.of(spec)
         );

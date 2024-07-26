@@ -24,9 +24,6 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
     private final String bucket = "webprotege-uploads";
     private final static Logger LOGGER = LoggerFactory.getLogger(UploadLinearizationCommandHandler.class);
-
-    private String bucket = "webprotege-uploads";
-
     private final LinearizationDocumentRepository linearizationRepository;
 
     @Value("${webprotege.linearization.batch-size:500}")

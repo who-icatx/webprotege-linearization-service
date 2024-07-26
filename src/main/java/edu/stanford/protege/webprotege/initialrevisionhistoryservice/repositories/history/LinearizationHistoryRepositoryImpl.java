@@ -1,5 +1,6 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.result.UpdateResult;
 import edu.stanford.protege.webprotege.common.ProjectId;
@@ -22,9 +23,12 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
     private final MongoTemplate mongoTemplate;
     private final ReadWriteLockService readWriteLock;
 
-    public LinearizationHistoryRepositoryImpl(MongoTemplate mongoTemplate, ReadWriteLockService readWriteLock) {
+    private final ObjectMapper objectMapper;
+
+    public LinearizationHistoryRepositoryImpl(MongoTemplate mongoTemplate, ReadWriteLockService readWriteLock, ObjectMapper objectMapper) {
         this.mongoTemplate = mongoTemplate;
         this.readWriteLock = readWriteLock;
+        this.objectMapper = objectMapper;
     }
 
     @Override

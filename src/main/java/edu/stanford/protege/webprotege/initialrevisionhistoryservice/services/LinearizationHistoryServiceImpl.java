@@ -57,8 +57,8 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     }
 
     @Override
-    public Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
-        return linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri.toString(), projectId)
+    public Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(String entityIri, ProjectId projectId) {
+        return linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri, projectId)
                 .map(history -> {
                     Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
                             .stream()

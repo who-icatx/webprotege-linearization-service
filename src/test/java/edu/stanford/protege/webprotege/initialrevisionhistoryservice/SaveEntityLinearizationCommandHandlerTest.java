@@ -46,15 +46,14 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                IRI.create(linearizationParent),
-                IRI.create(linearizationView),
+                linearizationParent,
+                linearizationView,
                 codingNote
         );
 
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
 
-        var woficEntitySpec = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+        var woficEntitySpec = new WhoficEntityLinearizationSpecification(entityIri,
                 residual,
                 List.of(spec)
         );
@@ -91,15 +90,15 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                IRI.create(linearizationParent),
-                IRI.create(linearizationView),
+                linearizationParent,
+                linearizationView,
                 codingNote
         );
 
         var residual1 = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
 
         var woficEntitySpec1 = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+                entityIri,
                 residual1,
                 List.of(spec1)
         );
@@ -108,15 +107,15 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
                 ThreeStateBoolean.TRUE,
-                IRI.create(linearizationParent),
-                IRI.create(linearizationView),
+                linearizationParent,
+                linearizationView,
                 codingNote
         );
 
         var residual2 = new LinearizationResiduals(ThreeStateBoolean.TRUE, getRandomString());
 
         var woficEntitySpec2 = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+                entityIri,
                 residual2,
                 List.of(spec2)
         );

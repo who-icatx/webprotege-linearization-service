@@ -32,13 +32,13 @@ public class LinearizationEventMapperTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                IRI.create(linearizationParent),
-                IRI.create(linearizationView),
+                linearizationParent,
+                linearizationView,
                 codingNote
         );
 
         WhoficEntityLinearizationSpecification entityLinearizationSpecification = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+                entityIri,
                 null,
                 List.of(spec)
         );
@@ -72,7 +72,7 @@ public class LinearizationEventMapperTest {
         );
 
         WhoficEntityLinearizationSpecification specification = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+                entityIri,
                 residuals,
                 List.of()
         );

@@ -3,7 +3,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME
@@ -17,7 +17,6 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
         @JsonSubTypes.Type(value = SetSuppressedSpecifiedResidual.class, name = SetSuppressedSpecifiedResidual.CLASS_TYPE),
         @JsonSubTypes.Type(value = SetUnspecifiedResidualTitle.class, name = SetUnspecifiedResidualTitle.CLASS_TYPE),
 })
-
 public interface LinearizationEvent {
 
     @JsonProperty("@type")
