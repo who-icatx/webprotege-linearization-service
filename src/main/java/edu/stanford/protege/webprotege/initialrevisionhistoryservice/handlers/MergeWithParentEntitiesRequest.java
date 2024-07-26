@@ -8,7 +8,7 @@ import java.util.Set;
 
 @JsonTypeName(MergeWithParentEntitiesRequest.CHANNEL)
 public record MergeWithParentEntitiesRequest(
-        @JsonProperty("currenteEtityIri") IRI currenteEtityIri,
+        @JsonProperty("currentEntityIri") IRI currentEntityIri,
         @JsonProperty("parentEntityIris") Set<IRI> parentEntityIris,
         @JsonProperty("projectId") ProjectId projectId
 ) implements Request<MergeWithParentEntitiesResponse> {
@@ -20,7 +20,7 @@ public record MergeWithParentEntitiesRequest(
         return CHANNEL;
     }
 
-    public static MergeWithParentEntitiesRequest create(IRI newEntityIri, Set<IRI> parentEntityIris, ProjectId projectId) {
-        return new MergeWithParentEntitiesRequest(newEntityIri, parentEntityIris, projectId);
+    public static MergeWithParentEntitiesRequest create(IRI currentEntityIri, Set<IRI> parentEntityIris, ProjectId projectId) {
+        return new MergeWithParentEntitiesRequest(currentEntityIri, parentEntityIris, projectId);
     }
 }
