@@ -227,5 +227,8 @@ public class LinearizationHistoryProcessorServiceImplTest {
 
         verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(parentEntityIri1, projectId);
         verify(eventsProcessorService, times(1)).processHistory(parent1EntityHistory);
+
+        verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(parentEntityIri2, projectId);
+        verify(eventsProcessorService, times(1)).processHistory(parent2EntityHistory);
     }
 }
