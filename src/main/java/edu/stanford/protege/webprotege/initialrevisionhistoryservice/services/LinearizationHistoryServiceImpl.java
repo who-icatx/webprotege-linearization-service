@@ -4,6 +4,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
