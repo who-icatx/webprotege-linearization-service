@@ -2,7 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.LinearizationEventMapper;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import org.junit.*;

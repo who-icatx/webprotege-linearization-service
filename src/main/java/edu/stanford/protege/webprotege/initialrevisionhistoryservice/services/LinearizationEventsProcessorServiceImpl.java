@@ -48,7 +48,7 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
                             null,
                             IRI.create(viewIRI),
                             null);
-                    while (isNotEmpty(specQueue.isEmpty())) {
+                    while (isNotEmpty(specQueue)) {
                         LinearizationSpecificationEvent event = specQueue.remove();
                         response = (LinearizationSpecification) event.applyEvent(response);
                     }

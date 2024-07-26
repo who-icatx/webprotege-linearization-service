@@ -17,8 +17,6 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.mode
 @Repository
 public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryRepository {
 
-    private final static String REVISION_HISTORY_COLLECTION = "EntityLinearizationHistories";
-
     private final MongoTemplate mongoTemplate;
     private final ReadWriteLockService readWriteLock;
 
@@ -29,13 +27,13 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
 
     @Override
     public EntityLinearizationHistory saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory) {
-        return readWriteLock.executeWriteLock(() -> mongoTemplate.save(entityLinearizationHistory, REVISION_HISTORY_COLLECTION));
+        return readWriteLock.executeWriteLock(() -> mongoTemplate.save(entityLinearizationHistory, LINEARIZATION_HISTORY_COLLECTION));
     }
 
     @Override
     public void bulkWriteDocuments(List<InsertOneModel<Document>> listOfInsertOneModelDocument) {
         readWriteLock.executeWriteLock(() -> {
-            var collection = mongoTemplate.getCollection(REVISION_HISTORY_COLLECTION);
+            var collection = mongoTemplate.getCollection(LINEARIZATION_HISTORY_COLLECTION);
             collection.bulkWrite(listOfInsertOneModelDocument);
         });
     }
@@ -50,9 +48,9 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
         update.push(LINEARIZATION_REVISIONS, newRevision);
 
         readWriteLock.executeWriteLock(() -> {
-            UpdateResult result = mongoTemplate.updateFirst(query, update, EntityLinearizationHistory.class, REVISION_HISTORY_COLLECTION);
+            UpdateResult result = mongoTemplate.updateFirst(query, update, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION);
             if (result.getMatchedCount() == 0) {
-                throw new IllegalArgumentException(REVISION_HISTORY_COLLECTION + " not found for the given " +
+                throw new IllegalArgumentException(LINEARIZATION_HISTORY_COLLECTION + " not found for the given " +
                         WHOFIC_ENTITY_IRI + ":" + whoficEntityIri + " and " + PROJECT_ID +
                         ":" + projectId + ".");
             }
@@ -66,6 +64,6 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
         query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
                 .and(PROJECT_ID).is(projectId.value()));
 
-        return readWriteLock.executeReadLock(() -> Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, REVISION_HISTORY_COLLECTION)));
+        return readWriteLock.executeReadLock(() -> Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION)));
     }
 }

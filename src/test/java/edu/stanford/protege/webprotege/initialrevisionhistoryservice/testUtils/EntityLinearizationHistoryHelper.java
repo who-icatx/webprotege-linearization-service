@@ -12,4 +12,9 @@ public class EntityLinearizationHistoryHelper {
 
         return new EntityLinearizationHistory(getRandomIri(), projectId.id(), getLinearizationRevisions(numberOfRevisions));
     }
+
+    public static EntityLinearizationHistory getEntityLinearizationHistoryForEntityIri(String entityIRI, ProjectId projectId, int numberOfRevisions) {
+
+        return new EntityLinearizationHistory(entityIRI, projectId.id(), getLinearizationRevisions(numberOfRevisions));
+    }
 }

@@ -4,7 +4,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.LinearizationEventMapper;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
@@ -41,7 +41,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                                                                            UserId userId) {
 
         var linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
-        linearizationEvents.addAll(eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification));
+        linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
 
         var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents);
 
