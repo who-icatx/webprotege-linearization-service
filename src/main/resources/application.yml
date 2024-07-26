@@ -8,11 +8,11 @@ spring:
     username: guest
   data:
     mongodb:
-      host: localhost
+      host: mongo
       port: 27017
       database: webprotege
       auto-index-creation: true
-      uri: mongodb://mongo:27017/webprotege
+      uri: mongodb://${spring.data.mongodb.host}:${spring.data.mongodb.port}/webprotege
 
 webprotege:
   minio:

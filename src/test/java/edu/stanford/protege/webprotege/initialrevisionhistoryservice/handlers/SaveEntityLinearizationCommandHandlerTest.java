@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({WebprotegeLinearizationServiceServiceApplication.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @ExtendWith({SpringExtension.class, IntegrationTest.class})
+@ActiveProfiles("test")
 public class SaveEntityLinearizationCommandHandlerTest {
 
     @Autowired

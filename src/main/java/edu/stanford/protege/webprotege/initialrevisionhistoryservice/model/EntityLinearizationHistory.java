@@ -70,4 +70,10 @@ public class EntityLinearizationHistory {
     public String toString() {
         return toStringHelper("EntityLinearizationHistory").addValue(whoficEntityIri).addValue(projectId).addValue(linearizationRevisions).toString();
     }
+
+    public static EntityLinearizationHistory create(String whoficEntityIri,
+                                                    String projectId,
+                                                    Set<LinearizationRevision> linearizationRevisions) {
+        return new EntityLinearizationHistory(whoficEntityIri, projectId, linearizationRevisions);
+    }
 }

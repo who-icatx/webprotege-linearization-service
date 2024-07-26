@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers.MergeWithParentEntitiesRequest.CHANNEL;
 
+@WebProtegeHandler
 public class MergeWithParentEntitiesCommandHandler implements CommandHandler<MergeWithParentEntitiesRequest, MergeWithParentEntitiesResponse> {
 
     private final LinearizationHistoryService linearizationHistoryService;
