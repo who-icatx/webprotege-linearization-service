@@ -4,6 +4,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
+import edu.stanford.protege.webprotege.change.OntologyDocumentId;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
@@ -62,7 +63,7 @@ public class UploadLinearizationCommandHandlerTest {
 
     @Test
     public void GIVEN_largeLinearization_WHEN_savingTheInitialRevisions_THEN_paginationWorks() {
-        commandHandler.handleRequest(new UploadLinearizationRequest("testDocumentLocation",
+        commandHandler.handleRequest(new UploadLinearizationRequest(new OntologyDocumentId("testDocumentLocation"),
                         ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
                 new ExecutionContext(UserId.valueOf("alexsilaghi"), ""));
 
@@ -72,7 +73,7 @@ public class UploadLinearizationCommandHandlerTest {
     @Test
     public void GIVEN_largeLinearization_WHEN_savingTheInitialRevision_THEN_eventsAreSavedIntoDatabase() throws JsonProcessingException {
         UserId userId = UserId.valueOf("alexsilaghi");
-        commandHandler.handleRequest(new UploadLinearizationRequest("testDocumentLocation", ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
+        commandHandler.handleRequest(new UploadLinearizationRequest(new OntologyDocumentId("testDocumentLocation"), ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
                 new ExecutionContext(userId, ""));
 
         Document filter = new Document("whoficEntityIri", "http://id.who.int/icd/entity/979278646");

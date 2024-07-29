@@ -1,9 +1,8 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.common.Request;
+import com.fasterxml.jackson.annotation.*;
+import edu.stanford.protege.webprotege.change.OntologyDocumentId;
+import edu.stanford.protege.webprotege.common.*;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers.UploadLinearizationRequest.CHANNEL;
 
@@ -13,8 +12,8 @@ import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.hand
  * 2024-05-03
  */
 @JsonTypeName(CHANNEL)
-public record UploadLinearizationRequest(@JsonProperty("documentLocation") String documentLocation, @JsonProperty("projectId")
-                                         ProjectId projectId) implements Request<UploadLinearizationResponse> {
+public record UploadLinearizationRequest(@JsonProperty("documentId") OntologyDocumentId documentId,
+                                         @JsonProperty("projectId") ProjectId projectId) implements Request<UploadLinearizationResponse> {
 
     public static final String CHANNEL = "webprotege.linearization.ProcessUploadedLinearization";
 

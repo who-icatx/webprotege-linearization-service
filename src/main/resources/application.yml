@@ -19,7 +19,7 @@ webprotege:
     access-key: webprotege
     end-point: http://localhost:9000
     secret-key: webprotege
-    linearization-document-bucket-name: webprotege-linearizations
+    bucket-name: webprotege-uploads
     revision-history-documents-bucket-name: webprotege-revision-history-documents
   rabbitmq:
     requestqueue: webprotege-linearization-service-queue
