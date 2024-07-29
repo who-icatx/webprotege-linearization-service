@@ -85,12 +85,13 @@ public class LinearizationEventMapper {
         }
     }
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
-        if (specification.getLinearizationParent() != null) {
+        if (specification.getLinearizationParent() != null && !specification.getLinearizationParent().isEmpty()) {
             events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
     }
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
-        if (specification.getLinearizationParent() != null && (oldSpecification == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
+        if ((specification.getLinearizationParent() != null && !specification.getLinearizationParent().isEmpty())
+                && (oldSpecification == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
             events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
     }
@@ -112,7 +113,7 @@ public class LinearizationEventMapper {
         }
     }
     private void addCodingNoteEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
-        if (specification.getCodingNote() != null && (oldSpecification == null || !oldSpecification.getCodingNote().equals(specification.getCodingNote()))) {
+        if ((specification.getCodingNote() != null && !specification.getCodingNote().isEmpty()) && (oldSpecification == null || !specification.getCodingNote().equalsIgnoreCase(oldSpecification.getCodingNote()))) {
             events.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView().toString()));
         }
     }
