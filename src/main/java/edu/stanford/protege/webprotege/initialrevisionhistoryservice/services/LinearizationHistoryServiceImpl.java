@@ -4,7 +4,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
@@ -44,6 +43,10 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
         var linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
 
+        if (linearizationEvents.isEmpty()) {
+            throw new RuntimeException("Trying to create history with no events! EntityIri: " + linearizationSpecification.entityIRI());
+        }
+
         var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents);
 
         return new EntityLinearizationHistory(linearizationSpecification.entityIRI().toString(), projectId.id(), new HashSet<>(List.of(linearizationRevision)));
@@ -79,6 +82,10 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                     existingHistoryOptional.ifPresentOrElse(history -> {
                                 Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
                                 linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
+
+                                if (linearizationEvents.isEmpty()) {
+                                    throw new RuntimeException("Trying to create revision with no events! EntityIri: " + linearizationSpecification.entityIRI());
+                                }
 
                                 var newRevision = LinearizationRevision.create(userId, linearizationEvents);
 
