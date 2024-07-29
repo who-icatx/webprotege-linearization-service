@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers;
 
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
@@ -10,18 +10,21 @@ import java.util.stream.Collectors;
 @Component
 public class LinearizationEventMapper {
     public Set<LinearizationEvent> mapLinearizationSpecificationsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
-        return linearizationSpecification.linearizationSpecifications()
-                .stream()
-                .flatMap(specification -> {
-                    List<LinearizationSpecificationEvent> response = new ArrayList<>();
-                    addIncludedInLinearizationEvent(response, specification);
-                    addAuxiliaryAxisChildEvent(response, specification);
-                    addLinearizationParentEvent(response, specification);
-                    addGroupingEvent(response, specification);
-                    addCodingNoteEvent(response, specification);
-                    return response.stream();
-                })
-                .collect(Collectors.toSet());
+        if(linearizationSpecification.linearizationSpecifications()!=null){
+            return linearizationSpecification.linearizationSpecifications()
+                    .stream()
+                    .flatMap(specification -> {
+                        List<LinearizationSpecificationEvent> response = new ArrayList<>();
+                        addIncludedInLinearizationEvent(response, specification);
+                        addAuxiliaryAxisChildEvent(response, specification);
+                        addLinearizationParentEvent(response, specification);
+                        addGroupingEvent(response, specification);
+                        addCodingNoteEvent(response, specification);
+                        return response.stream();
+                    })
+                    .collect(Collectors.toSet());
+        }
+        return Set.of();
     }
 
     public Set<LinearizationEvent> mapLinearizationSpecificationsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification, WhoficEntityLinearizationSpecification oldWhoficSpecification) {

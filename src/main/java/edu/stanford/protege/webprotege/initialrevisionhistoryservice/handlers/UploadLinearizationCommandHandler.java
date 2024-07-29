@@ -1,6 +1,6 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
 
-import edu.stanford.protege.webprotege.common.BlobLocation;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.StreamUtils;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.document.LinearizationDocumentRepository;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.*;
@@ -22,8 +22,6 @@ import java.util.function.Consumer;
 @WebProtegeHandler
 public class UploadLinearizationCommandHandler implements CommandHandler<UploadLinearizationRequest, UploadLinearizationResponse> {
 
-    private final String bucket = "webprotege-uploads";
-    private final static Logger LOGGER = LoggerFactory.getLogger(UploadLinearizationCommandHandler.class);
     private final LinearizationDocumentRepository linearizationRepository;
 
     @Value("${webprotege.linearization.batch-size:500}")
@@ -56,7 +54,7 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
     public Mono<UploadLinearizationResponse> handleRequest(UploadLinearizationRequest request,
                                                            ExecutionContext executionContext) {
 
-        var stream = linearizationRepository.fetchFromDocument(new BlobLocation(this.bucket, request.documentId().id()));
+        var stream = linearizationRepository.fetchFromDocument(request.documentId().id());
 
         readWriteLock.executeWriteLock(() -> {
             Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());

@@ -50,4 +50,14 @@ public class ApplicationBeans {
     public ReadWriteLock readWriteLock() {
         return new ReentrantReadWriteLock(true);
     }
+
+    @Bean
+    public MongoCustomConversions customConversions(ObjectMapper objectMapper) {
+        return new MongoCustomConversions(
+                List.of(
+                        new LinearizationEventReadingConverter(objectMapper),
+                        new LinearizationEventWritingConverter(objectMapper)
+                )
+        );
+    }
 }

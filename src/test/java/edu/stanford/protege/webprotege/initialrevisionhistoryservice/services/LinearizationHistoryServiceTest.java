@@ -2,13 +2,14 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.LinearizationEventMapper;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;
 
@@ -28,7 +29,6 @@ public class LinearizationHistoryServiceTest {
     @Mock
     private ObjectMapper objectMapper;
 
-    @Mock
     private LinearizationEventMapper eventMapper;
 
     @Mock
@@ -69,7 +69,7 @@ public class LinearizationHistoryServiceTest {
         when(linearizationHistoryRepo.findHistoryByEntityIriAndProjectId(entityIri, projectId)).thenReturn(unsortedHistory);
 
         // Call the method to be tested
-        var sortedHistoryOptional = linearizationHistoryService.getExistingHistoryOrderedByRevision(entityIri, projectId);
+        var sortedHistoryOptional = linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(entityIri), projectId);
 
         assertTrue(sortedHistoryOptional.isPresent());
         // Verify the revisions are sorted by timestamp
@@ -92,15 +92,15 @@ public class LinearizationHistoryServiceTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                linearizationParent,
-                linearizationView,
+                IRI.create(linearizationParent),
+                IRI.create(linearizationView),
                 codingNote
         );
 
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
 
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
-                entityIri,
+                IRI.create(entityIri),
                 residual,
                 List.of(spec)
         );
@@ -123,13 +123,13 @@ public class LinearizationHistoryServiceTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                linearizationParent,
-                linearizationView,
+                IRI.create(linearizationParent),
+                IRI.create(linearizationView),
                 codingNote
         );
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
-                entityIri,
+                IRI.create(entityIri),
                 residual,
                 List.of(spec)
         );

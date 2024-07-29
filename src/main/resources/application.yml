@@ -8,17 +8,18 @@ spring:
     username: guest
   data:
     mongodb:
-      host: localhost
+      host: mongo
       port: 27017
       database: webprotege
       auto-index-creation: true
+      uri: mongodb://${spring.data.mongodb.host}:${spring.data.mongodb.port}/${spring.data.mongodb.database}
 
 webprotege:
   minio:
     access-key: webprotege
     end-point: http://localhost:9000
     secret-key: webprotege
-    linearization-document-bucket-name: webprotege-linearizations
+    bucket-name: webprotege-uploads
     revision-history-documents-bucket-name: webprotege-revision-history-documents
   rabbitmq:
     requestqueue: webprotege-linearization-service-queue

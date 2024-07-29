@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import edu.stanford.protege.webprotege.change.OntologyDocumentId;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
@@ -23,8 +24,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.*;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.EntityLinearizationHistory.LINEARIZATION_HISTORY_COLLECTION;
 import static java.util.stream.StreamSupport.stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,12 +77,14 @@ public class UploadLinearizationCommandHandlerTest {
                 new ExecutionContext(userId, ""));
 
         Document filter = new Document("whoficEntityIri", "http://id.who.int/icd/entity/979278646");
-        FindIterable<Document> documents = mongoTemplate.getCollection("EntityLinearizationHistories").find(filter);
+        FindIterable<Document> documents = mongoTemplate.getCollection(LINEARIZATION_HISTORY_COLLECTION).find(filter);
         Stream<Document> docs = stream(documents.spliterator(), false);
 
-        assertTrue(docs.findFirst().isPresent());
+        Optional<Document> docOptional = docs.findFirst();
 
-        Document doc = docs.findFirst().get();
+        assertTrue(docOptional.isPresent());
+
+        Document doc = docOptional.get();
         EntityLinearizationHistory savedHistory = objectMapper.readValue(doc.toJson(), EntityLinearizationHistory.class);
 
         assertNotNull(savedHistory);
@@ -87,7 +92,7 @@ public class UploadLinearizationCommandHandlerTest {
         assertEquals(1, savedHistory.getLinearizationRevisions().size());
         LinearizationRevision revision = (LinearizationRevision) savedHistory.getLinearizationRevisions().toArray()[0];
         assertEquals(userId, revision.userId());
-        assertEquals(86, revision.linearizationEvents().size());
+        assertEquals(43, revision.linearizationEvents().size());
         assertTrue(revision.linearizationEvents().stream()
                 .noneMatch(linearizationEvent -> linearizationEvent.getType() == null && linearizationEvent.getType().isEmpty()));
 

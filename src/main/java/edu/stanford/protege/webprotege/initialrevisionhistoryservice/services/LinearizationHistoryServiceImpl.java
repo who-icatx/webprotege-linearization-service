@@ -4,14 +4,12 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationSpecificationEvent;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import org.bson.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,8 +20,6 @@ import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 @Service
 public class LinearizationHistoryServiceImpl implements LinearizationHistoryService {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(LinearizationHistoryServiceImpl.class);
 
     private final ObjectMapper objectMapper;
     private final LinearizationHistoryRepository linearizationHistoryRepository;
@@ -47,7 +43,11 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                                                                            UserId userId) {
 
         var linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
-        linearizationEvents.addAll(eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification));
+        linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
+
+        if (linearizationEvents.isEmpty()) {
+            throw new RuntimeException("Trying to create history with no events! EntityIri: " + linearizationSpecification.entityIRI());
+        }
 
         var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents);
 
@@ -63,8 +63,8 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     }
 
     @Override
-    public Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(String entityIri, ProjectId projectId) {
-        return linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri, projectId)
+    public Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
+        return linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri.toString(), projectId)
                 .map(history -> {
                     Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
                             .stream()

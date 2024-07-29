@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
 
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.*;
@@ -44,11 +44,12 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
 
     @Override
     public Mono<GetEntityLinearizationsResponse> handleRequest(GetEntityLinearizationsRequest request, ExecutionContext executionContext) {
+        var currentEntityIri = IRI.create(request.entityIRI());
 
         WhoficEntityLinearizationSpecification processedSpec =
-                this.linearizationHistoryService.getExistingHistoryOrderedByRevision(request.entityIRI(), request.projectId())
+                this.linearizationHistoryService.getExistingHistoryOrderedByRevision(currentEntityIri, request.projectId())
                         .map(linearizationEventsProcessor::processHistory)
-                        .orElseGet(() -> new WhoficEntityLinearizationSpecification(null, null, Collections.emptyList()));
+                        .orElseGet(() -> new WhoficEntityLinearizationSpecification(currentEntityIri, null, Collections.emptyList()));
         LOGGER.info("Returning processed spec {}", processedSpec);
         return Mono.just(new GetEntityLinearizationsResponse(request.entityIRI(), processedSpec));
     }

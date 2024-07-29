@@ -46,13 +46,11 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
                             null,
                             null,
                             null,
-                            viewIRI,
+                            IRI.create(viewIRI),
                             null);
-                    if(specQueue != null) {
-                        while (isNotEmpty(specQueue)) {
-                            LinearizationSpecificationEvent event = specQueue.remove();
-                            response = (LinearizationSpecification) event.applyEvent(response);
-                        }
+                    while (isNotEmpty(specQueue)) {
+                        LinearizationSpecificationEvent event = specQueue.remove();
+                        response = (LinearizationSpecification) event.applyEvent(response);
                     }
 
                     linearizationSpecifications.add(response);
@@ -62,7 +60,7 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
         for (LinearizationEvent event : linearizationResidualEvents) {
             residuals = (LinearizationResiduals) event.applyEvent(residuals);
         }
-        return new WhoficEntityLinearizationSpecification(linearizationHistory.getWhoficEntityIri(),
+        return new WhoficEntityLinearizationSpecification(IRI.create(linearizationHistory.getWhoficEntityIri()),
                 residuals,
                 linearizationSpecifications);
     }

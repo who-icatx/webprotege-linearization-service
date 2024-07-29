@@ -1,16 +1,12 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice;
 
-import edu.stanford.protege.webprotege.common.BlobLocation;
-import io.minio.GetObjectArgs;
-import io.minio.MinioClient;
+import io.minio.*;
 import io.minio.errors.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.io.*;
+import java.security.*;
 
 /**
  * Matthew Horridge
@@ -29,12 +25,12 @@ public class MinioLinearizationDocumentLoader {
         this.minioProperties = minioProperties;
     }
 
-    public InputStream fetchLinearizationDocument(@Nonnull BlobLocation location) throws StorageException {
+    public InputStream fetchLinearizationDocument(@Nonnull String location) throws StorageException {
         try {
             return minioClient.getObject(GetObjectArgs.builder()
-                                                            .bucket(minioProperties.getBucketName())
-                                                            .object(location.name())
-                                                            .build());
+                    .bucket(minioProperties.getBucketName())
+                    .object(location)
+                    .build());
         } catch (ErrorResponseException | XmlParserException | ServerException | NoSuchAlgorithmException |
                  IOException | InvalidResponseException | InvalidKeyException | InternalException |
                  InsufficientDataException e) {
