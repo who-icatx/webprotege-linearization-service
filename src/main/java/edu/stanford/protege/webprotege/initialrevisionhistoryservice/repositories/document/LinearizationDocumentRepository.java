@@ -2,7 +2,6 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositori
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
-import edu.stanford.protege.webprotege.common.BlobLocation;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.MinioLinearizationDocumentLoader;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.WhoficEntityLinearizationSpecification;
 import org.slf4j.*;
@@ -34,7 +33,7 @@ public class LinearizationDocumentRepository {
     }
 
 
-    public Stream<WhoficEntityLinearizationSpecification> fetchFromDocument(BlobLocation location) {
+    public Stream<WhoficEntityLinearizationSpecification> fetchFromDocument(String location) {
 
         try {
             JsonFactory jsonFactory = new JsonFactory();

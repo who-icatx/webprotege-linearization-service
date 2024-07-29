@@ -41,11 +41,12 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
 
     @Override
     public Mono<GetEntityLinearizationsResponse> handleRequest(GetEntityLinearizationsRequest request, ExecutionContext executionContext) {
+        var currentEntityIri = IRI.create(request.entityIRI());
 
         WhoficEntityLinearizationSpecification processedSpec =
-                this.linearizationHistoryService.getExistingHistoryOrderedByRevision(IRI.create(request.entityIRI()), request.projectId())
+                this.linearizationHistoryService.getExistingHistoryOrderedByRevision(currentEntityIri, request.projectId())
                         .map(linearizationEventsProcessor::processHistory)
-                        .orElseGet(() -> new WhoficEntityLinearizationSpecification(null, null, Collections.emptyList()));
+                        .orElseGet(() -> new WhoficEntityLinearizationSpecification(currentEntityIri, null, Collections.emptyList()));
 
         return Mono.just(new GetEntityLinearizationsResponse(request.entityIRI(), processedSpec));
     }

@@ -1,0 +1,12 @@
+package edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers;
+
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import edu.stanford.protege.webprotege.common.Response;
+
+@JsonTypeName(MergeWithParentEntitiesRequest.CHANNEL)
+public record MergeWithParentEntitiesResponse() implements Response {
+    public static MergeWithParentEntitiesResponse create() {
+        return new MergeWithParentEntitiesResponse();
+    }
+
+}

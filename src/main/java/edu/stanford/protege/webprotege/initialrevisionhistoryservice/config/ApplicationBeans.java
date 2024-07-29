@@ -9,8 +9,10 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.Three
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.context.annotation.*;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.util.List;
 import java.util.concurrent.locks.*;
 
 @Configuration
@@ -36,5 +38,15 @@ public class ApplicationBeans {
     @Bean
     public ReadWriteLock readWriteLock() {
         return new ReentrantReadWriteLock(true);
+    }
+
+    @Bean
+    public MongoCustomConversions customConversions(ObjectMapper objectMapper) {
+        return new MongoCustomConversions(
+                List.of(
+                        new LinearizationEventReadingConverter(objectMapper),
+                        new LinearizationEventWritingConverter(objectMapper)
+                )
+        );
     }
 }
