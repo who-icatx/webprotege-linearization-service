@@ -6,10 +6,12 @@ import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationSpecificationEvent;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history.LinearizationHistoryRepository;
 import org.bson.Document;
-import org.semanticweb.owlapi.model.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,19 +23,23 @@ import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 @Service
 public class LinearizationHistoryServiceImpl implements LinearizationHistoryService {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(LinearizationHistoryServiceImpl.class);
+
     private final ObjectMapper objectMapper;
     private final LinearizationHistoryRepository linearizationHistoryRepository;
     private final LinearizationEventMapper eventMapper;
     private final ReadWriteLockService readWriteLock;
 
+    private final LinearizationEventsProcessorService processorService;
 
     public LinearizationHistoryServiceImpl(ObjectMapper objectMapper,
                                            LinearizationHistoryRepository linearizationHistoryRepository,
-                                           LinearizationEventMapper eventMapper, ReadWriteLockService readWriteLock) {
+                                           LinearizationEventMapper eventMapper, ReadWriteLockService readWriteLock, LinearizationEventsProcessorService processorService) {
         this.objectMapper = objectMapper;
         this.linearizationHistoryRepository = linearizationHistoryRepository;
         this.eventMapper = eventMapper;
         this.readWriteLock = readWriteLock;
+        this.processorService = processorService;
     }
 
     private EntityLinearizationHistory createNewEntityLinearizationHistory(WhoficEntityLinearizationSpecification linearizationSpecification,
@@ -76,12 +82,18 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
         readWriteLock.executeWriteLock(() -> {
                     var existingHistoryOptional = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
                     existingHistoryOptional.ifPresentOrElse(history -> {
-                                Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
-                                linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
 
-                                var newRevision = LinearizationRevision.create(userId, linearizationEvents);
+                                WhoficEntityLinearizationSpecification oldSpec = processorService.processHistory(existingHistoryOptional.get());
 
-                                linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
+                                Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification, oldSpec);
+
+                                linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification, oldSpec));
+
+                                if(!linearizationEvents.isEmpty()) {
+                                    var newRevision = LinearizationRevision.create(userId, linearizationEvents);
+
+                                    linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
+                                }
                             }, () -> {
                                 var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
                                 linearizationHistoryRepository.saveLinearizationHistory(newHistory);
@@ -90,7 +102,6 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                 }
         );
     }
-
 
     @Override
     public Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId) {
