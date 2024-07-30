@@ -83,7 +83,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                     var existingHistoryOptional = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
                     existingHistoryOptional.ifPresentOrElse(history -> {
 
-                                WhoficEntityLinearizationSpecification oldSpec = processorService.processHistory(existingHistoryOptional.get());
+                                WhoficEntityLinearizationSpecification oldSpec = processorService.processHistory(history);
 
                                 Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification, oldSpec);
 
