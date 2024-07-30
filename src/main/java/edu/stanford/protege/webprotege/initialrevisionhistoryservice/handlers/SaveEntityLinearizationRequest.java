@@ -7,7 +7,7 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.Whofi
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.handlers.SaveEntityLinearizationRequest.CHANNEL;
 
 @JsonTypeName(CHANNEL)
-        public record SaveEntityLinearizationRequest(
+public record SaveEntityLinearizationRequest(
         @JsonProperty("projectId")
         ProjectId projectId,
         @JsonProperty("entityLinearization")

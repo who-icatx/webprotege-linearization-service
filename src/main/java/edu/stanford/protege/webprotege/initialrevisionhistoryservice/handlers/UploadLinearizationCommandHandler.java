@@ -6,8 +6,6 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositorie
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
@@ -61,7 +59,7 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
             stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
         });
 
-        LOGGER.info("Finished processing request for project: {} and document : {}", request.projectId(), request.documentId());
+
         return Mono.just(UploadLinearizationResponse.create());
     }
 

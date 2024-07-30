@@ -32,13 +32,13 @@ public class LinearizationEventMapperTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                linearizationParent,
-                linearizationView,
+                IRI.create(linearizationParent),
+                IRI.create(linearizationView),
                 codingNote
         );
 
         WhoficEntityLinearizationSpecification entityLinearizationSpecification = new WhoficEntityLinearizationSpecification(
-                entityIri,
+                IRI.create(entityIri),
                 null,
                 List.of(spec)
         );
@@ -64,7 +64,7 @@ public class LinearizationEventMapperTest {
     @Test
     public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allResidualEventsAreCreated() {
         String residualTitle = getRandomString();
-        String entityIri = getRandomIri();
+        IRI entityIri = IRI.create(getRandomIri());
 
         LinearizationResiduals residuals = new LinearizationResiduals(
                 ThreeStateBoolean.TRUE,

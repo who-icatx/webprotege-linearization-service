@@ -103,6 +103,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
         );
     }
 
+
     @Override
     public Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId) {
         return page -> {

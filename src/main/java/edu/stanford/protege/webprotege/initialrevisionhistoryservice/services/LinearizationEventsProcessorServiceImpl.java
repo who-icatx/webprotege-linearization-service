@@ -52,7 +52,6 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
                         LinearizationSpecificationEvent event = specQueue.remove();
                         response = (LinearizationSpecification) event.applyEvent(response);
                     }
-
                     linearizationSpecifications.add(response);
                 }
         );

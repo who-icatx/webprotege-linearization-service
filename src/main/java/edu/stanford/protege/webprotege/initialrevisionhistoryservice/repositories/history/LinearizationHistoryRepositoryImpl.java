@@ -21,12 +21,9 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
     private final MongoTemplate mongoTemplate;
     private final ReadWriteLockService readWriteLock;
 
-    private final ObjectMapper objectMapper;
-
-    public LinearizationHistoryRepositoryImpl(MongoTemplate mongoTemplate, ReadWriteLockService readWriteLock, ObjectMapper objectMapper) {
+    public LinearizationHistoryRepositoryImpl(MongoTemplate mongoTemplate, ReadWriteLockService readWriteLock) {
         this.mongoTemplate = mongoTemplate;
         this.readWriteLock = readWriteLock;
-        this.objectMapper = objectMapper;
     }
 
     @Override

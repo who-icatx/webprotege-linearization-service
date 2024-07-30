@@ -18,9 +18,9 @@ public class LinearizationSpecification extends EventProcesableParameter {
 
     private final ThreeStateBoolean isIncludedInLinearization;
 
-    private final String linearizationParent;
+    private final IRI linearizationParent;
 
-    private final String linearizationView;
+    private final IRI linearizationView;
 
     private final String codingNote;
 
@@ -28,8 +28,8 @@ public class LinearizationSpecification extends EventProcesableParameter {
     public LinearizationSpecification(@JsonProperty("isAuxiliaryAxisChild") ThreeStateBoolean isAuxiliaryAxisChild,
                                       @JsonProperty("isGrouping") ThreeStateBoolean isGrouping,
                                       @JsonProperty("isIncludedInLinearization") ThreeStateBoolean isIncludedInLinearization,
-                                      @JsonProperty("linearizationParent") String linearizationParent,
-                                      @JsonProperty("linearizationView") @Nonnull String linearizationView,
+                                      @JsonProperty("linearizationParent") IRI linearizationParent,
+                                      @JsonProperty("linearizationView") @Nonnull IRI linearizationView,
                                       @JsonProperty("codingNote") String codingNote) {
         this.isAuxiliaryAxisChild = isAuxiliaryAxisChild;
         this.isGrouping = isGrouping;
@@ -52,11 +52,11 @@ public class LinearizationSpecification extends EventProcesableParameter {
         return isIncludedInLinearization;
     }
 
-    public String getLinearizationParent() {
+    public IRI getLinearizationParent() {
         return linearizationParent;
     }
 
-    public String getLinearizationView() {
+    public IRI getLinearizationView() {
         return linearizationView;
     }
 

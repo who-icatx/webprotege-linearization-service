@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers;
 
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
+import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -44,9 +45,9 @@ public class LinearizationEventMapper {
     }
 
 
-    private LinearizationSpecification getOldSpecification(WhoficEntityLinearizationSpecification oldWhoficSpecification, String linearizationView) {
+    private LinearizationSpecification getOldSpecification(WhoficEntityLinearizationSpecification oldWhoficSpecification, IRI linearizationView) {
         return oldWhoficSpecification.linearizationSpecifications().stream().filter(oldSpecification ->
-            oldSpecification.getLinearizationView().equalsIgnoreCase(linearizationView)
+            oldSpecification.getLinearizationView().equals(linearizationView)
         ).findFirst().orElse(null);
     }
 

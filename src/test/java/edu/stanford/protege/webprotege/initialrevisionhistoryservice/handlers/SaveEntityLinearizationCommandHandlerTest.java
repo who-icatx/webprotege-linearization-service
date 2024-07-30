@@ -49,14 +49,15 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
                 ThreeStateBoolean.UNKNOWN,
-                linearizationParent,
-                linearizationView,
+                IRI.create(linearizationParent),
+                IRI.create(linearizationView),
                 codingNote
         );
 
         var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
 
-        var woficEntitySpec = new WhoficEntityLinearizationSpecification(entityIri,
+        var woficEntitySpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(entityIri),
                 residual,
                 List.of(spec)
         );
@@ -97,10 +98,10 @@ public class SaveEntityLinearizationCommandHandlerTest {
     @Test
     public void GIVEN_entityWithLinearizationHistory_WHEN_savingEntityLinearization_THEN_createNewRevisionAndAddToExistingHistory() {
         var userId = UserId.valueOf("user1");
-        var linearizationView = getRandomIri();
-        var linearizationParent = getRandomIri();
+        var linearizationView = IRI.create(getRandomIri());
+        var linearizationParent = IRI.create(getRandomIri());
         var codingNote = getRandomString();
-        var entityIri = getRandomIri();
+        var entityIri = IRI.create(getRandomIri());
         var projectId = ProjectId.generate();
         var executionContext = new ExecutionContext(userId, "jwt");
         LinearizationSpecification spec1 = new LinearizationSpecification(
