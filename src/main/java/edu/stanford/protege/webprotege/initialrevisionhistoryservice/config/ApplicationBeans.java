@@ -36,11 +36,6 @@ public class ApplicationBeans {
     }
 
     @Bean
-    public ReadWriteLock readWriteLock() {
-        return new ReentrantReadWriteLock(true);
-    }
-
-    @Bean
     public MongoCustomConversions customConversions(ObjectMapper objectMapper) {
         return new MongoCustomConversions(
                 List.of(
@@ -48,5 +43,11 @@ public class ApplicationBeans {
                         new LinearizationEventWritingConverter(objectMapper)
                 )
         );
+    }
+
+
+    @Bean
+    public ReadWriteLock readWriteLock() {
+        return new ReentrantReadWriteLock(true);
     }
 }

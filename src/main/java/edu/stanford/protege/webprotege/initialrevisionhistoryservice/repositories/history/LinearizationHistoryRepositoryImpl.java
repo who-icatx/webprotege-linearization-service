@@ -1,5 +1,6 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.result.UpdateResult;
 import edu.stanford.protege.webprotege.common.ProjectId;

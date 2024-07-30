@@ -31,15 +31,15 @@ public class LinearizationHistoryProcessorServiceImpl implements LinearizationHi
 
 
     @Override
-    public Optional<WhoficEntityLinearizationSpecification> mergeLinearizationViewsFromParentsAndGetDefaultSpec(IRI currenteEtityIri, Set<IRI> parentEntityIris, ProjectId projectId) {
+    public Optional<WhoficEntityLinearizationSpecification> mergeLinearizationViewsFromParentsAndGetDefaultSpec(IRI currentEntityIri, Set<IRI> parentEntityIris, ProjectId projectId) {
 
         return readWriteLockService.executeReadLock(() -> {
             var missingSpecViews = new ArrayList<LinearizationSpecification>();
 
             WhoficEntityLinearizationSpecification currentSpecs =
-                    linearizationHistoryService.getExistingHistoryOrderedByRevision(currenteEtityIri, projectId)
+                    linearizationHistoryService.getExistingHistoryOrderedByRevision(currentEntityIri, projectId)
                             .map(eventsProcessorService::processHistory)
-                            .orElseGet(() -> new WhoficEntityLinearizationSpecification(currenteEtityIri, null, Collections.emptyList()));
+                            .orElseGet(() -> new WhoficEntityLinearizationSpecification(currentEntityIri, null, Collections.emptyList()));
 
             parentEntityIris.stream()
                     .flatMap(parentIri -> {
@@ -49,7 +49,7 @@ public class LinearizationHistoryProcessorServiceImpl implements LinearizationHi
                         }
 
                         var parentWhoficSpec = eventsProcessorService.processHistory(parentEntityHistory.get());
-                        var newDefaultWhoficSpecs = whoficSpecMapper.mapToDefaultWhoficEntityLinearizationSpecification(currenteEtityIri, parentWhoficSpec);
+                        var newDefaultWhoficSpecs = whoficSpecMapper.mapToDefaultWhoficEntityLinearizationSpecification(currentEntityIri, parentWhoficSpec);
 
                         return newDefaultWhoficSpecs.linearizationSpecifications().stream();
                     }).forEach(parentSpec -> {
@@ -63,7 +63,7 @@ public class LinearizationHistoryProcessorServiceImpl implements LinearizationHi
                 return Optional.empty();
             }
 
-            return Optional.of(new WhoficEntityLinearizationSpecification(currenteEtityIri, null, missingSpecViews));
+            return Optional.of(new WhoficEntityLinearizationSpecification(currentEntityIri, null, missingSpecViews));
         });
     }
 }

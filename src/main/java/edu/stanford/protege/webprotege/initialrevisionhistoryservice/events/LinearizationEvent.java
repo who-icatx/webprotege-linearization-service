@@ -7,8 +7,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 @BsonDiscriminator(key = "type")
 @JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type"
+        use = JsonTypeInfo.Id.NAME
 )
 @JsonSubTypes(value = {
         @JsonSubTypes.Type(value = SetAuxiliaryAxisChild.class, name = SetAuxiliaryAxisChild.CLASS_TYPE),
@@ -22,6 +21,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 
 public interface LinearizationEvent {
 
+    @JsonProperty("@type")
     String getType();
 
     EventProcesableParameter applyEvent(EventProcesableParameter input);

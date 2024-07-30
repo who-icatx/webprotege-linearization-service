@@ -64,7 +64,7 @@ public class LinearizationEventMapperTest {
     @Test
     public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allResidualEventsAreCreated() {
         String residualTitle = getRandomString();
-        String entityIri = getRandomIri();
+        IRI entityIri = IRI.create(getRandomIri());
 
         LinearizationResiduals residuals = new LinearizationResiduals(
                 ThreeStateBoolean.TRUE,
@@ -72,7 +72,7 @@ public class LinearizationEventMapperTest {
         );
 
         WhoficEntityLinearizationSpecification specification = new WhoficEntityLinearizationSpecification(
-                IRI.create(entityIri),
+                entityIri,
                 residuals,
                 List.of()
         );

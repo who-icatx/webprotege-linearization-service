@@ -32,6 +32,9 @@ public class LinearizationHistoryServiceTest {
     private LinearizationEventMapper eventMapper;
 
     @Mock
+    private LinearizationEventsProcessorService processorService;
+
+    @Mock
     private ReadWriteLockService readWriteLock;
 
     private LinearizationHistoryService linearizationHistoryService;
@@ -45,7 +48,7 @@ public class LinearizationHistoryServiceTest {
             return null;
         }).when(readWriteLock).executeWriteLock(any(Runnable.class));
         eventMapper = new LinearizationEventMapper();
-        linearizationHistoryService = new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock);
+        linearizationHistoryService = new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock, processorService);
     }
 
     @Test
