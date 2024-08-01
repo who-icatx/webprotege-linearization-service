@@ -1,6 +1,5 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.history;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.result.UpdateResult;
 import edu.stanford.protege.webprotege.common.ProjectId;
@@ -62,9 +61,29 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
     public Optional<EntityLinearizationHistory> findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId) {
 
         Query query = new Query();
-        query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
-                .and(PROJECT_ID).is(projectId.value()));
+        query.addCriteria(
+                Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
+                        .and(PROJECT_ID).is(projectId.value())
+        );
 
         return readWriteLock.executeReadLock(() -> Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION)));
+    }
+
+    @Override
+    public List<EntityLinearizationHistory> getAllEntityHistoriesForProjectId(ProjectId projectId) {
+        // Define the query to select documents with the specified projectId
+        Query query = new Query();
+
+        query.addCriteria(Criteria.where("projectId").is(projectId));
+
+        // Specify the fields to include (projection)
+        query.fields().include("whoficEntityIri");
+
+        // Retrieve the list of documents
+        List<EntityLinearizationHistory> histories = mongoTemplate.find(query, EntityLinearizationHistory.class);
+
+        // Extract the 'whoficEntityIri' values
+        return histories;
+
     }
 }
