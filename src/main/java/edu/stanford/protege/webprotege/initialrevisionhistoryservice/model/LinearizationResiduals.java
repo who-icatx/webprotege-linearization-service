@@ -32,17 +32,17 @@ public class LinearizationResiduals extends EventProcesableParameter {
         return suppressOtherSpecifiedResiduals;
     }
 
-    @JsonProperty("suppressUnspecifiedResiduals")
+    @JsonProperty("unspecifiedResidualTitle")
     public String getUnspecifiedResidualTitle() {
         return unspecifiedResidualTitle;
     }
 
-    @JsonProperty("otherSpecifiedResidualTitle")
+    @JsonProperty("suppressUnspecifiedResiduals")
     public ThreeStateBoolean getSuppressUnspecifiedResiduals() {
         return suppressUnspecifiedResiduals;
     }
 
-    @JsonProperty("unspecifiedResidualTitle")
+    @JsonProperty("otherSpecifiedResidualTitle")
     public String getOtherSpecifiedResidualTitle() {
         return otherSpecifiedResidualTitle;
     }
