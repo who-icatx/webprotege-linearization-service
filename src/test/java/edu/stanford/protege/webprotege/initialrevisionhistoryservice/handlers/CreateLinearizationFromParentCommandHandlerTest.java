@@ -80,7 +80,7 @@ class CreateLinearizationFromParentCommandHandlerTest {
                 assertEquals(ThreeStateBoolean.UNKNOWN.name(), event.getValue());
             } else if (event instanceof SetLinearizationParent) {
                 assertEquals("", event.getValue());
-            } else if (event instanceof SetSuppressedSpecifiedResidual) {
+            } else if (event instanceof SetSuppressedOtherSpecifiedResidual) {
                 assertEquals(ThreeStateBoolean.UNKNOWN.name(), event.getValue());
             } else if (event instanceof SetUnspecifiedResidualTitle) {
                 assertEquals("", event.getValue());
@@ -115,10 +115,10 @@ class CreateLinearizationFromParentCommandHandlerTest {
                                         .anyMatch(childEntityEvent -> (childEntityEvent instanceof SetUnspecifiedResidualTitle));
 
                                 assertTrue(residualExistsInChild);
-                            } else if (parentEvent instanceof SetSuppressedSpecifiedResidual) {
+                            } else if (parentEvent instanceof SetSuppressedOtherSpecifiedResidual) {
                                 var residualExistsInChild = newEntityRevision.linearizationEvents()
                                         .stream()
-                                        .anyMatch(childEntityEvent -> (childEntityEvent instanceof SetSuppressedSpecifiedResidual));
+                                        .anyMatch(childEntityEvent -> (childEntityEvent instanceof SetSuppressedOtherSpecifiedResidual));
 
                                 assertTrue(residualExistsInChild);
                             }

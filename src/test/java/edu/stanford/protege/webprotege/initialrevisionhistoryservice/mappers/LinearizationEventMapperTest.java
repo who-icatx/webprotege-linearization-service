@@ -68,7 +68,9 @@ public class LinearizationEventMapperTest {
 
         LinearizationResiduals residuals = new LinearizationResiduals(
                 ThreeStateBoolean.TRUE,
-                residualTitle
+                ThreeStateBoolean.TRUE,
+                residualTitle,
+                getRandomString()
         );
 
         WhoficEntityLinearizationSpecification specification = new WhoficEntityLinearizationSpecification(
@@ -79,12 +81,16 @@ public class LinearizationEventMapperTest {
 
         Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(specification);
 
-        assertEquals(2, events.size());
+        assertEquals(4, events.size());
         events.forEach(event -> {
-            if (event instanceof SetSuppressedSpecifiedResidual suppressedSpecifiedResidualEvent) {
-                assertEquals(suppressedSpecifiedResidualEvent.getValue(), residuals.getSuppressSpecifiedResidual().name());
+            if (event instanceof SetSuppressedOtherSpecifiedResidual suppressedSpecifiedResidualEvent) {
+                assertEquals(suppressedSpecifiedResidualEvent.getValue(), residuals.getSuppressOtherSpecifiedResiduals().name());
+            } else if (event instanceof SetSuppressedUnspecifiedResiduals supressUnspecifiedResiduals) {
+                assertEquals(supressUnspecifiedResiduals.getValue(), residuals.getSuppressUnspecifiedResiduals().name());
             } else if (event instanceof SetUnspecifiedResidualTitle unspecifiedResidualTitleEvent) {
                 assertEquals(unspecifiedResidualTitleEvent.getValue(), residuals.getUnspecifiedResidualTitle());
+            } else if (event instanceof SetOtherSpecifiedResidualTitle otherSpecifiedResidualTitle) {
+                assertEquals(otherSpecifiedResidualTitle.getValue(), residuals.getOtherSpecifiedResidualTitle());
             }
         });
     }

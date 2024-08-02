@@ -54,7 +54,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 codingNote
         );
 
-        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
+        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE,ThreeStateBoolean.FALSE,getRandomString(), getRandomString());
 
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(entityIri),
@@ -113,7 +113,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 codingNote
         );
 
-        var residual1 = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
+        var residual1 = new LinearizationResiduals(ThreeStateBoolean.FALSE,ThreeStateBoolean.FALSE,getRandomString(), getRandomString());
 
         var woficEntitySpec1 = new WhoficEntityLinearizationSpecification(
                 entityIri,
@@ -130,7 +130,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 codingNote
         );
 
-        var residual2 = new LinearizationResiduals(ThreeStateBoolean.TRUE, getRandomString());
+        var residual2 = new LinearizationResiduals(ThreeStateBoolean.TRUE, ThreeStateBoolean.FALSE,getRandomString(), getRandomString());
 
         var woficEntitySpec2 = new WhoficEntityLinearizationSpecification(
                 entityIri,

@@ -55,15 +55,19 @@ public class LinearizationEventMapper {
 
     public Set<LinearizationEvent> mapLinearizationResidualsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
         Set<LinearizationEvent> residuals = new HashSet<>();
-        addSuppressedSpecifiedResidual(residuals, linearizationSpecification);
+        addSuppressedOtherSpecifiedResidual(residuals, linearizationSpecification);
+        addSuppressedUnspecifiedSpecifiedResidual(residuals, linearizationSpecification);
         addUnspecifiedTitleResidual(residuals, linearizationSpecification);
+        addOtherSpecifiedTitleResidual(residuals, linearizationSpecification);
         return residuals;
     }
 
     public Set<LinearizationEvent> mapLinearizationResidualsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification, WhoficEntityLinearizationSpecification oldWhoficSpec) {
         Set<LinearizationEvent> residuals = new HashSet<>();
-        addSuppressedSpecifiedResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
+        addSuppressedOtherSpecifiedResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
+        addSuppressedUnspecifiedSpecifiedResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
         addUnspecifiedTitleResidual(residuals, linearizationSpecification,  oldWhoficSpec.linearizationResiduals());
+        addOtherSpecifiedTitleResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
         return residuals;
     }
 
@@ -121,27 +125,57 @@ public class LinearizationEventMapper {
             events.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView().toString()));
         }
     }
-    private void addSuppressedSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
-        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressSpecifiedResidual() != null) {
-            events.add(new SetSuppressedSpecifiedResidual(specification.linearizationResiduals().getSuppressSpecifiedResidual()));
+    private void addSuppressedOtherSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
+        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals() != null) {
+            events.add(new SetSuppressedOtherSpecifiedResidual(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()));
         }
     }
-    private void addSuppressedSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
-        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressSpecifiedResidual() != null
-                && (oldResiduals == null || oldResiduals.getSuppressSpecifiedResidual() == null || !oldResiduals.getSuppressSpecifiedResidual().equals(specification.linearizationResiduals().getSuppressSpecifiedResidual()))) {
-            events.add(new SetSuppressedSpecifiedResidual(specification.linearizationResiduals().getSuppressSpecifiedResidual()));
+    private void addSuppressedOtherSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
+        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals() != null
+                && (oldResiduals == null || oldResiduals.getSuppressOtherSpecifiedResiduals() == null || !oldResiduals.getSuppressOtherSpecifiedResiduals().equals(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()))) {
+            events.add(new SetSuppressedOtherSpecifiedResidual(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()));
         }
     }
+
+
+    private void addSuppressedUnspecifiedSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
+        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals() != null) {
+            events.add(new SetSuppressedUnspecifiedResiduals(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()));
+        }
+    }
+    private void addSuppressedUnspecifiedSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
+        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressUnspecifiedResiduals() != null
+                && (oldResiduals == null || oldResiduals.getSuppressUnspecifiedResiduals() == null || !oldResiduals.getSuppressUnspecifiedResiduals().equals(specification.linearizationResiduals().getSuppressUnspecifiedResiduals()))) {
+            events.add(new SetSuppressedUnspecifiedResiduals(specification.linearizationResiduals().getSuppressUnspecifiedResiduals()));
+        }
+    }
+
+
+
     private void addUnspecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
-        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getUnspecifiedResidualTitle() != null) {
+        if (specification.linearizationResiduals() != null) {
             events.add(new SetUnspecifiedResidualTitle(specification.linearizationResiduals().getUnspecifiedResidualTitle()));
         }
     }
 
     private void addUnspecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
-        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getUnspecifiedResidualTitle() != null
-                && (oldResiduals == null || oldResiduals.getSuppressSpecifiedResidual() == null || !oldResiduals.getUnspecifiedResidualTitle().equals(specification.linearizationResiduals().getUnspecifiedResidualTitle()))) {
+        if (specification.linearizationResiduals() != null
+                && (oldResiduals == null || oldResiduals.getSuppressOtherSpecifiedResiduals() == null || !oldResiduals.getUnspecifiedResidualTitle().equals(specification.linearizationResiduals().getUnspecifiedResidualTitle()))) {
             events.add(new SetUnspecifiedResidualTitle(specification.linearizationResiduals().getUnspecifiedResidualTitle()));
+        }
+    }
+
+
+    private void addOtherSpecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
+        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getOtherSpecifiedResidualTitle() != null) {
+            events.add(new SetOtherSpecifiedResidualTitle(specification.linearizationResiduals().getOtherSpecifiedResidualTitle()));
+        }
+    }
+
+    private void addOtherSpecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
+        if (specification.linearizationResiduals() != null &&
+                (oldResiduals == null || oldResiduals.getOtherSpecifiedResidualTitle() == null || !oldResiduals.getOtherSpecifiedResidualTitle().equals(specification.linearizationResiduals().getOtherSpecifiedResidualTitle()))) {
+            events.add(new SetOtherSpecifiedResidualTitle(specification.linearizationResiduals().getOtherSpecifiedResidualTitle()));
         }
     }
 }

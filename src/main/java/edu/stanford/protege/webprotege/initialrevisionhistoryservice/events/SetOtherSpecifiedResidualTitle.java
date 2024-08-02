@@ -1,23 +1,24 @@
 package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationResiduals;
 
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
-public class SetUnspecifiedResidualTitle implements LinearizationEvent {
+public class SetOtherSpecifiedResidualTitle implements LinearizationEvent {
 
-    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetUnspecifiedResidualTitle";
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetOtherSpecifiedResidualTitle";
     private final String value;
 
     @JsonCreator
-    public SetUnspecifiedResidualTitle(@JsonProperty("value") String value) {
+    public SetOtherSpecifiedResidualTitle(@JsonProperty("value") String value) {
         this.value = value;
     }
 
     @Override
     public String getType() {
-        return SetUnspecifiedResidualTitle.class.getName();
+        return SetOtherSpecifiedResidualTitle.class.getName();
     }
 
     @Override
@@ -28,9 +29,9 @@ public class SetUnspecifiedResidualTitle implements LinearizationEvent {
 
         if (notEqual(residual.getUnspecifiedResidualTitle(), value)) {
             return new LinearizationResiduals(residual.getSuppressOtherSpecifiedResiduals(),
-                                              residual.getSuppressUnspecifiedResiduals(),
-                                              residual.getOtherSpecifiedResidualTitle(),
-                                              value);
+                    residual.getSuppressUnspecifiedResiduals(),
+                    value,
+                    residual.getUnspecifiedResidualTitle());
         }
 
         return residual;
