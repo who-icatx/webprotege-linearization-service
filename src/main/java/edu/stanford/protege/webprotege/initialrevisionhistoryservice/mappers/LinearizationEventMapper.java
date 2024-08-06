@@ -71,6 +71,13 @@ public class LinearizationEventMapper {
         return residuals;
     }
 
+    public Set<LinearizationEvent> mapLinearizationResidualsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification, WhoficEntityLinearizationSpecification oldWhoficSpec) {
+        Set<LinearizationEvent> residuals = new HashSet<>();
+        addSuppressedSpecifiedResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
+        addUnspecifiedTitleResidual(residuals, linearizationSpecification,  oldWhoficSpec.linearizationResiduals());
+        return residuals;
+    }
+
     private void addIncludedInLinearizationEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getIsIncludedInLinearization() != null) {
             events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));

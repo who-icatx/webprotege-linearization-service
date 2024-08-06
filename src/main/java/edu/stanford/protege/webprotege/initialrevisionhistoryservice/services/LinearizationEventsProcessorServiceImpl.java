@@ -14,6 +14,10 @@ import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 @Service
 public class LinearizationEventsProcessorServiceImpl implements LinearizationEventsProcessorService {
     public WhoficEntityLinearizationSpecification processHistory(@Nonnull EntityLinearizationHistory linearizationHistory) {
+        return processHistory(linearizationHistory.getLinearizationRevisions(), linearizationHistory.getWhoficEntityIri());
+    }
+
+    public WhoficEntityLinearizationSpecification processHistory(@Nonnull Set<LinearizationRevision> linearizationRevisions, String entityIri) {
         Map<String, Queue<LinearizationSpecificationEvent>> allEventsThatHappenedPerIRI = new HashMap<>();
         List<LinearizationEvent> linearizationResidualEvents = new ArrayList<>();
         List<LinearizationSpecification> linearizationSpecifications = new ArrayList<>();
@@ -23,7 +27,7 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
             Can we have two revisions with the exact same timestamp?
             Will we have this service scaled horizontally?
          */
-        linearizationHistory.getLinearizationRevisions()
+        linearizationRevisions
                 .forEach(linearizationRevision ->
                         linearizationRevision.linearizationEvents()
                                 .forEach(event -> {
@@ -59,7 +63,7 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
         for (LinearizationEvent event : linearizationResidualEvents) {
             residuals = (LinearizationResiduals) event.applyEvent(residuals);
         }
-        return new WhoficEntityLinearizationSpecification(IRI.create(linearizationHistory.getWhoficEntityIri()),
+        return new WhoficEntityLinearizationSpecification(IRI.create(entityIri),
                 residuals,
                 linearizationSpecifications);
     }
