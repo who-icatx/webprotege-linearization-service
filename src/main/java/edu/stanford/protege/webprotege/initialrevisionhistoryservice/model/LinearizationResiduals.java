@@ -6,23 +6,44 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.Even
 
 public class LinearizationResiduals extends EventProcesableParameter {
 
-    private final ThreeStateBoolean suppressSpecifiedResidual;
+    private final ThreeStateBoolean suppressOtherSpecifiedResiduals;
+
+    private final ThreeStateBoolean suppressUnspecifiedResiduals;
+
+
     private final String unspecifiedResidualTitle;
+    private final String otherSpecifiedResidualTitle;
 
 
     @JsonCreator
-    public LinearizationResiduals( @JsonProperty("suppressOtherSpecifiedResiduals") ThreeStateBoolean suppressSpecifiedResidual,
+    public LinearizationResiduals( @JsonProperty("suppressOtherSpecifiedResiduals") ThreeStateBoolean suppressOtherSpecifiedResiduals,
+                                   @JsonProperty("suppressUnspecifiedResiduals") ThreeStateBoolean suppressUnspecifiedResiduals,
+                                   @JsonProperty("otherSpecifiedResidualTitle") String otherSpecifiedResidualTitle,
                                    @JsonProperty("unspecifiedResidualTitle") String unspecifiedResidualTitle) {
-        this.suppressSpecifiedResidual = suppressSpecifiedResidual;
+        this.suppressOtherSpecifiedResiduals = suppressOtherSpecifiedResiduals;
         this.unspecifiedResidualTitle = unspecifiedResidualTitle;
+        this.suppressUnspecifiedResiduals = suppressUnspecifiedResiduals;
+        this.otherSpecifiedResidualTitle = otherSpecifiedResidualTitle;
     }
 
 
-    public ThreeStateBoolean getSuppressSpecifiedResidual() {
-        return suppressSpecifiedResidual;
+    @JsonProperty("suppressOtherSpecifiedResiduals")
+    public ThreeStateBoolean getSuppressOtherSpecifiedResiduals() {
+        return suppressOtherSpecifiedResiduals;
     }
 
+    @JsonProperty("unspecifiedResidualTitle")
     public String getUnspecifiedResidualTitle() {
         return unspecifiedResidualTitle;
+    }
+
+    @JsonProperty("suppressUnspecifiedResiduals")
+    public ThreeStateBoolean getSuppressUnspecifiedResiduals() {
+        return suppressUnspecifiedResiduals;
+    }
+
+    @JsonProperty("otherSpecifiedResidualTitle")
+    public String getOtherSpecifiedResidualTitle() {
+        return otherSpecifiedResidualTitle;
     }
 }

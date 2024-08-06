@@ -6,19 +6,19 @@ import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
-public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
+public class SetSuppressedOtherSpecifiedResidual implements LinearizationEvent {
 
-    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetSuppressedSpecifiedResidual";
+    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetSuppressedOtherSpecifiedResidual";
     private final ThreeStateBoolean value;
 
     @JsonCreator
-    public SetSuppressedSpecifiedResidual(@JsonProperty("value") ThreeStateBoolean value) {
+    public SetSuppressedOtherSpecifiedResidual(@JsonProperty("value") ThreeStateBoolean value) {
         this.value = value;
     }
 
     @Override
     public String getType() {
-        return SetSuppressedSpecifiedResidual.class.getName();
+        return SetSuppressedOtherSpecifiedResidual.class.getName();
     }
 
     @Override
@@ -27,8 +27,11 @@ public class SetSuppressedSpecifiedResidual implements LinearizationEvent {
             throw new RuntimeException("Error! Trying to parse event that is not " + LinearizationResiduals.class.getName());
         }
 
-        if (notEqual(residual.getSuppressSpecifiedResidual(), value)) {
-            return new LinearizationResiduals(value, residual.getUnspecifiedResidualTitle());
+        if (notEqual(residual.getSuppressOtherSpecifiedResiduals(), value)) {
+            return new LinearizationResiduals(value,
+                    residual.getSuppressUnspecifiedResiduals(),
+                    residual.getOtherSpecifiedResidualTitle(),
+                    residual.getUnspecifiedResidualTitle());
         }
 
         return residual;

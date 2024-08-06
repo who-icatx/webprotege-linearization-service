@@ -15,7 +15,9 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
         @JsonSubTypes.Type(value = SetGrouping.class, name = SetGrouping.CLASS_TYPE),
         @JsonSubTypes.Type(value = SetIncludedInLinearization.class, name = SetIncludedInLinearization.CLASS_TYPE),
         @JsonSubTypes.Type(value = SetLinearizationParent.class, name = SetLinearizationParent.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetSuppressedSpecifiedResidual.class, name = SetSuppressedSpecifiedResidual.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetSuppressedOtherSpecifiedResidual.class, name = SetSuppressedOtherSpecifiedResidual.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetSuppressedUnspecifiedResiduals.class, name = SetSuppressedUnspecifiedResiduals.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetOtherSpecifiedResidualTitle.class, name = SetOtherSpecifiedResidualTitle.CLASS_TYPE),
         @JsonSubTypes.Type(value = SetUnspecifiedResidualTitle.class, name = SetUnspecifiedResidualTitle.CLASS_TYPE),
 })
 
