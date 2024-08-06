@@ -31,7 +31,6 @@ public class LinearizationHistoryServiceTest {
 
     private LinearizationEventMapper eventMapper;
 
-    @Mock
     private LinearizationEventsProcessorService processorService;
 
     @Mock
@@ -48,6 +47,7 @@ public class LinearizationHistoryServiceTest {
             return null;
         }).when(readWriteLock).executeWriteLock(any(Runnable.class));
         eventMapper = new LinearizationEventMapper();
+        processorService = new LinearizationEventsProcessorServiceImpl();
         linearizationHistoryService = new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock, processorService);
     }
 
@@ -98,7 +98,7 @@ public class LinearizationHistoryServiceTest {
                 codingNote
         );
 
-        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
+        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE,ThreeStateBoolean.FALSE,getRandomString(), getRandomString());
 
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(entityIri),
@@ -128,7 +128,7 @@ public class LinearizationHistoryServiceTest {
                 IRI.create(linearizationView),
                 codingNote
         );
-        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, getRandomString());
+        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE,ThreeStateBoolean.FALSE,getRandomString(),  getRandomString());
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(entityIri),
                 residual,

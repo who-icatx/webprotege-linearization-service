@@ -32,14 +32,14 @@ class WhoficEntityLinearizationSpecificationMapperTest {
         );
         WhoficEntityLinearizationSpecification whoficSpec = new WhoficEntityLinearizationSpecification(
                 entityIri,
-                new LinearizationResiduals(ThreeStateBoolean.TRUE, "residualTitle"),
+                new LinearizationResiduals(ThreeStateBoolean.TRUE,ThreeStateBoolean.FALSE,"otherSpecifiedTitle", "residualTitle"),
                 List.of(spec)
         );
 
         WhoficEntityLinearizationSpecification result = mapper.mapToDefaultWhoficEntityLinearizationSpecification(newSpecIri, whoficSpec);
 
         assertEquals(newSpecIri, result.entityIRI());
-        assertEquals(ThreeStateBoolean.UNKNOWN, result.linearizationResiduals().getSuppressSpecifiedResidual());
+        assertEquals(ThreeStateBoolean.UNKNOWN, result.linearizationResiduals().getSuppressOtherSpecifiedResiduals());
         assertEquals("", result.linearizationResiduals().getUnspecifiedResidualTitle());
 
         List<LinearizationSpecification> defaultSpecifications = result.linearizationSpecifications();

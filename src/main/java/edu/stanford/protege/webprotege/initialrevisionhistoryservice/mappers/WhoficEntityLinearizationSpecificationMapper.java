@@ -22,10 +22,13 @@ public class WhoficEntityLinearizationSpecificationMapper {
     }
 
     private LinearizationResiduals getDefaultResiduals() {
-        ThreeStateBoolean suppressSpecifiedResidual = ThreeStateBoolean.UNKNOWN;
-        String unspecifiedResidualTitle = "";
+        ThreeStateBoolean suppressOtherSpecifiedResidual = ThreeStateBoolean.UNKNOWN;
+        ThreeStateBoolean suppressUnspecifiedSpecifiedResidual = ThreeStateBoolean.UNKNOWN;
 
-        return new LinearizationResiduals(suppressSpecifiedResidual, unspecifiedResidualTitle);
+        String unspecifiedResidualTitle = "";
+        String otherSpecifiedResidualTitle = "";
+
+        return new LinearizationResiduals(suppressOtherSpecifiedResidual, suppressUnspecifiedSpecifiedResidual,otherSpecifiedResidualTitle, unspecifiedResidualTitle);
     }
 
     private List<LinearizationSpecification> extractDefaultSpecificationsFromSpec(List<LinearizationSpecification> linearizationSpecifications) {

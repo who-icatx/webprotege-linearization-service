@@ -46,8 +46,8 @@ public class LinearizationEventHelper {
         return new SetLinearizationParent(getRandomIri(), viewIRI.toString());
     }
 
-    private static SetSuppressedSpecifiedResidual getSetSuppressedSpecifiedResidualEvent() {
-        return new SetSuppressedSpecifiedResidual(getRandomThreeStateBoolean());
+    private static SetSuppressedOtherSpecifiedResidual getSetSuppressedSpecifiedResidualEvent() {
+        return new SetSuppressedOtherSpecifiedResidual(getRandomThreeStateBoolean());
     }
 
     private static SetUnspecifiedResidualTitle getSetUnspecifiedResidualTitleEvent() {
