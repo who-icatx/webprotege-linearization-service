@@ -2,7 +2,10 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 
 import com.fasterxml.jackson.annotation.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+
+import javax.annotation.Nonnull;
 
 
 @BsonDiscriminator(key = "type")
@@ -29,4 +32,6 @@ public interface LinearizationEvent {
     EventProcesableParameter applyEvent(EventProcesableParameter input);
 
     String getValue();
+
+    <R> R accept(@Nonnull LinearizationChangeVisitor<R> visitor);
 }

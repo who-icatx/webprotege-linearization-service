@@ -71,19 +71,13 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
 
     @Override
     public List<EntityLinearizationHistory> getAllEntityHistoriesForProjectId(ProjectId projectId) {
-        // Define the query to select documents with the specified projectId
         Query query = new Query();
 
-        query.addCriteria(Criteria.where("projectId").is(projectId));
+        query.addCriteria(
+                Criteria.where(PROJECT_ID)
+                        .is(projectId.value())
+        );
 
-        // Specify the fields to include (projection)
-        query.fields().include("whoficEntityIri");
-
-        // Retrieve the list of documents
-        List<EntityLinearizationHistory> histories = mongoTemplate.find(query, EntityLinearizationHistory.class);
-
-        // Extract the 'whoficEntityIri' values
-        return histories;
-
+        return mongoTemplate.find(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION);
     }
 }

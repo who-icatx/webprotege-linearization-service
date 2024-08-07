@@ -2,6 +2,8 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.LinearizationResiduals;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
+import org.jetbrains.annotations.NotNull;
 
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
@@ -28,9 +30,9 @@ public class SetUnspecifiedResidualTitle implements LinearizationEvent {
 
         if (notEqual(residual.getUnspecifiedResidualTitle(), value)) {
             return new LinearizationResiduals(residual.getSuppressOtherSpecifiedResiduals(),
-                                              residual.getSuppressUnspecifiedResiduals(),
-                                              residual.getOtherSpecifiedResidualTitle(),
-                                              value);
+                    residual.getSuppressUnspecifiedResiduals(),
+                    residual.getOtherSpecifiedResidualTitle(),
+                    value);
         }
 
         return residual;
@@ -38,6 +40,11 @@ public class SetUnspecifiedResidualTitle implements LinearizationEvent {
 
     @JsonProperty("value")
     public String getValue() {
-        return this.value;
+        return this.value != null ? this.value : "";
+    }
+
+    @Override
+    public <R> R accept(@NotNull LinearizationChangeVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

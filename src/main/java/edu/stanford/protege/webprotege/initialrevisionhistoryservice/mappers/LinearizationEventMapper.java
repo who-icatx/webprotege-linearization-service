@@ -178,4 +178,14 @@ public class LinearizationEventMapper {
             events.add(new SetOtherSpecifiedResidualTitle(specification.linearizationResiduals().getOtherSpecifiedResidualTitle()));
         }
     }
+
+    public static Map<String, List<LinearizationEvent>> groupEventsByViews(List<LinearizationEvent> events) {
+        return events.stream().collect(Collectors.groupingBy(event -> {
+            if (event instanceof LinearizationSpecificationEvent) {
+                return ((LinearizationSpecificationEvent) event).getLinearizationView();
+            } else {
+                return "residualEvents";
+            }
+        }));
+    }
 }

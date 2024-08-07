@@ -40,11 +40,11 @@ public class ProjectChangesManager {
                                                  ProjectId projectId,
                                                  PageRequest pageRequest) {
         if (subject != null) {
-            ImmutableList<ProjectChange> theChanges = getChangesForEntity(subject.getIRI(), projectId);
+            ImmutableList<ProjectChange> theChanges = getChangesForEntity(subject.getIRI(), projectId, pageRequest);
             return Page.create(1, 1, theChanges, theChanges.size());
         } else {
             // Pages are in reverse order
-            ImmutableList<ProjectChange> projectChanges = getChangesForFullProject(projectId);
+            ImmutableList<ProjectChange> projectChanges = getChangesForFullProject(projectId, pageRequest);
 
             int pageCount = (projectChanges.size() / pageRequest.getPageSize()) + 1;
             return Page.create(pageRequest.getPageNumber(),
@@ -53,45 +53,37 @@ public class ProjectChangesManager {
         }
     }
 
-    private ImmutableList<ProjectChange> getChangesForEntity(IRI iri, ProjectId projectId) {
+    private ImmutableList<ProjectChange> getChangesForEntity(IRI iri, ProjectId projectId, PageRequest pageRequest) {
         List<LinearizationRevision> revisions = new ArrayList<>();
         Optional<EntityLinearizationHistory> optionalHistory = historyService.getExistingHistoryOrderedByRevision(iri, projectId);
-        optionalHistory.ifPresent(history -> {
-            revisions.addAll(history.getLinearizationRevisions());
-        });
+        optionalHistory.ifPresent(history -> revisions.addAll(history.getLinearizationRevisions()));
         // We need to scan revisions to find the ones containing a particular subject
         // We ignore the page request here.
         // This needs reworking really, but the number of changes per entity is usually small
         // so this works for now.
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
-        for (LinearizationRevision revision : revisions) {
-            getProjectChangesForRevision(revision, iri, changes);
-        }
+        revisions.stream()
+                .skip(pageRequest.getSkip())
+                .limit(pageRequest.getPageSize())
+                .forEach(revision -> getProjectChangesForRevision(revision, iri, changes));
 
         return changes.build();
     }
 
-    private ImmutableList<ProjectChange> getChangesForFullProject(ProjectId projectId) {
+    private ImmutableList<ProjectChange> getChangesForFullProject(ProjectId projectId, PageRequest pageRequest) {
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
         List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProject(projectId);
 
         fullHistory.stream()
+                .skip(pageRequest.getSkip())
+                .limit(pageRequest.getPageSize())
                 .flatMap(history ->
                         history.getLinearizationRevisions()
                                 .stream()
                                 .map(revision -> new LinearizationRevisionWithEntity(revision, IRI.create(history.getWhoficEntityIri())))
                 )
                 .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision))
-                .forEach(revisionWithEntity -> {
-                    getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityIri(), changes);
-                });
-
-        fullHistory.forEach(history -> {
-            IRI currentEntity = IRI.create(history.getWhoficEntityIri());
-            history.getLinearizationRevisions().forEach(revision -> {
-                getProjectChangesForRevision(revision, currentEntity, changes);
-            });
-        });
+                .forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityIri(), changes));
 
         return changes.build();
     }
@@ -115,7 +107,7 @@ public class ProjectChangesManager {
                 .forEach(limitedRecords::add);
 
 
-        List<DiffElement<String, LinearizationEvent>> diffElements = revision2DiffElementsTranslator.getDiffElementsFromRevision(limitedRecords, subject);
+        List<DiffElement<String, LinearizationEventsForView>> diffElements = revision2DiffElementsTranslator.getDiffElementsFromRevision(limitedRecords, subject);
         List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(diffElements);
         int pageElements = renderedDiffElements.size();
         int pageCount;
@@ -134,17 +126,17 @@ public class ProjectChangesManager {
                 RevisionNumber.valueOf("1"),
                 revision.userId(),
                 revision.timestamp(),
-                "Some high level description",
+                "Edited Linearization for Entity: " + subject.toString(),
                 totalChanges,
                 page);
         changesBuilder.add(projectChange);
     }
 
-    private List<DiffElement<String, String>> renderDiffElements(List<DiffElement<String, LinearizationEvent>> diffElements) {
+    private List<DiffElement<String, String>> renderDiffElements(List<DiffElement<String, LinearizationEventsForView>> diffElements) {
 
         List<DiffElement<String, String>> renderedDiffElements = new ArrayList<>();
         DiffElementRenderer<String> renderer = new DiffElementRenderer<>();
-        for (DiffElement<String, LinearizationEvent> diffElement : diffElements) {
+        for (DiffElement<String, LinearizationEventsForView> diffElement : diffElements) {
             renderedDiffElements.add(renderer.render(diffElement));
         }
         return renderedDiffElements;
