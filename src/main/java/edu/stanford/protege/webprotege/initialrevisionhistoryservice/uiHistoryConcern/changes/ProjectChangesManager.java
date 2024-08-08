@@ -2,8 +2,8 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.uiHistoryC
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationHistoryService;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.uiHistoryConcern.diff.*;
 import edu.stanford.protege.webprotege.revision.RevisionNumber;
@@ -12,6 +12,8 @@ import org.slf4j.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+
+import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper.groupEventsByViews;
 
 /**
  * Matthew Horridge
@@ -23,28 +25,32 @@ public class ProjectChangesManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectChangesManager.class);
 
-    public static final int DEFAULT_CHANGE_LIMIT = 50;
-
     private final Revision2DiffElementsTranslator revision2DiffElementsTranslator;
 
     private final LinearizationHistoryService historyService;
 
+    private final LinearizationDefinitionRepository definitionRepository;
+
     public ProjectChangesManager(
             Revision2DiffElementsTranslator revision2DiffElementsTranslator,
-            LinearizationHistoryService historyService) {
+            LinearizationHistoryService historyService,
+            LinearizationDefinitionRepository definitionRepository) {
         this.revision2DiffElementsTranslator = revision2DiffElementsTranslator;
         this.historyService = historyService;
+        this.definitionRepository = definitionRepository;
     }
 
     public Page<ProjectChange> getProjectChanges(OWLEntity subject,
                                                  ProjectId projectId,
                                                  PageRequest pageRequest) {
+
+        var linearizationDefinitions = definitionRepository.getLinearizationDefinitions();
         if (subject != null) {
-            ImmutableList<ProjectChange> theChanges = getChangesForEntity(subject.getIRI(), projectId, pageRequest);
+            ImmutableList<ProjectChange> theChanges = getChangesForEntity(subject.getIRI(), projectId, pageRequest, linearizationDefinitions);
             return Page.create(1, 1, theChanges, theChanges.size());
         } else {
             // Pages are in reverse order
-            ImmutableList<ProjectChange> projectChanges = getChangesForFullProject(projectId, pageRequest);
+            ImmutableList<ProjectChange> projectChanges = getChangesForFullProject(projectId, pageRequest, linearizationDefinitions);
 
             int pageCount = (projectChanges.size() / pageRequest.getPageSize()) + 1;
             return Page.create(pageRequest.getPageNumber(),
@@ -53,7 +59,7 @@ public class ProjectChangesManager {
         }
     }
 
-    private ImmutableList<ProjectChange> getChangesForEntity(IRI iri, ProjectId projectId, PageRequest pageRequest) {
+    private ImmutableList<ProjectChange> getChangesForEntity(IRI iri, ProjectId projectId, PageRequest pageRequest, List<LinearizationDefinition> linearizationDefinitions) {
         List<LinearizationRevision> revisions = new ArrayList<>();
         Optional<EntityLinearizationHistory> optionalHistory = historyService.getExistingHistoryOrderedByRevision(iri, projectId);
         optionalHistory.ifPresent(history -> revisions.addAll(history.getLinearizationRevisions()));
@@ -65,12 +71,12 @@ public class ProjectChangesManager {
         revisions.stream()
                 .skip(pageRequest.getSkip())
                 .limit(pageRequest.getPageSize())
-                .forEach(revision -> getProjectChangesForRevision(revision, iri, changes));
+                .forEach(revision -> getProjectChangesForRevision(revision, iri, changes, linearizationDefinitions));
 
         return changes.build();
     }
 
-    private ImmutableList<ProjectChange> getChangesForFullProject(ProjectId projectId, PageRequest pageRequest) {
+    private ImmutableList<ProjectChange> getChangesForFullProject(ProjectId projectId, PageRequest pageRequest, List<LinearizationDefinition> linearizationDefinitions) {
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
         List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProject(projectId);
 
@@ -83,31 +89,26 @@ public class ProjectChangesManager {
                                 .map(revision -> new LinearizationRevisionWithEntity(revision, IRI.create(history.getWhoficEntityIri())))
                 )
                 .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision))
-                .forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityIri(), changes));
+                .forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityIri(), changes, linearizationDefinitions));
 
         return changes.build();
     }
 
-    public ImmutableList<ProjectChange> getProjectChangesForSubjectInRevision(OWLEntity subject, LinearizationRevision revision) {
+    public ImmutableList<ProjectChange> getProjectChangesForSubjectInRevision(OWLEntity subject, LinearizationRevision revision, List<LinearizationDefinition> linearizationDefinitions) {
         ImmutableList.Builder<ProjectChange> resultBuilder = ImmutableList.builder();
-        getProjectChangesForRevision(revision, subject.getIRI(), resultBuilder);
+        getProjectChangesForRevision(revision, subject.getIRI(), resultBuilder, linearizationDefinitions);
         return resultBuilder.build();
     }
 
     private void getProjectChangesForRevision(LinearizationRevision revision,
                                               IRI subject,
-                                              ImmutableList.Builder<ProjectChange> changesBuilder) {
-
-        List<LinearizationEvent> limitedRecords = new ArrayList<>();
+                                              ImmutableList.Builder<ProjectChange> changesBuilder,
+                                              List<LinearizationDefinition> linearizationDefinitions) {
         final int totalChanges;
+        var changesByView = groupEventsByViews(revision.linearizationEvents().stream().toList());
+        totalChanges = changesByView.size();
 
-        totalChanges = revision.linearizationEvents().size();
-        revision.linearizationEvents().stream()
-                .limit(DEFAULT_CHANGE_LIMIT)
-                .forEach(limitedRecords::add);
-
-
-        List<DiffElement<String, LinearizationEventsForView>> diffElements = revision2DiffElementsTranslator.getDiffElementsFromRevision(limitedRecords, subject);
+        List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements = revision2DiffElementsTranslator.getDiffElementsFromRevision(changesByView, linearizationDefinitions);
         List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(diffElements);
         int pageElements = renderedDiffElements.size();
         int pageCount;
@@ -132,11 +133,11 @@ public class ProjectChangesManager {
         changesBuilder.add(projectChange);
     }
 
-    private List<DiffElement<String, String>> renderDiffElements(List<DiffElement<String, LinearizationEventsForView>> diffElements) {
+    private List<DiffElement<String, String>> renderDiffElements(List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements) {
 
         List<DiffElement<String, String>> renderedDiffElements = new ArrayList<>();
         DiffElementRenderer<String> renderer = new DiffElementRenderer<>();
-        for (DiffElement<String, LinearizationEventsForView> diffElement : diffElements) {
+        for (DiffElement<LinearizationDocumentChange, LinearizationEventsForView> diffElement : diffElements) {
             renderedDiffElements.add(renderer.render(diffElement));
         }
         return renderedDiffElements;

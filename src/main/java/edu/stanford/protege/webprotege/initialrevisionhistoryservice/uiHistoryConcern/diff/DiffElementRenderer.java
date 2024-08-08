@@ -78,28 +78,31 @@ public class DiffElementRenderer<S extends Serializable> {
     }
 
 
-    public DiffElement<S, String> render(DiffElement<S, LinearizationEventsForView> element) {
+    public DiffElement<String, String> render(DiffElement<LinearizationDocumentChange, LinearizationEventsForView> element) {
         var eventsByViews = element.getLineElement();
-        var rederedLine = renderData(eventsByViews);
+        var rederedLine = renderLine(eventsByViews);
+        var source = element.getSourceDocument();
+        var renderedSource = renderSource(source);
         rederedLine = rederedLine != null ? rederedLine : "no value";
         return new DiffElement<>(
                 element.getDiffOperation(),
-                element.getSourceDocument(),
+                renderedSource,
                 rederedLine
         );
     }
 
-    public String renderData(LinearizationEventsForView change) {
+    private String renderSource(LinearizationDocumentChange source) {
         final StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append("'");
-        stringBuilder.append("<span title=\"").append("CLASS").append(": ");
-        stringBuilder.append(change.getViewName());
-        stringBuilder.append("\" class=\"").append("highlight").append("\">");
-        stringBuilder.append(change.getViewName().replace(" ", "&nbsp;"));
-        stringBuilder.append("</span>");
-        stringBuilder.append("'");
+        var displayLabel = source.getLinearizationViewName()!=null?source.getLinearizationViewName():source.getLinearizationViewId();
 
+        renderPlainLink(source.getLinearizationViewIri(), displayLabel, stringBuilder);
+
+        return stringBuilder.toString();
+    }
+
+    public String renderLine(LinearizationEventsForView change) {
+        final StringBuilder stringBuilder = new StringBuilder();
         change.getLinearizationEvents()
                 .forEach(event -> stringBuilder.append(event.accept(visitor)));
 
@@ -107,15 +110,25 @@ public class DiffElementRenderer<S extends Serializable> {
     }
 
     private String renderHtmlForElement(String elementName, String elementValue) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<br><span>");
+        stringBuilder.append(elementName);
+        stringBuilder.append(" - ");
+        stringBuilder.append("<span class=\"ms-literal\">\"");
+        stringBuilder.append(elementValue);
+        stringBuilder.append("\"</span>");
+        stringBuilder.append("</span><br>");
 
-        String htmlElement = "<br>'" +
-                "<span>" +
-                elementName +
-                " - " +
-                elementValue +
-                "</span>" +
-                "'<br>";
+        return stringBuilder.toString();
+    }
 
-        return htmlElement;
+    private void renderPlainLink(String link, String display, StringBuilder builder) {
+        builder.append("<a target=\"_blank\" href=\"");
+        builder.append(link);
+        builder.append("\">");
+        builder.append("<span class=\"iri\">");
+        builder.append(display);
+        builder.append("</span>");
+        builder.append("</a>");
     }
 }
