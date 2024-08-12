@@ -10,10 +10,10 @@
     </parent>
     <groupId>edu.stanford.protege</groupId>
     <artifactId>webprotege-linearization-service</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>webprotege-linearization-service</name>
     <description>This service reads linearization documents from cloud storage (using MinIO) and, from these, generates WebProtégé linearization.
-        Also it handles querying and event sourcing</description>
+        Also, it handles querying and event sourcing</description>
     <properties>
         <java.version>17</java.version>
     </properties>
