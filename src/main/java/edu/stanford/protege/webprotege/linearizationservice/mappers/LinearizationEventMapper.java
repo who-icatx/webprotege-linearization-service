@@ -160,7 +160,7 @@ public class LinearizationEventMapper {
 
     private void addUnspecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
         if (specification.linearizationResiduals() != null
-                && (oldResiduals == null || oldResiduals.getSuppressOtherSpecifiedResiduals() == null || !oldResiduals.getUnspecifiedResidualTitle().equals(specification.linearizationResiduals().getUnspecifiedResidualTitle()))) {
+                && (oldResiduals == null || oldResiduals.getUnspecifiedResidualTitle() == null || !oldResiduals.getUnspecifiedResidualTitle().equals(specification.linearizationResiduals().getUnspecifiedResidualTitle()))) {
             events.add(new SetUnspecifiedResidualTitle(specification.linearizationResiduals().getUnspecifiedResidualTitle()));
         }
     }
