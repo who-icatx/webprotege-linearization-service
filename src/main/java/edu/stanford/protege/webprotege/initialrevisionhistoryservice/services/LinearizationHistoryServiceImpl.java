@@ -120,6 +120,5 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     @Override
     public List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId) {
         return readWriteLock.executeWriteLock(() -> linearizationHistoryRepository.getAllEntityHistoriesForProjectId(projectId));
-
     }
 }

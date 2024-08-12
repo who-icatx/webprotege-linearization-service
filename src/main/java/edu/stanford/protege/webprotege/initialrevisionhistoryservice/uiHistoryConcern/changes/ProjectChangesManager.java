@@ -81,14 +81,14 @@ public class ProjectChangesManager {
         List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProject(projectId);
 
         fullHistory.stream()
-                .skip(pageRequest.getSkip())
-                .limit(pageRequest.getPageSize())
                 .flatMap(history ->
                         history.getLinearizationRevisions()
                                 .stream()
                                 .map(revision -> new LinearizationRevisionWithEntity(revision, IRI.create(history.getWhoficEntityIri())))
                 )
-                .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision))
+                .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision).reversed())
+                .skip(pageRequest.getSkip())
+                .limit(pageRequest.getPageSize())
                 .forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityIri(), changes, linearizationDefinitions));
 
         return changes.build();
