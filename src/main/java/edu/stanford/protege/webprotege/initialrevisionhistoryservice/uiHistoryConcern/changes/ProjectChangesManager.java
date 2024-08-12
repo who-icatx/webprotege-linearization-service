@@ -124,7 +124,7 @@ public class ProjectChangesManager {
                 totalChanges
         );
         ProjectChange projectChange = ProjectChange.get(
-                RevisionNumber.valueOf("1"),
+                RevisionNumber.valueOf("0"),
                 revision.userId(),
                 revision.timestamp(),
                 "Edited Linearization for Entity: " + subject.toString(),
