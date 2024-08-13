@@ -63,9 +63,13 @@ public class ProjectChangesManager {
             ImmutableList<ProjectChange> projectChanges = getChangesForFullProject(projectId, pageRequest, linearizationDefinitions);
 
             int pageCount = (projectChanges.size() / pageRequest.getPageSize()) + 1;
+            if(pageRequest.getPageNumber()>pageCount){
+                return Page.emptyPage();
+            }
             return Page.create(pageRequest.getPageNumber(),
                     pageCount,
-                    projectChanges.reverse(), projectChanges.size());
+                    projectChanges,
+                    projectChanges.size());
         }
     }
 

@@ -111,14 +111,14 @@ public class DiffElementRenderer<S extends Serializable> {
 
     private String renderHtmlForElement(String elementName, String elementValue) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<br><span>");
+        stringBuilder.append("&nbsp;<span>");
         stringBuilder.append("Set the ");
         stringBuilder.append(elementName);
         stringBuilder.append(" value to ");
         stringBuilder.append("<span class=\"ms-literal\">\"");
         stringBuilder.append(elementValue.toLowerCase());
         stringBuilder.append("\"</span>");
-        stringBuilder.append("</span><br>");
+        stringBuilder.append("</span>;&nbsp;");
 
         return stringBuilder.toString();
     }
