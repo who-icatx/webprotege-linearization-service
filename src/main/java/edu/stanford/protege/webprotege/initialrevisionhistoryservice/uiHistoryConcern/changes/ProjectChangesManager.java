@@ -2,16 +2,22 @@ package edu.stanford.protege.webprotege.initialrevisionhistoryservice.uiHistoryC
 
 import com.google.common.collect.ImmutableList;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.entity.EntityNode;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.model.*;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.services.LinearizationHistoryService;
 import edu.stanford.protege.webprotege.initialrevisionhistoryservice.uiHistoryConcern.diff.*;
+import edu.stanford.protege.webprotege.initialrevisionhistoryservice.uiHistoryConcern.nodeRendering.*;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
+import edu.stanford.protege.webprotege.renderer.GetEntityHtmlRenderingResult;
 import edu.stanford.protege.webprotege.revision.RevisionNumber;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
 import static edu.stanford.protege.webprotege.initialrevisionhistoryservice.mappers.LinearizationEventMapper.groupEventsByViews;
 
@@ -31,13 +37,17 @@ public class ProjectChangesManager {
 
     private final LinearizationDefinitionRepository definitionRepository;
 
+    private final EntityRendererManager entityRendererManager;
+
     public ProjectChangesManager(
             Revision2DiffElementsTranslator revision2DiffElementsTranslator,
             LinearizationHistoryService historyService,
-            LinearizationDefinitionRepository definitionRepository) {
+            LinearizationDefinitionRepository definitionRepository,
+            EntityRendererManager entityRendererManager) {
         this.revision2DiffElementsTranslator = revision2DiffElementsTranslator;
         this.historyService = historyService;
         this.definitionRepository = definitionRepository;
+        this.entityRendererManager = entityRendererManager;
     }
 
     public Page<ProjectChange> getProjectChanges(OWLEntity subject,
@@ -63,6 +73,20 @@ public class ProjectChangesManager {
         List<LinearizationRevision> revisions = new ArrayList<>();
         Optional<EntityLinearizationHistory> optionalHistory = historyService.getExistingHistoryOrderedByRevision(iri, projectId);
         optionalHistory.ifPresent(history -> revisions.addAll(history.getLinearizationRevisions()));
+
+        GetEntityHtmlRenderingResult renderedEntity = null;
+        try {
+            renderedEntity = entityRendererManager.getRenderedEntity(iri, projectId, new ExecutionContext()).get(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            logger.error(e.getMessage());
+        }
+        String entityName = iri.toString();
+        if (renderedEntity != null &&
+                !renderedEntity.rendering().trim().equals("")) {
+            entityName = renderedEntity.rendering();
+        }
+
+        final var finalEntityName = entityName;
         // We need to scan revisions to find the ones containing a particular subject
         // We ignore the page request here.
         // This needs reworking really, but the number of changes per entity is usually small
@@ -71,7 +95,7 @@ public class ProjectChangesManager {
         revisions.stream()
                 .skip(pageRequest.getSkip())
                 .limit(pageRequest.getPageSize())
-                .forEach(revision -> getProjectChangesForRevision(revision, iri, changes, linearizationDefinitions));
+                .forEach(revision -> getProjectChangesForRevision(revision, finalEntityName, changes, linearizationDefinitions));
 
         return changes.build();
     }
@@ -80,28 +104,50 @@ public class ProjectChangesManager {
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
         List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProject(projectId);
 
+        var entityIris = fullHistory.stream().flatMap(history -> Stream.of(history.getWhoficEntityIri())).collect(Collectors.toSet());
+        GetRenderedOwlEntitiesResult renderedEntities = null;
+        try {
+            renderedEntities = entityRendererManager.getRenderedEntities(entityIris, projectId, new ExecutionContext()).get(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            logger.error(e.getMessage());
+        }
+        final var renderedEntitiesResult = renderedEntities;
         fullHistory.stream()
                 .flatMap(history ->
                         history.getLinearizationRevisions()
                                 .stream()
-                                .map(revision -> new LinearizationRevisionWithEntity(revision, IRI.create(history.getWhoficEntityIri())))
+                                .map(revision -> {
+                                            if (renderedEntitiesResult == null || renderedEntitiesResult.renderedEntities() == null) {
+                                                return new LinearizationRevisionWithEntity(revision, history.getWhoficEntityIri());
+                                            }
+                                            var entityTextOptional = renderedEntitiesResult.renderedEntities()
+                                                    .stream()
+                                                    .filter(entityNode -> entityNode.getEntity().getIRI().toString().equals(history.getWhoficEntityIri()))
+                                                    .map(EntityNode::getBrowserText)
+                                                    .findFirst();
+                                            if (entityTextOptional.isEmpty()) {
+                                                return new LinearizationRevisionWithEntity(revision, history.getWhoficEntityIri());
+                                            }
+                                            return new LinearizationRevisionWithEntity(revision, entityTextOptional.get());
+                                        }
+                                )
                 )
                 .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision).reversed())
                 .skip(pageRequest.getSkip())
                 .limit(pageRequest.getPageSize())
-                .forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityIri(), changes, linearizationDefinitions));
+                .forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityName(), changes, linearizationDefinitions));
 
         return changes.build();
     }
 
     public ImmutableList<ProjectChange> getProjectChangesForSubjectInRevision(OWLEntity subject, LinearizationRevision revision, List<LinearizationDefinition> linearizationDefinitions) {
         ImmutableList.Builder<ProjectChange> resultBuilder = ImmutableList.builder();
-        getProjectChangesForRevision(revision, subject.getIRI(), resultBuilder, linearizationDefinitions);
+        getProjectChangesForRevision(revision, subject.getIRI().toString(), resultBuilder, linearizationDefinitions);
         return resultBuilder.build();
     }
 
     private void getProjectChangesForRevision(LinearizationRevision revision,
-                                              IRI subject,
+                                              String subjectName,
                                               ImmutableList.Builder<ProjectChange> changesBuilder,
                                               List<LinearizationDefinition> linearizationDefinitions) {
         final int totalChanges;
@@ -127,7 +173,7 @@ public class ProjectChangesManager {
                 RevisionNumber.valueOf("0"),
                 revision.userId(),
                 revision.timestamp(),
-                "Edited Linearization for Entity: " + subject.toString(),
+                "Edited Linearization for Entity: " + subjectName,
                 totalChanges,
                 page);
         changesBuilder.add(projectChange);

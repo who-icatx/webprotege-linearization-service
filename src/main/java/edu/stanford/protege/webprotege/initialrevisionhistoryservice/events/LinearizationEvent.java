@@ -34,4 +34,10 @@ public interface LinearizationEvent {
     String getValue();
 
     <R> R accept(@Nonnull LinearizationChangeVisitor<R> visitor);
+
+    default String getUiDisplayName() {
+        var eventNameWithSpaces = this.getClass().getSimpleName().replaceAll("([a-z])([A-Z]+)", "$1 $2");
+        eventNameWithSpaces = eventNameWithSpaces.replaceFirst("^Set", "");
+        return eventNameWithSpaces.toLowerCase();
+    }
 }

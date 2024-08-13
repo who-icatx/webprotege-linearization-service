@@ -130,6 +130,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>edu.stanford.protege</groupId>
+            <artifactId>webprotege-backend-api</artifactId>
+            <version>1.0.26-WHO</version>
+        </dependency>
+
     </dependencies>
 
     <build>

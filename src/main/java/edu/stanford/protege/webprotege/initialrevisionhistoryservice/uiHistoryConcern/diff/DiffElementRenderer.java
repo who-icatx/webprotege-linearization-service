@@ -19,60 +19,60 @@ public class DiffElementRenderer<S extends Serializable> {
         visitor = new LinearizationChangeVisitor<>() {
             @Override
             public String visit(@NotNull SetAuxiliaryAxisChild setAuxiliaryAxisChild) {
-                return renderHtmlForElement(setAuxiliaryAxisChild.getClass().getSimpleName(), setAuxiliaryAxisChild.getValue());
+                return renderHtmlForElement(setAuxiliaryAxisChild.getUiDisplayName(), setAuxiliaryAxisChild.getValue());
             }
 
             @Override
             public String visit(SetCodingNote setCodingNote) {
-                return renderHtmlForElement(setCodingNote.getClass().getSimpleName(), setCodingNote.getValue());
+                return renderHtmlForElement(setCodingNote.getUiDisplayName(), setCodingNote.getValue());
 
             }
 
             @Override
             public String visit(SetGrouping setGrouping) {
-                return renderHtmlForElement(setGrouping.getClass().getSimpleName(), setGrouping.getValue());
+                return renderHtmlForElement(setGrouping.getUiDisplayName(), setGrouping.getValue());
 
             }
 
             @Override
             public String visit(SetIncludedInLinearization setIncludedInLinearization) {
-                return renderHtmlForElement(setIncludedInLinearization.getClass().getSimpleName(), setIncludedInLinearization.getValue());
+                return renderHtmlForElement(setIncludedInLinearization.getUiDisplayName(), setIncludedInLinearization.getValue());
 
             }
 
             @Override
             public String visit(SetLinearizationParent setLinearizationParent) {
-                return renderHtmlForElement(setLinearizationParent.getClass().getSimpleName(), setLinearizationParent.getValue());
+                return renderHtmlForElement(setLinearizationParent.getUiDisplayName(), setLinearizationParent.getValue());
 
             }
 
             @Override
             public String visit(SetOtherSpecifiedResidualTitle setOtherSpecifiedResidualTitle) {
-                return renderHtmlForElement(setOtherSpecifiedResidualTitle.getClass().getSimpleName(), setOtherSpecifiedResidualTitle.getValue());
+                return renderHtmlForElement(setOtherSpecifiedResidualTitle.getUiDisplayName(), setOtherSpecifiedResidualTitle.getValue());
 
             }
 
             @Override
             public String visit(SetSuppressedOtherSpecifiedResidual setSuppressedOtherSpecifiedResidual) {
-                return renderHtmlForElement(setSuppressedOtherSpecifiedResidual.getClass().getSimpleName(), setSuppressedOtherSpecifiedResidual.getValue());
+                return renderHtmlForElement(setSuppressedOtherSpecifiedResidual.getUiDisplayName(), setSuppressedOtherSpecifiedResidual.getValue());
 
             }
 
             @Override
             public String visit(SetSuppressedUnspecifiedResiduals setSuppressedUnspecifiedResiduals) {
-                return renderHtmlForElement(setSuppressedUnspecifiedResiduals.getClass().getSimpleName(), setSuppressedUnspecifiedResiduals.getValue());
+                return renderHtmlForElement(setSuppressedUnspecifiedResiduals.getUiDisplayName(), setSuppressedUnspecifiedResiduals.getValue());
 
             }
 
             @Override
             public String visit(SetUnspecifiedResidualTitle unspecifiedResidualTitle) {
-                return renderHtmlForElement(unspecifiedResidualTitle.getClass().getSimpleName(), unspecifiedResidualTitle.getValue());
+                return renderHtmlForElement(unspecifiedResidualTitle.getUiDisplayName(), unspecifiedResidualTitle.getValue());
 
             }
 
             @Override
             public String getDefaultReturnValue() {
-                throw  new RuntimeException();
+                throw new RuntimeException();
             }
         };
     }
@@ -94,7 +94,7 @@ public class DiffElementRenderer<S extends Serializable> {
     private String renderSource(LinearizationDocumentChange source) {
         final StringBuilder stringBuilder = new StringBuilder();
 
-        var displayLabel = source.getLinearizationViewName()!=null?source.getLinearizationViewName():source.getLinearizationViewId();
+        var displayLabel = source.getLinearizationViewName() != null ? source.getLinearizationViewName() : source.getLinearizationViewId();
 
         renderPlainLink(source.getLinearizationViewIri(), displayLabel, stringBuilder);
 
@@ -115,7 +115,7 @@ public class DiffElementRenderer<S extends Serializable> {
         stringBuilder.append(elementName);
         stringBuilder.append(" - ");
         stringBuilder.append("<span class=\"ms-literal\">\"");
-        stringBuilder.append(elementValue);
+        stringBuilder.append(elementValue.toLowerCase());
         stringBuilder.append("\"</span>");
         stringBuilder.append("</span><br>");
 
