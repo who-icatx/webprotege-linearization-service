@@ -1,7 +1,7 @@
-package edu.stanford.protege.webprotege.liniarizationservice.services;
+package edu.stanford.protege.webprotege.linearizationservice.services;
 
-import edu.stanford.protege.webprotege.liniarizationservice.events.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.events.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +59,7 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
                     linearizationSpecifications.add(response);
                 }
         );
-        LinearizationResiduals residuals = new LinearizationResiduals(null,null,null, null);
+        LinearizationResiduals residuals = new LinearizationResiduals(null, null, null, null);
         for (LinearizationEvent event : linearizationResidualEvents) {
             residuals = (LinearizationResiduals) event.applyEvent(residuals);
         }

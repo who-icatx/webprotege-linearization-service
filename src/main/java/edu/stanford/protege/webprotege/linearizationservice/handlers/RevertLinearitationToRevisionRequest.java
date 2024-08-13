@@ -1,10 +1,10 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.common.*;
 import org.semanticweb.owlapi.model.IRI;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.handlers.RevertLinearitationToRevisionRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.handlers.RevertLinearitationToRevisionRequest.CHANNEL;
 
 @JsonTypeName(CHANNEL)
 public record RevertLinearitationToRevisionRequest(@JsonProperty("entityIri") IRI entityIri,

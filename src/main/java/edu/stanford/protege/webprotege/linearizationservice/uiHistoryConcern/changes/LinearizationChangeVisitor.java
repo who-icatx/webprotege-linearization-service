@@ -1,5 +1,7 @@
 package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes;
 
+import edu.stanford.protege.webprotege.linearizationservice.events.*;
+
 import javax.annotation.Nonnull;
 
 public interface LinearizationChangeVisitor<R> {

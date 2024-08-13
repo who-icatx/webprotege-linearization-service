@@ -1,7 +1,7 @@
-package edu.stanford.protege.webprotege.liniarizationservice.model;
+package edu.stanford.protege.webprotege.linearizationservice.model;
 
 import edu.stanford.protege.webprotege.common.UserId;
-import edu.stanford.protege.webprotege.liniarizationservice.events.LinearizationEvent;
+import edu.stanford.protege.webprotege.linearizationservice.events.LinearizationEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;

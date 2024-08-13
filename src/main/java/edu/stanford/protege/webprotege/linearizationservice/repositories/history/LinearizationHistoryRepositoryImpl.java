@@ -3,6 +3,7 @@ package edu.stanford.protege.webprotege.linearizationservice.repositories.histor
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.result.UpdateResult;
 import edu.stanford.protege.webprotege.common.ProjectId;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.services.ReadWriteLockService;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;

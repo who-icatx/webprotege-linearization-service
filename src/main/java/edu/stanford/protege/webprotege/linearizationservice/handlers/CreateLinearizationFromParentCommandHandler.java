@@ -1,12 +1,12 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.liniarizationservice.mappers.WhoficEntityLinearizationSpecificationMapper;
-import edu.stanford.protege.webprotege.liniarizationservice.services.*;
+import edu.stanford.protege.webprotege.linearizationservice.mappers.WhoficEntityLinearizationSpecificationMapper;
+import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.handlers.CreateLinearizationFromParentRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.handlers.CreateLinearizationFromParentRequest.CHANNEL;
 
 @WebProtegeHandler
 public class CreateLinearizationFromParentCommandHandler implements CommandHandler<CreateLinearizationFromParentRequest, CreateLinearizationFromParentResponse> {
@@ -15,7 +15,9 @@ public class CreateLinearizationFromParentCommandHandler implements CommandHandl
     private final LinearizationEventsProcessorService linearizationEventsProcessor;
     private final WhoficEntityLinearizationSpecificationMapper whoficSpecMapper;
 
-    public CreateLinearizationFromParentCommandHandler(LinearizationHistoryService linearizationHistoryService, LinearizationEventsProcessorService linearizationEventsProcessor, WhoficEntityLinearizationSpecificationMapper whoficSpecMapper) {
+    public CreateLinearizationFromParentCommandHandler(LinearizationHistoryService linearizationHistoryService,
+                                                       LinearizationEventsProcessorService linearizationEventsProcessor,
+                                                       WhoficEntityLinearizationSpecificationMapper whoficSpecMapper) {
         this.linearizationHistoryService = linearizationHistoryService;
         this.linearizationEventsProcessor = linearizationEventsProcessor;
         this.whoficSpecMapper = whoficSpecMapper;

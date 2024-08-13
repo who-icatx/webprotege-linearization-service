@@ -1,6 +1,6 @@
-package edu.stanford.protege.webprotege.liniarizationservice.mappers;
+package edu.stanford.protege.webprotege.linearizationservice.mappers;
 
-import edu.stanford.protege.webprotege.liniarizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Component;
 

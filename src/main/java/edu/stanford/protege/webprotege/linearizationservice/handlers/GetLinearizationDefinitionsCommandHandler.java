@@ -1,12 +1,12 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 
-import edu.stanford.protege.webprotege.liniarizationservice.repositories.definitions.LinearizationDefinitionRepository;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.handlers.LinearizationDefinitionRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.handlers.LinearizationDefinitionRequest.CHANNEL;
 
 @WebProtegeHandler
 public class GetLinearizationDefinitionsCommandHandler implements CommandHandler<LinearizationDefinitionRequest, LinearizationDefinitionResponse> {

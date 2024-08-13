@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import edu.stanford.protege.webprotege.change.OntologyDocumentId;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.liniarizationservice.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import org.bson.Document;
@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.model.EntityLinearizationHistory.LINEARIZATION_HISTORY_COLLECTION;
+import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.LINEARIZATION_HISTORY_COLLECTION;
 import static java.util.stream.StreamSupport.stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

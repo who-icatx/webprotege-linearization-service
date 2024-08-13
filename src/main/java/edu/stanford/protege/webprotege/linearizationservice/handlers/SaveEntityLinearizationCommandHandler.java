@@ -1,6 +1,6 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.liniarizationservice.services.*;
+import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;

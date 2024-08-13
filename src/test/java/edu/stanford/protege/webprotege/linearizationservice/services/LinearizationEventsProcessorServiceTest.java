@@ -1,9 +1,9 @@
-package edu.stanford.protege.webprotege.liniarizationservice.services;
+package edu.stanford.protege.webprotege.linearizationservice.services;
 
 
 import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.liniarizationservice.events.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.linearizationservice.events.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.text.MessageFormat;
 import java.util.logging.Logger;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
 import static org.junit.Assert.assertTrue;
 
 @ExtendWith(MockitoExtension.class)

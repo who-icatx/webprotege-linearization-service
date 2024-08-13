@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.liniarizationservice.model;
+package edu.stanford.protege.webprotege.linearizationservice.model;
 
 import com.fasterxml.jackson.annotation.*;
 import org.springframework.data.mongodb.core.mapping.*;
@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.*;
 import java.util.*;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
-import static edu.stanford.protege.webprotege.liniarizationservice.model.EntityLinearizationHistory.LINEARIZATION_HISTORY_COLLECTION;
+import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.LINEARIZATION_HISTORY_COLLECTION;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)

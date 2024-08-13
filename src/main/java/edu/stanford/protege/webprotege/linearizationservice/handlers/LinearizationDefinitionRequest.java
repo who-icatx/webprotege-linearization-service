@@ -1,9 +1,9 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import edu.stanford.protege.webprotege.common.Request;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.handlers.LinearizationDefinitionRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.handlers.LinearizationDefinitionRequest.CHANNEL;
 
 @JsonTypeName(CHANNEL)
 public record LinearizationDefinitionRequest() implements Request<LinearizationDefinitionResponse> {

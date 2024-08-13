@@ -1,6 +1,6 @@
-package edu.stanford.protege.webprotege.liniarizationservice.services;
+package edu.stanford.protege.webprotege.linearizationservice.services;
 
-import edu.stanford.protege.webprotege.liniarizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 
 import java.util.Set;
 

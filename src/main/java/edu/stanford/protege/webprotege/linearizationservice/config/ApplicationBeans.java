@@ -1,12 +1,12 @@
-package edu.stanford.protege.webprotege.liniarizationservice.config;
+package edu.stanford.protege.webprotege.linearizationservice.config;
 
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import edu.stanford.protege.webprotege.common.UserId;
-import edu.stanford.protege.webprotege.liniarizationservice.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.ThreeStateBoolean;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
+import edu.stanford.protege.webprotege.linearizationservice.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.context.annotation.*;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;

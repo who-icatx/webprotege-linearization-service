@@ -1,10 +1,10 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.handlers.SaveEntityLinearizationRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.handlers.SaveEntityLinearizationRequest.CHANNEL;
 
 @JsonTypeName(CHANNEL)
 public record SaveEntityLinearizationRequest(

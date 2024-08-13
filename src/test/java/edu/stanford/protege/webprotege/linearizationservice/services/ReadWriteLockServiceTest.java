@@ -1,6 +1,6 @@
-package edu.stanford.protege.webprotege.liniarizationservice.services;
+package edu.stanford.protege.webprotege.linearizationservice.services;
 
-import edu.stanford.protege.webprotege.liniarizationservice.config.ReadWriteLockConfig;
+import edu.stanford.protege.webprotege.linearizationservice.config.ReadWriteLockConfig;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.*;

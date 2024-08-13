@@ -1,13 +1,13 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.liniarizationservice.services.*;
+import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.util.stream.Collectors;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.handlers.RevertLinearitationToRevisionRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.handlers.RevertLinearitationToRevisionRequest.CHANNEL;
 
 @WebProtegeHandler
 public class RevertLinearitationToRevisionCommandHandler implements CommandHandler<RevertLinearitationToRevisionRequest, RevertLinearitationToRevisionResponse> {

@@ -1,6 +1,6 @@
-package edu.stanford.protege.webprotege.liniarizationservice.model;
+package edu.stanford.protege.webprotege.linearizationservice.model;
 
-import edu.stanford.protege.webprotege.liniarizationservice.events.LinearizationSpecificationEvent;
+import edu.stanford.protege.webprotege.linearizationservice.events.LinearizationSpecificationEvent;
 
 import java.util.List;
 

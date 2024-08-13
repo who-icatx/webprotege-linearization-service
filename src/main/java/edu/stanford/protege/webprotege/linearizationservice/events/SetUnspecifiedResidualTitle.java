@@ -1,8 +1,8 @@
-package edu.stanford.protege.webprotege.liniarizationservice.events;
+package edu.stanford.protege.webprotege.linearizationservice.events;
 
 import com.fasterxml.jackson.annotation.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.LinearizationResiduals;
-import edu.stanford.protege.webprotege.liniarizationservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
+import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationResiduals;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import static org.apache.commons.lang3.ObjectUtils.notEqual;

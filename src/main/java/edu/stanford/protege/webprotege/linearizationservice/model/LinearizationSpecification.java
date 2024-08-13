@@ -1,8 +1,8 @@
-package edu.stanford.protege.webprotege.liniarizationservice.model;
+package edu.stanford.protege.webprotege.linearizationservice.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import edu.stanford.protege.webprotege.liniarizationservice.events.EventProcesableParameter;
+import edu.stanford.protege.webprotege.linearizationservice.events.EventProcesableParameter;
 import org.semanticweb.owlapi.model.IRI;
 
 import javax.annotation.Nonnull;

@@ -1,7 +1,7 @@
-package edu.stanford.protege.webprotege.liniarizationservice.mappers;
+package edu.stanford.protege.webprotege.linearizationservice.mappers;
 
-import edu.stanford.protege.webprotege.liniarizationservice.events.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.events.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -9,7 +9,7 @@ import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.RandomHelper.*;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)

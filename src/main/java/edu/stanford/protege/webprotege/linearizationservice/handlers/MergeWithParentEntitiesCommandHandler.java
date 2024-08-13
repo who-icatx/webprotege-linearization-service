@@ -1,14 +1,14 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.liniarizationservice.model.WhoficEntityLinearizationSpecification;
-import edu.stanford.protege.webprotege.liniarizationservice.services.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.handlers.MergeWithParentEntitiesRequest.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.handlers.MergeWithParentEntitiesRequest.CHANNEL;
 
 @WebProtegeHandler
 public class MergeWithParentEntitiesCommandHandler implements CommandHandler<MergeWithParentEntitiesRequest, MergeWithParentEntitiesResponse> {

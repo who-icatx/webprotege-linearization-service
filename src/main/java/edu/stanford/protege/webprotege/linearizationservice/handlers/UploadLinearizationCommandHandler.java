@@ -1,9 +1,9 @@
-package edu.stanford.protege.webprotege.liniarizationservice.handlers;
+package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.liniarizationservice.StreamUtils;
-import edu.stanford.protege.webprotege.liniarizationservice.model.WhoficEntityLinearizationSpecification;
-import edu.stanford.protege.webprotege.liniarizationservice.repositories.document.LinearizationDocumentRepository;
-import edu.stanford.protege.webprotege.liniarizationservice.services.*;
+import edu.stanford.protege.webprotege.linearizationservice.StreamUtils;
+import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.document.LinearizationDocumentRepository;
+import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;

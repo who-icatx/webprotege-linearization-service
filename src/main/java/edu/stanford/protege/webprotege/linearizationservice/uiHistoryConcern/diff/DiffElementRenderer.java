@@ -1,5 +1,6 @@
 package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff;
 
+import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.*;
 import org.jetbrains.annotations.NotNull;
 

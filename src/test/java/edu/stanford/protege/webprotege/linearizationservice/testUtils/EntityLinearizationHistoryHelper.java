@@ -1,10 +1,10 @@
-package edu.stanford.protege.webprotege.liniarizationservice.testUtils;
+package edu.stanford.protege.webprotege.linearizationservice.testUtils;
 
 import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.liniarizationservice.model.EntityLinearizationHistory;
+import edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.LinearizationRevisionHelper.getLinearizationRevisions;
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.RandomHelper.getRandomIri;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationRevisionHelper.getLinearizationRevisions;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.getRandomIri;
 
 public class EntityLinearizationHistoryHelper {
 

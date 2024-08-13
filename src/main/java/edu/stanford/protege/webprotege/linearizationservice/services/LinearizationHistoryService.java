@@ -1,7 +1,7 @@
-package edu.stanford.protege.webprotege.liniarizationservice.services;
+package edu.stanford.protege.webprotege.linearizationservice.services;
 
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.liniarizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;

@@ -1,13 +1,13 @@
-package edu.stanford.protege.webprotege.liniarizationservice.testUtils;
+package edu.stanford.protege.webprotege.linearizationservice.testUtils;
 
 import edu.stanford.protege.webprotege.common.UserId;
-import edu.stanford.protege.webprotege.liniarizationservice.model.LinearizationRevision;
+import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationRevision;
 
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.LinearizationEventHelper.getRandomLinearizationEvents;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationEventHelper.getRandomLinearizationEvents;
 
 public class LinearizationRevisionHelper {
 

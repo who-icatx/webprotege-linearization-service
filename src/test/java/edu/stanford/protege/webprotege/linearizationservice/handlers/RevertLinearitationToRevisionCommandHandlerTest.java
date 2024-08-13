@@ -1,8 +1,9 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -14,7 +15,7 @@ import java.util.*;
 
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationEventHelper.getRandomLinearizationEvents;
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

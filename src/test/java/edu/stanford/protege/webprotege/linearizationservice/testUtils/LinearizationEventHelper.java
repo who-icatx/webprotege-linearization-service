@@ -1,12 +1,12 @@
-package edu.stanford.protege.webprotege.liniarizationservice.testUtils;
+package edu.stanford.protege.webprotege.linearizationservice.testUtils;
 
-import edu.stanford.protege.webprotege.liniarizationservice.events.*;
+import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.LinearizationViewIriHelper.getLinearizationViewIris;
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.RandomHelper.*;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper.getLinearizationViewIris;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.*;
 
 public class LinearizationEventHelper {
 

@@ -1,7 +1,7 @@
-package edu.stanford.protege.webprotege.liniarizationservice.repositories.history;
+package edu.stanford.protege.webprotege.linearizationservice.repositories.history;
 
 import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.liniarizationservice.*;
+import edu.stanford.protege.webprotege.linearizationservice.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +10,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.LinearizationRevisionHelper.getLinearizationRevision;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistory;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationRevisionHelper.getLinearizationRevision;
 import static org.junit.jupiter.api.Assertions.*;
 
 

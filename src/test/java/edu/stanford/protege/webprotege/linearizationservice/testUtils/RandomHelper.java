@@ -1,11 +1,11 @@
-package edu.stanford.protege.webprotege.liniarizationservice.testUtils;
+package edu.stanford.protege.webprotege.linearizationservice.testUtils;
 
-import edu.stanford.protege.webprotege.liniarizationservice.model.ThreeStateBoolean;
+import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;
 
-import static edu.stanford.protege.webprotege.liniarizationservice.testUtils.LinearizationViewIriHelper.getLinearizationViewIris;
+import static edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper.getLinearizationViewIris;
 
 public class RandomHelper {
     private static final Random RANDOM = new Random();

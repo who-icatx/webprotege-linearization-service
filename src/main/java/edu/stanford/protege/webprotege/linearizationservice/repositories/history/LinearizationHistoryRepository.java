@@ -1,8 +1,8 @@
-package edu.stanford.protege.webprotege.liniarizationservice.repositories.history;
+package edu.stanford.protege.webprotege.linearizationservice.repositories.history;
 
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.ProjectId;
-import edu.stanford.protege.webprotege.liniarizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.bson.Document;
 
 import java.util.*;

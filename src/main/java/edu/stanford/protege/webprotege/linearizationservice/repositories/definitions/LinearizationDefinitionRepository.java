@@ -1,7 +1,7 @@
-package edu.stanford.protege.webprotege.liniarizationservice.repositories.definitions;
+package edu.stanford.protege.webprotege.linearizationservice.repositories.definitions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.stanford.protege.webprotege.liniarizationservice.model.LinearizationDefinition;
+import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationDefinition;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 

@@ -1,9 +1,9 @@
-package edu.stanford.protege.webprotege.liniarizationservice.repositories.document;
+package edu.stanford.protege.webprotege.linearizationservice.repositories.document;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
-import edu.stanford.protege.webprotege.liniarizationservice.MinioLinearizationDocumentLoader;
-import edu.stanford.protege.webprotege.liniarizationservice.model.WhoficEntityLinearizationSpecification;
+import edu.stanford.protege.webprotege.linearizationservice.MinioLinearizationDocumentLoader;
+import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 import org.slf4j.*;
 import org.springframework.stereotype.Service;
 
