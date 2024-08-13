@@ -11,7 +11,7 @@ public class SetCodingNote extends LinearizationSpecificationEvent {
 
     private final String value;
 
-    public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetCodingNote";
+    public final static String DISCRIMINATOR = "SetCodingNote";
 
     @JsonCreator
     public SetCodingNote(@JsonProperty("value") String value, @JsonProperty("linearizationView") String linearizationView) {
@@ -39,7 +39,7 @@ public class SetCodingNote extends LinearizationSpecificationEvent {
 
     @Override
     public String getType() {
-        return SetCodingNote.class.getName();
+        return DISCRIMINATOR;
     }
 
     @JsonProperty("value")

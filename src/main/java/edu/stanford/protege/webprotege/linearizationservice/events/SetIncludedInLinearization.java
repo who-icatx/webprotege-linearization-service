@@ -9,7 +9,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetIncludedInLinearization extends LinearizationSpecificationEvent {
 
-    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetIncludedInLinearization";
+    public static final String DISCRIMINATOR = "SetIncludedInLinearization";
 
     private final ThreeStateBoolean value;
 
@@ -39,7 +39,7 @@ public class SetIncludedInLinearization extends LinearizationSpecificationEvent 
 
     @Override
     public String getType() {
-        return SetIncludedInLinearization.class.getName();
+        return DISCRIMINATOR;
     }
 
     @JsonProperty("value")

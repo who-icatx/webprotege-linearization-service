@@ -13,15 +13,15 @@ import javax.annotation.Nonnull;
         use = JsonTypeInfo.Id.NAME
 )
 @JsonSubTypes(value = {
-        @JsonSubTypes.Type(value = SetAuxiliaryAxisChild.class, name = SetAuxiliaryAxisChild.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetCodingNote.class, name = SetCodingNote.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetGrouping.class, name = SetGrouping.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetIncludedInLinearization.class, name = SetIncludedInLinearization.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetLinearizationParent.class, name = SetLinearizationParent.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetSuppressedOtherSpecifiedResidual.class, name = SetSuppressedOtherSpecifiedResidual.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetSuppressedUnspecifiedResiduals.class, name = SetSuppressedUnspecifiedResiduals.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetOtherSpecifiedResidualTitle.class, name = SetOtherSpecifiedResidualTitle.CLASS_TYPE),
-        @JsonSubTypes.Type(value = SetUnspecifiedResidualTitle.class, name = SetUnspecifiedResidualTitle.CLASS_TYPE),
+        @JsonSubTypes.Type(value = SetAuxiliaryAxisChild.class, name = SetAuxiliaryAxisChild.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetCodingNote.class, name = SetCodingNote.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetGrouping.class, name = SetGrouping.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetIncludedInLinearization.class, name = SetIncludedInLinearization.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetLinearizationParent.class, name = SetLinearizationParent.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetSuppressedOtherSpecifiedResidual.class, name = SetSuppressedOtherSpecifiedResidual.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetSuppressedUnspecifiedResiduals.class, name = SetSuppressedUnspecifiedResiduals.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetOtherSpecifiedResidualTitle.class, name = SetOtherSpecifiedResidualTitle.DISCRIMINATOR),
+        @JsonSubTypes.Type(value = SetUnspecifiedResidualTitle.class, name = SetUnspecifiedResidualTitle.DISCRIMINATOR),
 })
 
 public interface LinearizationEvent {

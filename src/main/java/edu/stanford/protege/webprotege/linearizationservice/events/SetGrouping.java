@@ -9,7 +9,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetGrouping extends LinearizationSpecificationEvent {
 
-    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetGrouping";
+    public static final String DISCRIMINATOR = "SetGrouping";
 
     private final ThreeStateBoolean value;
 
@@ -39,7 +39,7 @@ public class SetGrouping extends LinearizationSpecificationEvent {
 
     @Override
     public String getType() {
-        return SetGrouping.class.getName();
+        return DISCRIMINATOR;
     }
 
     public String getValue() {

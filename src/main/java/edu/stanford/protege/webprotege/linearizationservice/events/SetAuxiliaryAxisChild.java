@@ -11,7 +11,7 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
 
     private final ThreeStateBoolean value;
 
-    public final static String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetAuxiliaryAxisChild";
+    public final static String DISCRIMINATOR = "SetAuxiliaryAxisChild";
 
     @JsonCreator
     public SetAuxiliaryAxisChild(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
@@ -40,7 +40,7 @@ public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
 
     @Override
     public String getType() {
-        return SetAuxiliaryAxisChild.class.getName();
+        return DISCRIMINATOR;
     }
 
     public static String getName() {

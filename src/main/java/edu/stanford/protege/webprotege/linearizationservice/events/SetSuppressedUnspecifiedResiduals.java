@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetSuppressedUnspecifiedResiduals implements LinearizationEvent {
 
-    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetSuppressedUnspecifiedResiduals";
+    public static final String DISCRIMINATOR = "SetSuppressedUnspecifiedResiduals";
     private final ThreeStateBoolean value;
 
     @JsonCreator
@@ -21,7 +21,7 @@ public class SetSuppressedUnspecifiedResiduals implements LinearizationEvent {
 
     @Override
     public String getType() {
-        return SetSuppressedUnspecifiedResiduals.class.getName();
+        return DISCRIMINATOR;
     }
 
     @Override

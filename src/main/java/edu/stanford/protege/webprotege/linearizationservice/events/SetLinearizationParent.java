@@ -12,7 +12,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
-    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetLinearizationParent";
+    public static final String DISCRIMINATOR = "SetLinearizationParent";
     private final String value;
 
     @JsonCreator
@@ -41,7 +41,7 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
 
     @Override
     public String getType() {
-        return SetLinearizationParent.class.getName();
+        return DISCRIMINATOR;
     }
 
     @JsonProperty("value")

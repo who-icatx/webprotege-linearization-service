@@ -9,7 +9,7 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetOtherSpecifiedResidualTitle implements LinearizationEvent {
 
-    public static final String CLASS_TYPE = "edu.stanford.protege.webprotege.initialrevisionhistoryservice.events.SetOtherSpecifiedResidualTitle";
+    public static final String DISCRIMINATOR = "SetOtherSpecifiedResidualTitle";
     private final String value;
 
     @JsonCreator
@@ -19,7 +19,7 @@ public class SetOtherSpecifiedResidualTitle implements LinearizationEvent {
 
     @Override
     public String getType() {
-        return SetOtherSpecifiedResidualTitle.class.getName();
+        return DISCRIMINATOR;
     }
 
     @Override
