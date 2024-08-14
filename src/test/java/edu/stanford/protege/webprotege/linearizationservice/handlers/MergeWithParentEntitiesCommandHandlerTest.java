@@ -1,11 +1,11 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.*;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
-import edu.stanford.protege.webprotege.linearizationservice.mappers.*;
+import edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
-import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.semanticweb.owlapi.model.IRI;

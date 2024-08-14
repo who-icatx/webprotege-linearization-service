@@ -59,7 +59,7 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
                     linearizationSpecifications.add(response);
                 }
         );
-        LinearizationResiduals residuals = new LinearizationResiduals(null,null,null, null);
+        LinearizationResiduals residuals = new LinearizationResiduals(null, null, null, null);
         for (LinearizationEvent event : linearizationResidualEvents) {
             residuals = (LinearizationResiduals) event.applyEvent(residuals);
         }

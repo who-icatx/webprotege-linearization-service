@@ -3,6 +3,8 @@ package edu.stanford.protege.webprotege.linearizationservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationSpecification;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
+import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
 
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
@@ -47,4 +49,8 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
         return this.value;
     }
 
+    @Override
+    public <R> R accept(@NotNull LinearizationChangeVisitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -1,8 +1,7 @@
 package edu.stanford.protege.webprotege.linearizationservice;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
 
 import java.io.IOException;

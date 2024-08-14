@@ -16,4 +16,6 @@ public interface LinearizationHistoryService {
                      ProjectId projectId, UserId userId);
 
     Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId);
+
+    List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId);
 }

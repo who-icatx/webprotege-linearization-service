@@ -56,7 +56,7 @@ public class LinearizationHistoryProcessorServiceImplTest {
     @Test
     void GIVEN_noParentEntityHistory_WHEN_mergeLinearizationViewsFromParentsAndGetDefaultSpecIsCalled_THEN_returnEmptyOptional() {
         IRI currenteEtityIri = IRI.create(getRandomIri());
-        Set<IRI> parentEntityIris = Set.of(IRI.create(getRandomIri()),IRI.create(getRandomIri()));
+        Set<IRI> parentEntityIris = Set.of(IRI.create(getRandomIri()), IRI.create(getRandomIri()));
         ProjectId projectId = ProjectId.generate();
 
         when(linearizationHistoryService.getExistingHistoryOrderedByRevision(any(), any()))
