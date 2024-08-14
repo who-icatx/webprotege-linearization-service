@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.*;
+import java.util.stream.Stream;
 
 import static edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper.groupEventsByViews;
 
@@ -108,38 +108,43 @@ public class ProjectChangesManager {
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
         List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProject(projectId);
 
-        var entityIris = fullHistory.stream().flatMap(history -> Stream.of(history.getWhoficEntityIri())).collect(Collectors.toSet());
-        GetRenderedOwlEntitiesResult renderedEntities = null;
-        try {
-            renderedEntities = entityRendererManager.getRenderedEntities(entityIris, projectId, new ExecutionContext()).get(5000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            logger.error(e.getMessage());
-        }
-        final var renderedEntitiesResult = renderedEntities;
-        fullHistory.stream()
+        List<String> entityIrisPaginated = new ArrayList<>();
+        var paginatedHistory = fullHistory.stream()
                 .flatMap(history ->
                         history.getLinearizationRevisions()
                                 .stream()
-                                .map(revision -> {
-                                            if (renderedEntitiesResult == null || renderedEntitiesResult.renderedEntities() == null) {
-                                                return new LinearizationRevisionWithEntity(revision, history.getWhoficEntityIri());
-                                            }
-                                            var entityTextOptional = renderedEntitiesResult.renderedEntities()
-                                                    .stream()
-                                                    .filter(entityNode -> entityNode.getEntity().getIRI().toString().equals(history.getWhoficEntityIri()))
-                                                    .map(EntityNode::getBrowserText)
-                                                    .findFirst();
-                                            if (entityTextOptional.isEmpty()) {
-                                                return new LinearizationRevisionWithEntity(revision, history.getWhoficEntityIri());
-                                            }
-                                            return new LinearizationRevisionWithEntity(revision, entityTextOptional.get());
-                                        }
-                                )
+                                .map(revision -> new LinearizationRevisionWithEntity(revision, history.getWhoficEntityIri()))
                 )
                 .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision).reversed())
                 .skip(pageRequest.getSkip())
                 .limit(pageRequest.getPageSize())
-                .forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityName(), changes, linearizationDefinitions));
+                .peek(revisionWithEntity -> entityIrisPaginated.add(revisionWithEntity.getWhoficEntityName()))
+                .toList();
+
+        //Make request just for the paginated entity changes
+        GetRenderedOwlEntitiesResult renderedEntities = null;
+        try {
+            renderedEntities = entityRendererManager.getRenderedEntities(new HashSet<>(entityIrisPaginated), projectId, new ExecutionContext()).get(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            logger.error(e.getMessage());
+        }
+        final var renderedEntitiesResult = renderedEntities;
+
+        //Here we add the rendered entity name
+        paginatedHistory.stream().flatMap(revisionWithEntity -> {
+            if (renderedEntitiesResult == null || renderedEntitiesResult.renderedEntities() == null) {
+                return Stream.of(revisionWithEntity);
+            }
+            var entityTextOptional = renderedEntitiesResult.renderedEntities()
+                    .stream()
+                    .filter(entityNode -> entityNode.getEntity().getIRI().toString().equals(revisionWithEntity.getWhoficEntityName()))
+                    .map(EntityNode::getBrowserText)
+                    .findFirst();
+            if (entityTextOptional.isEmpty()) {
+                return Stream.of(revisionWithEntity);
+            }
+            return Stream.of(new LinearizationRevisionWithEntity(revisionWithEntity.getRevision(), entityTextOptional.get()));
+        }).forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityName(), changes, linearizationDefinitions));
 
         return changes.build();
     }
