@@ -96,7 +96,9 @@ public class DiffElementRenderer<S extends Serializable> {
 
         var displayLabel = source.getLinearizationViewName() != null ? source.getLinearizationViewName() : source.getLinearizationViewId();
 
-        renderPlainLink(source.getLinearizationViewIri(), displayLabel, stringBuilder);
+        stringBuilder.append("<span class=\"ms-quantifier-kw\">");
+        stringBuilder.append(displayLabel);
+        stringBuilder.append("</span>");
 
         return stringBuilder.toString();
     }
@@ -121,15 +123,5 @@ public class DiffElementRenderer<S extends Serializable> {
         stringBuilder.append("</span>;&nbsp;");
 
         return stringBuilder.toString();
-    }
-
-    private void renderPlainLink(String link, String display, StringBuilder builder) {
-        builder.append("<a target=\"_blank\" href=\"");
-        builder.append(link);
-        builder.append("\">");
-        builder.append("<span class=\"iri\">");
-        builder.append(display);
-        builder.append("</span>");
-        builder.append("</a>");
     }
 }
