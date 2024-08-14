@@ -89,7 +89,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
                                 linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification, oldSpec));
 
-                                if(!linearizationEvents.isEmpty()) {
+                                if (!linearizationEvents.isEmpty()) {
                                     var newRevision = LinearizationRevision.create(userId, linearizationEvents);
 
                                     linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
@@ -115,5 +115,10 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                 saveMultipleEntityLinearizationHistories(historiesToBeSaved);
             }
         };
+    }
+
+    @Override
+    public List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId) {
+        return readWriteLock.executeWriteLock(() -> linearizationHistoryRepository.getAllEntityHistoriesForProjectId(projectId));
     }
 }

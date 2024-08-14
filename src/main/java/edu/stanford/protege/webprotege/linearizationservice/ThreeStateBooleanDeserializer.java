@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
+import com.fasterxml.jackson.databind.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
 
 import java.io.IOException;
 

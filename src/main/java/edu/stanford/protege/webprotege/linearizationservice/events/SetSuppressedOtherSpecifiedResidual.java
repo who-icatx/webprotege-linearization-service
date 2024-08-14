@@ -3,6 +3,9 @@ package edu.stanford.protege.webprotege.linearizationservice.events;
 
 import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
+import org.jetbrains.annotations.NotNull;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
@@ -39,5 +42,10 @@ public class SetSuppressedOtherSpecifiedResidual implements LinearizationEvent {
 
     public String getValue() {
         return this.value.name();
+    }
+
+    @Override
+    public <R> R accept(@NotNull LinearizationChangeVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

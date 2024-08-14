@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationResiduals;
 import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
+import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationResiduals;
+import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
+import org.jetbrains.annotations.NotNull;
 
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
@@ -40,6 +44,11 @@ public class SetSuppressedUnspecifiedResiduals implements LinearizationEvent {
 
     public String getValue() {
         return this.value.name();
+    }
+
+    @Override
+    public <R> R accept(@NotNull LinearizationChangeVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 
 }

@@ -15,7 +15,9 @@ public class CreateLinearizationFromParentCommandHandler implements CommandHandl
     private final LinearizationEventsProcessorService linearizationEventsProcessor;
     private final WhoficEntityLinearizationSpecificationMapper whoficSpecMapper;
 
-    public CreateLinearizationFromParentCommandHandler(LinearizationHistoryService linearizationHistoryService, LinearizationEventsProcessorService linearizationEventsProcessor, WhoficEntityLinearizationSpecificationMapper whoficSpecMapper) {
+    public CreateLinearizationFromParentCommandHandler(LinearizationHistoryService linearizationHistoryService,
+                                                       LinearizationEventsProcessorService linearizationEventsProcessor,
+                                                       WhoficEntityLinearizationSpecificationMapper whoficSpecMapper) {
         this.linearizationHistoryService = linearizationHistoryService;
         this.linearizationEventsProcessor = linearizationEventsProcessor;
         this.whoficSpecMapper = whoficSpecMapper;

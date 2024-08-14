@@ -7,6 +7,8 @@ import edu.stanford.protege.webprotege.common.UserId;
 import edu.stanford.protege.webprotege.linearizationservice.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
+import edu.stanford.protege.webprotege.linearizationservice.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.context.annotation.*;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;

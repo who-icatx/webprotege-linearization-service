@@ -3,6 +3,7 @@ package edu.stanford.protege.webprotege.linearizationservice.handlers;
 import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import edu.stanford.protege.webprotege.ipc.*;
+import edu.stanford.protege.webprotege.linearizationservice.services.*;
 import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
 import reactor.core.publisher.Mono;
