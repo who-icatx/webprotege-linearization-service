@@ -1,10 +1,12 @@
 package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff;
 
+import edu.stanford.protege.webprotege.entity.EntityNode;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Matthew Horridge
@@ -15,59 +17,60 @@ public class DiffElementRenderer<S extends Serializable> {
 
     private final LinearizationChangeVisitor<String> visitor;
 
-    public DiffElementRenderer() {
+    public DiffElementRenderer(List<EntityNode> renderedEntities) {
         visitor = new LinearizationChangeVisitor<>() {
             @Override
             public String visit(@NotNull SetAuxiliaryAxisChild setAuxiliaryAxisChild) {
-                return renderHtmlForElement(setAuxiliaryAxisChild.getUiDisplayName(), setAuxiliaryAxisChild.getValue());
+                return renderHtmlForElement(setAuxiliaryAxisChild.getUiDisplayName(), setAuxiliaryAxisChild.getValue().toLowerCase());
             }
 
             @Override
             public String visit(SetCodingNote setCodingNote) {
                 return renderHtmlForElement(setCodingNote.getUiDisplayName(), setCodingNote.getValue());
-
             }
 
             @Override
             public String visit(SetGrouping setGrouping) {
-                return renderHtmlForElement(setGrouping.getUiDisplayName(), setGrouping.getValue());
-
+                return renderHtmlForElement(setGrouping.getUiDisplayName(), setGrouping.getValue().toLowerCase());
             }
 
             @Override
             public String visit(SetIncludedInLinearization setIncludedInLinearization) {
-                return renderHtmlForElement(setIncludedInLinearization.getUiDisplayName(), setIncludedInLinearization.getValue());
-
+                return renderHtmlForElement(setIncludedInLinearization.getUiDisplayName(), setIncludedInLinearization.getValue().toLowerCase());
             }
 
             @Override
             public String visit(SetLinearizationParent setLinearizationParent) {
-                return renderHtmlForElement(setLinearizationParent.getUiDisplayName(), setLinearizationParent.getValue());
+                if (renderedEntities == null) {
+                    return renderHtmlForElement(setLinearizationParent.getUiDisplayName(), setLinearizationParent.getValue());
+                }
+                var renderedLinParentOptional = renderedEntities.stream()
+                        .filter(renderedEntity -> renderedEntity.getEntity().getIRI().toString().equals(setLinearizationParent.getValue()))
+                        .findFirst();
 
+                return renderedLinParentOptional
+                        .map(entityNode -> renderHtmlForElement(setLinearizationParent.getUiDisplayName(), entityNode.getBrowserText()))
+                        .orElseGet(() -> renderHtmlForElement(setLinearizationParent.getUiDisplayName(), setLinearizationParent.getValue()));
             }
 
             @Override
             public String visit(SetOtherSpecifiedResidualTitle setOtherSpecifiedResidualTitle) {
                 return renderHtmlForElement(setOtherSpecifiedResidualTitle.getUiDisplayName(), setOtherSpecifiedResidualTitle.getValue());
-
             }
 
             @Override
             public String visit(SetSuppressedOtherSpecifiedResidual setSuppressedOtherSpecifiedResidual) {
-                return renderHtmlForElement(setSuppressedOtherSpecifiedResidual.getUiDisplayName(), setSuppressedOtherSpecifiedResidual.getValue());
-
+                return renderHtmlForElement(setSuppressedOtherSpecifiedResidual.getUiDisplayName(), setSuppressedOtherSpecifiedResidual.getValue().toLowerCase());
             }
 
             @Override
             public String visit(SetSuppressedUnspecifiedResiduals setSuppressedUnspecifiedResiduals) {
-                return renderHtmlForElement(setSuppressedUnspecifiedResiduals.getUiDisplayName(), setSuppressedUnspecifiedResiduals.getValue());
-
+                return renderHtmlForElement(setSuppressedUnspecifiedResiduals.getUiDisplayName(), setSuppressedUnspecifiedResiduals.getValue().toLowerCase());
             }
 
             @Override
             public String visit(SetUnspecifiedResidualTitle unspecifiedResidualTitle) {
                 return renderHtmlForElement(unspecifiedResidualTitle.getUiDisplayName(), unspecifiedResidualTitle.getValue());
-
             }
 
             @Override
@@ -118,7 +121,7 @@ public class DiffElementRenderer<S extends Serializable> {
         stringBuilder.append(elementName);
         stringBuilder.append(" value to ");
         stringBuilder.append("<span class=\"ms-literal\">\"");
-        stringBuilder.append(elementValue.toLowerCase());
+        stringBuilder.append(elementValue);
         stringBuilder.append("\"</span>");
         stringBuilder.append("</span>;&nbsp;");
 
