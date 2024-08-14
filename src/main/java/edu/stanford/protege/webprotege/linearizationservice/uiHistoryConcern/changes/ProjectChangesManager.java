@@ -3,12 +3,12 @@ package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.ch
 import com.google.common.collect.ImmutableList;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.entity.EntityNode;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.linearizationservice.services.LinearizationHistoryService;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff.*;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.nodeRendering.*;
-import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.renderer.GetEntityHtmlRenderingResult;
 import edu.stanford.protege.webprotege.revision.RevisionNumber;
 import org.semanticweb.owlapi.model.*;
@@ -63,7 +63,7 @@ public class ProjectChangesManager {
             ImmutableList<ProjectChange> projectChanges = getChangesForFullProject(projectId, pageRequest, linearizationDefinitions);
 
             int pageCount = (projectChanges.size() / pageRequest.getPageSize()) + 1;
-            if(pageRequest.getPageNumber()>pageCount){
+            if (pageRequest.getPageNumber() > pageCount) {
                 return Page.emptyPage();
             }
             return Page.create(pageRequest.getPageNumber(),
@@ -159,6 +159,9 @@ public class ProjectChangesManager {
         totalChanges = changesByView.size();
 
         List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements = revision2DiffElementsTranslator.getDiffElementsFromRevision(changesByView, linearizationDefinitions);
+        diffElements.sort(
+                Comparator.comparing(diffElement -> diffElement.getSourceDocument().getSortingCode())
+        );
         List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(diffElements);
         int pageElements = renderedDiffElements.size();
         int pageCount;

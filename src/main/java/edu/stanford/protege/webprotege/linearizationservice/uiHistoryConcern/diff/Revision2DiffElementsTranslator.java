@@ -32,9 +32,9 @@ public class Revision2DiffElementsTranslator {
         var optionalDefView = linearizationDefinitions.stream().filter(definition -> definition.getWhoficEntityIri().equals(viewName)).findFirst();
         if (optionalDefView.isPresent()) {
             var defView = optionalDefView.get();
-            sourceDocument = LinearizationDocumentChange.create(defView.getWhoficEntityIri(), defView.getDisplayLabel(), defView.getId());
+            sourceDocument = LinearizationDocumentChange.create(defView.getWhoficEntityIri(), defView.getDisplayLabel(), defView.getId(), defView.getSortingCode());
         } else {
-            sourceDocument = LinearizationDocumentChange.create(null, "Residuals", null);
+            sourceDocument = LinearizationDocumentChange.create(null, "Residuals", null, "ZZZZZZZZZZ");
         }
         return new DiffElement<>(
                 getDiffOperation(),
