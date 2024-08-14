@@ -99,7 +99,7 @@ public class LinearizationEventMapper {
     }
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
         if ((specification.getLinearizationParent() != null && !specification.getLinearizationParent().isEmpty())
-                && (oldSpecification == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
+                && (oldSpecification == null || oldSpecification.getLinearizationParent() == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
             events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
     }
