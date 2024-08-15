@@ -9,7 +9,6 @@ import edu.stanford.protege.webprotege.linearizationservice.repositories.definit
 import edu.stanford.protege.webprotege.linearizationservice.services.LinearizationHistoryService;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff.*;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.nodeRendering.*;
-import edu.stanford.protege.webprotege.renderer.GetEntityHtmlRenderingResult;
 import edu.stanford.protege.webprotege.revision.RevisionNumber;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.*;
@@ -78,28 +77,23 @@ public class ProjectChangesManager {
         Optional<EntityLinearizationHistory> optionalHistory = historyService.getExistingHistoryOrderedByRevision(iri, projectId);
         optionalHistory.ifPresent(history -> revisions.addAll(history.getLinearizationRevisions()));
 
-        GetEntityHtmlRenderingResult renderedEntity = null;
+        GetRenderedOwlEntitiesResult renderedEntities = null;
         try {
-            renderedEntity = entityRendererManager.getRenderedEntity(iri, projectId, new ExecutionContext()).get(5000, TimeUnit.MILLISECONDS);
+            renderedEntities = entityRendererManager.getRenderedEntities(Set.of(iri.toString()), projectId, new ExecutionContext()).get(5000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             logger.error(e.getMessage());
         }
-        String entityName = iri.toString();
-        if (renderedEntity != null &&
-                !renderedEntity.rendering().trim().equals("")) {
-            entityName = renderedEntity.rendering();
-        }
 
-        final var finalEntityName = entityName;
         // We need to scan revisions to find the ones containing a particular subject
         // We ignore the page request here.
         // This needs reworking really, but the number of changes per entity is usually small
         // so this works for now.
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
+        List<EntityNode> finalRenderedEntities = renderedEntities != null ? renderedEntities.renderedEntities() : List.of();
         revisions.stream()
                 .skip(pageRequest.getSkip())
                 .limit(pageRequest.getPageSize())
-                .forEach(revision -> getProjectChangesForRevision(revision, finalEntityName, changes, linearizationDefinitions));
+                .forEach(revision -> getProjectChangesForRevision(revision, iri.toString(), finalRenderedEntities, changes, linearizationDefinitions));
 
         return changes.build();
     }
@@ -128,14 +122,11 @@ public class ProjectChangesManager {
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             logger.error(e.getMessage());
         }
-        final var renderedEntitiesResult = renderedEntities;
+        List<EntityNode> renderedEntitiesList = renderedEntities != null ? renderedEntities.renderedEntities() : List.of();
 
-        //Here we add the rendered entity name
+        //Here we add the rendered entity name for the view
         paginatedHistory.stream().flatMap(revisionWithEntity -> {
-            if (renderedEntitiesResult == null || renderedEntitiesResult.renderedEntities() == null) {
-                return Stream.of(revisionWithEntity);
-            }
-            var entityTextOptional = renderedEntitiesResult.renderedEntities()
+            var entityTextOptional = renderedEntitiesList
                     .stream()
                     .filter(entityNode -> entityNode.getEntity().getIRI().toString().equals(revisionWithEntity.getWhoficEntityName()))
                     .map(EntityNode::getBrowserText)
@@ -144,19 +135,21 @@ public class ProjectChangesManager {
                 return Stream.of(revisionWithEntity);
             }
             return Stream.of(new LinearizationRevisionWithEntity(revisionWithEntity.getRevision(), entityTextOptional.get()));
-        }).forEach(revisionWithEntity -> getProjectChangesForRevision(revisionWithEntity.getRevision(), revisionWithEntity.getWhoficEntityName(), changes, linearizationDefinitions));
+        }).forEach(revisionWithEntity -> getProjectChangesForRevision(
+                        revisionWithEntity.getRevision(),
+                        revisionWithEntity.getWhoficEntityName(),
+                        renderedEntitiesList,
+                        changes,
+                        linearizationDefinitions
+                )
+        );
 
         return changes.build();
     }
 
-    public ImmutableList<ProjectChange> getProjectChangesForSubjectInRevision(OWLEntity subject, LinearizationRevision revision, List<LinearizationDefinition> linearizationDefinitions) {
-        ImmutableList.Builder<ProjectChange> resultBuilder = ImmutableList.builder();
-        getProjectChangesForRevision(revision, subject.getIRI().toString(), resultBuilder, linearizationDefinitions);
-        return resultBuilder.build();
-    }
-
     private void getProjectChangesForRevision(LinearizationRevision revision,
                                               String subjectName,
+                                              List<EntityNode> renderedEntities,
                                               ImmutableList.Builder<ProjectChange> changesBuilder,
                                               List<LinearizationDefinition> linearizationDefinitions) {
         final int totalChanges;
@@ -167,7 +160,7 @@ public class ProjectChangesManager {
         diffElements.sort(
                 Comparator.comparing(diffElement -> diffElement.getSourceDocument().getSortingCode())
         );
-        List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(diffElements);
+        List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(diffElements, renderedEntities);
         int pageElements = renderedDiffElements.size();
         int pageCount;
         if (pageElements == 0) {
@@ -191,10 +184,10 @@ public class ProjectChangesManager {
         changesBuilder.add(projectChange);
     }
 
-    private List<DiffElement<String, String>> renderDiffElements(List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements) {
+    private List<DiffElement<String, String>> renderDiffElements(List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements, List<EntityNode> renderedEntities) {
 
         List<DiffElement<String, String>> renderedDiffElements = new ArrayList<>();
-        DiffElementRenderer<String> renderer = new DiffElementRenderer<>();
+        DiffElementRenderer<String> renderer = new DiffElementRenderer<>(renderedEntities);
         for (DiffElement<LinearizationDocumentChange, LinearizationEventsForView> diffElement : diffElements) {
             renderedDiffElements.add(renderer.render(diffElement));
         }
