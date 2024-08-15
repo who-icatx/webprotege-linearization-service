@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Component
 public class LinearizationEventMapper {
     public Set<LinearizationEvent> mapLinearizationSpecificationsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
-        if(linearizationSpecification.linearizationSpecifications()!=null){
+        if (linearizationSpecification.linearizationSpecifications() != null) {
             return linearizationSpecification.linearizationSpecifications()
                     .stream()
                     .flatMap(specification -> {
@@ -47,10 +47,9 @@ public class LinearizationEventMapper {
 
     private LinearizationSpecification getOldSpecification(WhoficEntityLinearizationSpecification oldWhoficSpecification, IRI linearizationView) {
         return oldWhoficSpecification.linearizationSpecifications().stream().filter(oldSpecification ->
-            oldSpecification.getLinearizationView().equals(linearizationView)
+                oldSpecification.getLinearizationView().equals(linearizationView)
         ).findFirst().orElse(null);
     }
-
 
 
     public Set<LinearizationEvent> mapLinearizationResidualsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
@@ -66,7 +65,7 @@ public class LinearizationEventMapper {
         Set<LinearizationEvent> residuals = new HashSet<>();
         addSuppressedOtherSpecifiedResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
         addSuppressedUnspecifiedResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
-        addUnspecifiedTitleResidual(residuals, linearizationSpecification,  oldWhoficSpec.linearizationResiduals());
+        addUnspecifiedTitleResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
         addOtherSpecifiedTitleResidual(residuals, linearizationSpecification, oldWhoficSpec.linearizationResiduals());
         return residuals;
     }
@@ -76,6 +75,7 @@ public class LinearizationEventMapper {
             events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));
         }
     }
+
     private void addIncludedInLinearizationEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
         if (specification.getIsIncludedInLinearization() != null && (oldSpecification == null || !oldSpecification.getIsIncludedInLinearization().equals(specification.getIsIncludedInLinearization()))) {
             events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));
@@ -87,22 +87,26 @@ public class LinearizationEventMapper {
             events.add(new SetAuxiliaryAxisChild(specification.getIsAuxiliaryAxisChild(), specification.getLinearizationView().toString()));
         }
     }
+
     private void addAuxiliaryAxisChildEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
         if (specification.getIsAuxiliaryAxisChild() != null && (oldSpecification == null || !oldSpecification.getIsAuxiliaryAxisChild().equals(specification.getIsAuxiliaryAxisChild()))) {
             events.add(new SetAuxiliaryAxisChild(specification.getIsAuxiliaryAxisChild(), specification.getLinearizationView().toString()));
         }
     }
+
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getLinearizationParent() != null && !specification.getLinearizationParent().isEmpty()) {
             events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
     }
+
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
         if ((specification.getLinearizationParent() != null && !specification.getLinearizationParent().isEmpty())
                 && (oldSpecification == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
             events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
     }
+
     private void addGroupingEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
         if (specification.getIsGrouping() != null) {
             events.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView().toString()));
@@ -120,16 +124,19 @@ public class LinearizationEventMapper {
             events.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView().toString()));
         }
     }
+
     private void addCodingNoteEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
         if ((specification.getCodingNote() != null && !specification.getCodingNote().isEmpty()) && (oldSpecification == null || !specification.getCodingNote().equalsIgnoreCase(oldSpecification.getCodingNote()))) {
             events.add(new SetCodingNote(specification.getCodingNote(), specification.getLinearizationView().toString()));
         }
     }
+
     private void addSuppressedOtherSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
         if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals() != null) {
             events.add(new SetSuppressedOtherSpecifiedResidual(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()));
         }
     }
+
     private void addSuppressedOtherSpecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
         if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals() != null
                 && (oldResiduals == null || oldResiduals.getSuppressOtherSpecifiedResiduals() == null || !oldResiduals.getSuppressOtherSpecifiedResiduals().equals(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()))) {
@@ -143,13 +150,13 @@ public class LinearizationEventMapper {
             events.add(new SetSuppressedUnspecifiedResiduals(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()));
         }
     }
+
     private void addSuppressedUnspecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
         if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressUnspecifiedResiduals() != null
                 && (oldResiduals == null || oldResiduals.getSuppressUnspecifiedResiduals() == null || !oldResiduals.getSuppressUnspecifiedResiduals().equals(specification.linearizationResiduals().getSuppressUnspecifiedResiduals()))) {
             events.add(new SetSuppressedUnspecifiedResiduals(specification.linearizationResiduals().getSuppressUnspecifiedResiduals()));
         }
     }
-
 
 
     private void addUnspecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
@@ -159,12 +166,18 @@ public class LinearizationEventMapper {
     }
 
     private void addUnspecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
-        if (specification.linearizationResiduals() != null
-                && (oldResiduals == null || oldResiduals.getUnspecifiedResidualTitle() == null || !oldResiduals.getUnspecifiedResidualTitle().equals(specification.linearizationResiduals().getUnspecifiedResidualTitle()))) {
-            events.add(new SetUnspecifiedResidualTitle(specification.linearizationResiduals().getUnspecifiedResidualTitle()));
+        if (specification.linearizationResiduals() != null) {
+            String newUnspecifiedTitle = specification.linearizationResiduals().getUnspecifiedResidualTitle();
+
+            boolean shouldSaveEmptyString = oldResiduals != null && oldResiduals.getUnspecifiedResidualTitle() != null && newUnspecifiedTitle.isEmpty();
+
+            if (shouldSaveEmptyString ||
+                    (oldResiduals == null || oldResiduals.getUnspecifiedResidualTitle() == null ||
+                            !oldResiduals.getUnspecifiedResidualTitle().equals(newUnspecifiedTitle))) {
+                events.add(new SetUnspecifiedResidualTitle(newUnspecifiedTitle));
+            }
         }
     }
-
 
     private void addOtherSpecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
         if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getOtherSpecifiedResidualTitle() != null) {
@@ -173,9 +186,17 @@ public class LinearizationEventMapper {
     }
 
     private void addOtherSpecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
-        if (specification.linearizationResiduals() != null &&
-                (oldResiduals == null || oldResiduals.getOtherSpecifiedResidualTitle() == null || !oldResiduals.getOtherSpecifiedResidualTitle().equals(specification.linearizationResiduals().getOtherSpecifiedResidualTitle()))) {
-            events.add(new SetOtherSpecifiedResidualTitle(specification.linearizationResiduals().getOtherSpecifiedResidualTitle()));
+        if (specification.linearizationResiduals() != null) {
+            String newTitle = specification.linearizationResiduals().getOtherSpecifiedResidualTitle();
+
+            // Check if the oldResiduals is null or the old title is different from the new title
+            boolean shouldSaveEmptyString = oldResiduals != null && oldResiduals.getOtherSpecifiedResidualTitle() != null && newTitle.isEmpty();
+
+            if (shouldSaveEmptyString ||
+                    (oldResiduals == null || oldResiduals.getOtherSpecifiedResidualTitle() == null ||
+                            !oldResiduals.getOtherSpecifiedResidualTitle().equals(newTitle))) {
+                events.add(new SetOtherSpecifiedResidualTitle(newTitle));
+            }
         }
     }
 
