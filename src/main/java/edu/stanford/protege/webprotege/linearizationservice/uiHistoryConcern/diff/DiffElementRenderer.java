@@ -108,6 +108,7 @@ public class DiffElementRenderer<S extends Serializable> {
 
     public String renderLine(LinearizationEventsForView change) {
         final StringBuilder stringBuilder = new StringBuilder();
+        change.getLinearizationEvents().sort(OrderedEventClasses.getEventClassComparator());
         change.getLinearizationEvents()
                 .forEach(event -> stringBuilder.append(event.accept(visitor)));
 
