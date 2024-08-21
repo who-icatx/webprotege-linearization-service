@@ -2,8 +2,9 @@ package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.ch
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import edu.stanford.protege.webprotege.common.*;
+import org.jetbrains.annotations.NotNull;
 
-import static edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.EntityLinearizationChangeEvent.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.ProjectLinearizationChangedEvent.CHANNEL;
 
 
 @JsonTypeName(CHANNEL)
@@ -16,20 +17,15 @@ public record ProjectLinearizationChangedEvent(EventId eventId,
         return new ProjectLinearizationChangedEvent(eventId, projectId);
     }
 
-    public ProjectLinearizationChangedEvent(EventId eventId, ProjectId projectId) {
-        this.eventId = eventId;
-        this.projectId = projectId;
-    }
-
     public String getChannel() {
         return CHANNEL;
     }
 
-    public EventId eventId() {
+    public @NotNull EventId eventId() {
         return this.eventId;
     }
 
-    public ProjectId projectId() {
+    public @NotNull ProjectId projectId() {
         return this.projectId;
     }
 
