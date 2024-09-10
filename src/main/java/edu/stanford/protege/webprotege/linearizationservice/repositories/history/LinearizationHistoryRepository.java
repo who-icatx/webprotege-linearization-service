@@ -18,4 +18,6 @@ public interface LinearizationHistoryRepository {
     Optional<EntityLinearizationHistory> findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId);
 
     List<EntityLinearizationHistory> getAllEntityHistoriesForProjectId(ProjectId projectId);
+
+    List<EntityLinearizationHistory> getOrderedAndPagedHistoriesForProjectId(ProjectId projectId, int pageSize, int pageNumber);
 }

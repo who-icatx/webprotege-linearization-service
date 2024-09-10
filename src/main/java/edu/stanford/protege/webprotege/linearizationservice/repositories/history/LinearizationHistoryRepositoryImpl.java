@@ -6,6 +6,9 @@ import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.services.ReadWriteLockService;
 import org.bson.Document;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.stereotype.Repository;
@@ -78,6 +81,20 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
                         .is(projectId.value())
         );
 
+        return mongoTemplate.find(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION);
+    }
+
+    @Override
+    public List<EntityLinearizationHistory> getOrderedAndPagedHistoriesForProjectId(ProjectId projectId, int pageSize, int pageNumber) {
+        Query query = new Query();
+
+        query.addCriteria(
+                Criteria.where(PROJECT_ID)
+                        .is(projectId.value())
+        );
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        query.with(pageable);
+        query.with(Sort.by(Sort.Direction.DESC, "linearizationRevisions.timestamp"));
         return mongoTemplate.find(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION);
     }
 }

@@ -100,7 +100,7 @@ public class ProjectChangesManager {
 
     private ImmutableList<ProjectChange> getChangesForFullProject(ProjectId projectId, PageRequest pageRequest, List<LinearizationDefinition> linearizationDefinitions) {
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
-        List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProject(projectId);
+        List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProjectWithPageAndPageSize(projectId, pageRequest.getPageNumber(), pageRequest.getPageSize());
 
         List<String> entityIrisPaginated = new ArrayList<>();
         var paginatedHistory = fullHistory.stream()

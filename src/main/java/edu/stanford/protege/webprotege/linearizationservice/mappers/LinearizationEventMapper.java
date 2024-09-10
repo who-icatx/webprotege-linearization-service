@@ -3,6 +3,8 @@ package edu.stanford.protege.webprotege.linearizationservice.mappers;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -10,6 +12,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class LinearizationEventMapper {
+
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(LinearizationEventMapper.class);
     public Set<LinearizationEvent> mapLinearizationSpecificationsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
         if (linearizationSpecification.linearizationSpecifications() != null) {
             return linearizationSpecification.linearizationSpecifications()
@@ -25,6 +30,7 @@ public class LinearizationEventMapper {
                     })
                     .collect(Collectors.toSet());
         }
+        LOGGER.info("Entity {} has no specifications", linearizationSpecification.entityIRI().toString());
         return Set.of();
     }
 
@@ -102,7 +108,7 @@ public class LinearizationEventMapper {
 
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
         if ((specification.getLinearizationParent() != null && !specification.getLinearizationParent().isEmpty())
-                && (oldSpecification == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
+                && (oldSpecification == null || oldSpecification.getLinearizationParent() == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
             events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
     }

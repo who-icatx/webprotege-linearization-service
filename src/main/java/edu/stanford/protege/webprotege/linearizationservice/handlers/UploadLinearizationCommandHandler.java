@@ -24,7 +24,7 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
     private final LinearizationDocumentRepository linearizationRepository;
 
-    @Value("${webprotege.linearization.batch-size:500}")
+    @Value("${webprotege.linearization.batch-size:1500}")
     private int batchSize;
 
     private final LinearizationHistoryService linearizationHistoryService;

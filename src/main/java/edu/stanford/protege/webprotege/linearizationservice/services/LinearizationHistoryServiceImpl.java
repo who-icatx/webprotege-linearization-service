@@ -45,10 +45,6 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
         var linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
 
-        if (linearizationEvents.isEmpty()) {
-            throw new RuntimeException("Trying to create history with no events! EntityIri: " + linearizationSpecification.entityIRI());
-        }
-
         var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents);
 
         return new EntityLinearizationHistory(linearizationSpecification.entityIRI().toString(), projectId.id(), new HashSet<>(List.of(linearizationRevision)));
@@ -120,5 +116,10 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     @Override
     public List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId) {
         return readWriteLock.executeWriteLock(() -> linearizationHistoryRepository.getAllEntityHistoriesForProjectId(projectId));
+    }
+
+    public List<EntityLinearizationHistory> getAllExistingHistoriesForProjectWithPageAndPageSize(ProjectId projectId, int page, int pageSize) {
+        return readWriteLock.executeWriteLock(() -> linearizationHistoryRepository.getOrderedAndPagedHistoriesForProjectId(projectId, pageSize,page));
+
     }
 }
