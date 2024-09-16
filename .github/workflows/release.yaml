@@ -50,3 +50,6 @@ jobs:
 env:
   DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
   DOCKER_TOKEN: ${{secrets.DOCKER_PASSWORD}}
+
+permissions:
+  contents: write
