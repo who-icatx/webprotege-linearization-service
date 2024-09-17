@@ -5,17 +5,18 @@ import com.mongodb.client.result.UpdateResult;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.services.ReadWriteLockService;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationRevisionWithEntity;
 import org.bson.Document;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.*;
+import static edu.stanford.protege.webprotege.linearizationservice.model.LinearizationRevision.TIMESTAMP;
 
 @Repository
 public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryRepository {
@@ -85,16 +86,35 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
     }
 
     @Override
-    public List<EntityLinearizationHistory> getOrderedAndPagedHistoriesForProjectId(ProjectId projectId, int pageSize, int pageNumber) {
-        Query query = new Query();
-
-        query.addCriteria(
-                Criteria.where(PROJECT_ID)
-                        .is(projectId.value())
+    public List<LinearizationRevisionWithEntity> getOrderedAndPagedHistoriesForProjectId(ProjectId projectId, int pageSize, int pageNumber) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where(PROJECT_ID).is(projectId.value())),
+                Aggregation.unwind(LINEARIZATION_REVISIONS),
+                Aggregation.sort(Sort.by(Sort.Direction.DESC, LINEARIZATION_REVISIONS + "." + TIMESTAMP)),
+                Aggregation.skip(pageSize * pageNumber),
+                Aggregation.limit(pageSize)
         );
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        query.with(pageable);
-        query.with(Sort.by(Sort.Direction.DESC, "linearizationRevisions.timestamp"));
-        return mongoTemplate.find(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION);
+
+        return mongoTemplate.aggregate(aggregation, LINEARIZATION_HISTORY_COLLECTION, LinearizationRevisionWithEntity.class)
+                .getMappedResults();
+    }
+
+
+    @Override
+    public int getRevisionCountForProject(ProjectId projectId) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where(PROJECT_ID).is(projectId.value())),
+                Aggregation.unwind(LINEARIZATION_REVISIONS),
+                Aggregation.group().count().as("revisionCount")
+        );
+
+        Document result = mongoTemplate.aggregate(aggregation, LINEARIZATION_HISTORY_COLLECTION, Document.class)
+                .getUniqueMappedResult();
+
+        if (result != null && result.containsKey("revisionCount")) {
+            return result.getInteger("revisionCount");
+        } else {
+            return 0;
+        }
     }
 }

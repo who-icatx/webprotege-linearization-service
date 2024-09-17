@@ -55,13 +55,14 @@ public class ProjectChangesManager {
 
         var linearizationDefinitions = definitionRepository.getLinearizationDefinitions();
         if (subject != null) {
-            ImmutableList<ProjectChange> theChanges = getChangesForEntity(subject.getIRI(), projectId, pageRequest, linearizationDefinitions);
-            return Page.create(1, 1, theChanges, theChanges.size());
+            ImmutableList<ProjectChange> projectChanges = getChangesForEntity(subject.getIRI(), projectId, pageRequest, linearizationDefinitions);
+            return Page.create(1, 1, projectChanges, projectChanges.size());
         } else {
             // Pages are in reverse order
-            ImmutableList<ProjectChange> projectChanges = getChangesForFullProject(projectId, pageRequest, linearizationDefinitions);
+            ImmutableList<ProjectChange> projectChanges = getPaginatedChangesForProject(projectId, pageRequest, linearizationDefinitions);
+            int totalCountLinearizationRevisions = historyService.getRevisionCountForProject(projectId);
 
-            int pageCount = (projectChanges.size() / pageRequest.getPageSize()) + 1;
+            int pageCount = (totalCountLinearizationRevisions / pageRequest.getPageSize()) + 1;
             if (pageRequest.getPageNumber() > pageCount) {
                 return Page.emptyPage();
             }
@@ -98,22 +99,12 @@ public class ProjectChangesManager {
         return changes.build();
     }
 
-    private ImmutableList<ProjectChange> getChangesForFullProject(ProjectId projectId, PageRequest pageRequest, List<LinearizationDefinition> linearizationDefinitions) {
+    private ImmutableList<ProjectChange> getPaginatedChangesForProject(ProjectId projectId, PageRequest pageRequest, List<LinearizationDefinition> linearizationDefinitions) {
         ImmutableList.Builder<ProjectChange> changes = ImmutableList.builder();
-        List<EntityLinearizationHistory> fullHistory = historyService.getAllExistingHistoriesForProjectWithPageAndPageSize(projectId, pageRequest.getPageNumber(), pageRequest.getPageSize());
+        List<LinearizationRevisionWithEntity> paginatedHistory = historyService.getAllExistingHistoriesForProjectWithPageAndPageSize(projectId, pageRequest.getPageNumber(), pageRequest.getPageSize());
 
         List<String> entityIrisPaginated = new ArrayList<>();
-        var paginatedHistory = fullHistory.stream()
-                .flatMap(history ->
-                        history.getLinearizationRevisions()
-                                .stream()
-                                .map(revision -> new LinearizationRevisionWithEntity(revision, history.getWhoficEntityIri()))
-                )
-                .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision).reversed())
-                .skip(pageRequest.getSkip())
-                .limit(pageRequest.getPageSize())
-                .peek(revisionWithEntity -> entityIrisPaginated.add(revisionWithEntity.getWhoficEntityName()))
-                .toList();
+        paginatedHistory.forEach(linRevisionWithEntity -> entityIrisPaginated.add(linRevisionWithEntity.getWhoficEntityName()));
 
         //Make request just for the paginated entity changes
         GetRenderedOwlEntitiesResult renderedEntities = null;
@@ -135,7 +126,8 @@ public class ProjectChangesManager {
                 return Stream.of(revisionWithEntity);
             }
             return Stream.of(new LinearizationRevisionWithEntity(revisionWithEntity.getRevision(), entityTextOptional.get()));
-        }).forEach(revisionWithEntity -> getProjectChangesForRevision(
+        }).forEach(revisionWithEntity ->
+                getProjectChangesForRevision(
                         revisionWithEntity.getRevision(),
                         revisionWithEntity.getWhoficEntityName(),
                         renderedEntitiesList,

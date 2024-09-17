@@ -3,6 +3,7 @@ package edu.stanford.protege.webprotege.linearizationservice.repositories.histor
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationRevisionWithEntity;
 import org.bson.Document;
 
 import java.util.*;
@@ -19,5 +20,7 @@ public interface LinearizationHistoryRepository {
 
     List<EntityLinearizationHistory> getAllEntityHistoriesForProjectId(ProjectId projectId);
 
-    List<EntityLinearizationHistory> getOrderedAndPagedHistoriesForProjectId(ProjectId projectId, int pageSize, int pageNumber);
+    List<LinearizationRevisionWithEntity> getOrderedAndPagedHistoriesForProjectId(ProjectId projectId, int pageSize, int pageNumber);
+
+    int getRevisionCountForProject(ProjectId projectId);
 }

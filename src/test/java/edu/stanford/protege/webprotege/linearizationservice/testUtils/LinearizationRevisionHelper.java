@@ -28,6 +28,6 @@ public class LinearizationRevisionHelper {
 
     public static LinearizationRevision getLinearizationRevision() {
         UserId userId = UserId.valueOf("user" + Instant.now());
-        return new LinearizationRevision(Instant.now().toEpochMilli(), userId, getRandomLinearizationEvents());
+        return LinearizationRevision.create(userId, getRandomLinearizationEvents());
     }
 }

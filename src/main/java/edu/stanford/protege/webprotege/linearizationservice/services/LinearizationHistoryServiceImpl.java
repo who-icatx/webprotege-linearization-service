@@ -8,6 +8,7 @@ import edu.stanford.protege.webprotege.linearizationservice.events.Linearization
 import edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.history.LinearizationHistoryRepository;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationRevisionWithEntity;
 import org.bson.Document;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
@@ -115,11 +116,15 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
     @Override
     public List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId) {
-        return readWriteLock.executeWriteLock(() -> linearizationHistoryRepository.getAllEntityHistoriesForProjectId(projectId));
+        return readWriteLock.executeReadLock(() -> linearizationHistoryRepository.getAllEntityHistoriesForProjectId(projectId));
     }
 
-    public List<EntityLinearizationHistory> getAllExistingHistoriesForProjectWithPageAndPageSize(ProjectId projectId, int page, int pageSize) {
-        return readWriteLock.executeWriteLock(() -> linearizationHistoryRepository.getOrderedAndPagedHistoriesForProjectId(projectId, pageSize,page));
+    public List<LinearizationRevisionWithEntity> getAllExistingHistoriesForProjectWithPageAndPageSize(ProjectId projectId, int page, int pageSize) {
+        return readWriteLock.executeReadLock(() -> linearizationHistoryRepository.getOrderedAndPagedHistoriesForProjectId(projectId, pageSize, page));
+    }
 
+    @Override
+    public int getRevisionCountForProject(ProjectId projectId) {
+        return readWriteLock.executeReadLock(() -> linearizationHistoryRepository.getRevisionCountForProject(projectId));
     }
 }
