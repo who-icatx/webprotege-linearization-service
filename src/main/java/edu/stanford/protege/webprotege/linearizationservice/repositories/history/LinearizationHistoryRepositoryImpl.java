@@ -91,7 +91,7 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
                 Aggregation.match(Criteria.where(PROJECT_ID).is(projectId.value())),
                 Aggregation.unwind(LINEARIZATION_REVISIONS),
                 Aggregation.sort(Sort.by(Sort.Direction.DESC, LINEARIZATION_REVISIONS + "." + TIMESTAMP)),
-                Aggregation.skip(pageSize * pageNumber),
+                Aggregation.skip(pageSize * (pageNumber - 1)),
                 Aggregation.limit(pageSize)
         );
 
