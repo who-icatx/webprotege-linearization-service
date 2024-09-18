@@ -1,8 +1,8 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 import com.fasterxml.jackson.annotation.*;
+import edu.stanford.protege.webprotege.change.ProjectChange;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.ProjectChange;
 
 import static edu.stanford.protege.webprotege.linearizationservice.handlers.GetLinearizationChangesRequest.CHANNEL;
 

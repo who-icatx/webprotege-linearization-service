@@ -5,6 +5,7 @@ import edu.stanford.protege.webprotege.linearizationservice.events.Linearization
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.mongodb.core.index.*;
 
+import java.time.Instant;
 import java.util.*;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
@@ -21,7 +22,7 @@ public record LinearizationRevision(@Indexed(name = "timestamp", direction = Ind
     private static int counter = 0;
 
     public static LinearizationRevision create(UserId userId, Set<LinearizationEvent> linearizationEvents) {
-        long currentTimestamp = System.nanoTime();
+        long currentTimestamp = Instant.now().toEpochMilli();
         if (currentTimestamp == lastTimestamp) {
             counter++;
         } else {

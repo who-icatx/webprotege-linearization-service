@@ -1,7 +1,9 @@
 package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes;
 
 import com.google.common.collect.ImmutableList;
+import edu.stanford.protege.webprotege.change.ProjectChange;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.diff.DiffElement;
 import edu.stanford.protege.webprotege.entity.EntityNode;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
@@ -20,11 +22,7 @@ import java.util.stream.Stream;
 
 import static edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper.groupEventsByViews;
 
-/**
- * Matthew Horridge
- * Stanford Center for Biomedical Informatics Research
- * 27/05/15
- */
+
 @Component
 public class ProjectChangesManager {
 
@@ -103,7 +101,7 @@ public class ProjectChangesManager {
         List<LinearizationRevisionWithEntity> paginatedHistory = historyService.getAllExistingHistoriesForProjectWithPageAndPageSize(projectId, pageRequest.getPageNumber(), pageRequest.getPageSize());
 
         List<String> entityIrisPaginated = new ArrayList<>();
-        paginatedHistory.forEach(linRevisionWithEntity -> entityIrisPaginated.add(linRevisionWithEntity.getWhoficEntityName()));
+        paginatedHistory.forEach(linRevisionWithEntity -> entityIrisPaginated.add(linRevisionWithEntity.getWhoficEntityIri()));
 
         //Make request just for the paginated entity changes
         GetRenderedOwlEntitiesResult renderedEntities = null;
@@ -118,7 +116,7 @@ public class ProjectChangesManager {
         paginatedHistory.stream().flatMap(revisionWithEntity -> {
             var entityTextOptional = renderedEntitiesList
                     .stream()
-                    .filter(entityNode -> entityNode.getEntity().getIRI().toString().equals(revisionWithEntity.getWhoficEntityName()))
+                    .filter(entityNode -> entityNode.getEntity().getIRI().toString().equals(revisionWithEntity.getWhoficEntityIri()))
                     .map(EntityNode::getBrowserText)
                     .findFirst();
             if (entityTextOptional.isEmpty()) {
@@ -128,7 +126,7 @@ public class ProjectChangesManager {
         }).forEach(revisionWithEntity ->
                 getProjectChangesForRevision(
                         revisionWithEntity.getRevision(),
-                        revisionWithEntity.getWhoficEntityName(),
+                        revisionWithEntity.getWhoficEntityIri(),
                         renderedEntitiesList,
                         changes,
                         linearizationDefinitions
@@ -175,6 +173,42 @@ public class ProjectChangesManager {
         changesBuilder.add(projectChange);
     }
 
+    public ProjectChange getProjectChangesForRevision(LinearizationRevision revision,
+                                                      String subjectName,
+                                                      List<EntityNode> renderedEntities,
+                                                      List<LinearizationDefinition> linearizationDefinitions) {
+        final int totalChanges;
+        var changesByView = groupEventsByViews(revision.linearizationEvents().stream().toList());
+        totalChanges = changesByView.size();
+
+        List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements = revision2DiffElementsTranslator.getDiffElementsFromRevision(changesByView, linearizationDefinitions);
+        diffElements.sort(
+                Comparator.comparing(diffElement -> diffElement.getSourceDocument().getSortingCode())
+        );
+        List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(diffElements, renderedEntities);
+        int pageElements = renderedDiffElements.size();
+        int pageCount;
+        if (pageElements == 0) {
+            pageCount = 1;
+        } else {
+            pageCount = totalChanges / pageElements + (totalChanges % pageElements);
+        }
+        Page<DiffElement<String, String>> page = Page.create(
+                1,
+                pageCount,
+                renderedDiffElements,
+                totalChanges
+        );
+        ProjectChange projectChange = ProjectChange.get(
+                RevisionNumber.valueOf("0"),
+                revision.userId(),
+                revision.timestamp(),
+                "Edited Linearization for Entity: " + subjectName,
+                totalChanges,
+                page);
+        return projectChange;
+    }
+
     private List<DiffElement<String, String>> renderDiffElements(List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements, List<EntityNode> renderedEntities) {
 
         List<DiffElement<String, String>> renderedDiffElements = new ArrayList<>();
@@ -183,5 +217,49 @@ public class ProjectChangesManager {
             renderedDiffElements.add(renderer.render(diffElement));
         }
         return renderedDiffElements;
+    }
+
+    public List<ProjectChangeForEntity> getProjectChangesForHistories(ProjectId projectId, List<EntityLinearizationHistory> entityLinearizationHistories) {
+        Map<String, String> entityIrisAndNames = new HashMap<>();
+        List<LinearizationRevisionWithEntity> linRevisions = entityLinearizationHistories.stream()
+                .flatMap(history ->
+                        history.getLinearizationRevisions()
+                                .stream()
+                                .map(revision -> new LinearizationRevisionWithEntity(revision, history.getWhoficEntityIri()))
+                )
+                .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision).reversed())
+                .peek(revisionWithEntity -> entityIrisAndNames.put(revisionWithEntity.getWhoficEntityIri(), revisionWithEntity.getWhoficEntityIri()))
+                .toList();
+
+        List<EntityNode> renderedEntitiesList = entityRendererManager.getRenderedEntities(entityIrisAndNames.keySet(), projectId);
+        var linearizationDefinitions = definitionRepository.getLinearizationDefinitions();
+
+        linRevisions.forEach(revisionWithEntity -> {
+            var entityTextOptional = renderedEntitiesList
+                    .stream()
+                    .filter(entityNode -> entityNode.getEntity().getIRI().toString().equals(revisionWithEntity.getWhoficEntityIri()))
+                    .map(EntityNode::getBrowserText)
+                    .findFirst();
+            entityTextOptional.ifPresent(s -> entityIrisAndNames.put(revisionWithEntity.getWhoficEntityIri(), s));
+        });
+
+        List<ProjectChangeForEntity> projectChangeForEntityList = linRevisions.stream()
+                .flatMap(revisionWithEntity -> {
+                            ProjectChange projectChange = getProjectChangesForRevision(
+                                    revisionWithEntity.getRevision(),
+                                    entityIrisAndNames.get(revisionWithEntity.getWhoficEntityIri()),
+                                    renderedEntitiesList,
+                                    linearizationDefinitions
+                            );
+                            ProjectChangeForEntity projectChangeForEntity = ProjectChangeForEntity.create(
+                                    revisionWithEntity.getWhoficEntityIri(),
+                                    projectChange
+                            );
+                            return Stream.of(projectChangeForEntity);
+                        }
+                )
+                .toList();
+
+        return projectChangeForEntityList;
     }
 }

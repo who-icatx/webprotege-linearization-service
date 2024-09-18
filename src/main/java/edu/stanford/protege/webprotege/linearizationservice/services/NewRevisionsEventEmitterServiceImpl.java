@@ -1,0 +1,29 @@
+package edu.stanford.protege.webprotege.linearizationservice.services;
+
+import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.ipc.EventDispatcher;
+import edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory;
+import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.*;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class NewRevisionsEventEmitterServiceImpl implements NewRevisionsEventEmitterService {
+
+    private final EventDispatcher eventDispatcher;
+    private final ProjectChangesManager projectChangesManager;
+
+    public NewRevisionsEventEmitterServiceImpl(EventDispatcher eventDispatcher,
+                                               ProjectChangesManager projectChangesManager) {
+        this.eventDispatcher = eventDispatcher;
+        this.projectChangesManager = projectChangesManager;
+    }
+
+    @Override
+    public void emitNewRevisionsEvent(ProjectId projectId, List<EntityLinearizationHistory> entityLinearizationHistories) {
+        List<ProjectChangeForEntity> changeList = projectChangesManager.getProjectChangesForHistories(projectId, entityLinearizationHistories);
+        NewRevisionsEvent revisionsEvent = NewRevisionsEvent.create(EventId.generate(), projectId, changeList);
+        eventDispatcher.dispatchEvent(revisionsEvent);
+    }
+}

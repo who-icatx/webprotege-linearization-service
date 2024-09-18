@@ -9,20 +9,20 @@ public class LinearizationRevisionWithEntity {
     @Field(LINEARIZATION_REVISIONS)
     private final LinearizationRevision revision;
     @Field(WHOFIC_ENTITY_IRI)
-    private final String whoficEntityName;
+    private final String whoficEntityIri;
 
     public LinearizationRevisionWithEntity(LinearizationRevision revision,
-                                           String whoficEntityName) {
+                                           String whoficEntityIri) {
         this.revision = revision;
-        this.whoficEntityName = whoficEntityName;
+        this.whoficEntityIri = whoficEntityIri;
     }
 
     public LinearizationRevision getRevision() {
         return revision;
     }
 
-    public String getWhoficEntityName() {
-        return whoficEntityName;
+    public String getWhoficEntityIri() {
+        return whoficEntityIri;
     }
 }
 

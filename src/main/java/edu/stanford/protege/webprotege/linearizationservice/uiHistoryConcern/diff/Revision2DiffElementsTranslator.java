@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff;
 
 
+import edu.stanford.protege.webprotege.diff.*;
 import edu.stanford.protege.webprotege.linearizationservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationDefinition;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.*;

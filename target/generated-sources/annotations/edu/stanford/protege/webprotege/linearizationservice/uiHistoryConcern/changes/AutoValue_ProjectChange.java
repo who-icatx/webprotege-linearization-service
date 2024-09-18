@@ -3,7 +3,6 @@ package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.ch
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.common.Page;
 import edu.stanford.protege.webprotege.common.UserId;
-import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff.DiffElement;
 import edu.stanford.protege.webprotege.revision.RevisionNumber;
 import javax.annotation.processing.Generated;
 

@@ -28,15 +28,20 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     private final ReadWriteLockService readWriteLock;
 
     private final LinearizationEventsProcessorService processorService;
+    private final NewRevisionsEventEmitterServiceImpl newRevisionsEventEmitter;
 
     public LinearizationHistoryServiceImpl(ObjectMapper objectMapper,
                                            LinearizationHistoryRepository linearizationHistoryRepository,
-                                           LinearizationEventMapper eventMapper, ReadWriteLockService readWriteLock, LinearizationEventsProcessorService processorService) {
+                                           LinearizationEventMapper eventMapper,
+                                           ReadWriteLockService readWriteLock,
+                                           LinearizationEventsProcessorService processorService,
+                                           NewRevisionsEventEmitterServiceImpl newRevisionsEventEmitter) {
         this.objectMapper = objectMapper;
         this.linearizationHistoryRepository = linearizationHistoryRepository;
         this.eventMapper = eventMapper;
         this.readWriteLock = readWriteLock;
         this.processorService = processorService;
+        this.newRevisionsEventEmitter = newRevisionsEventEmitter;
     }
 
     private EntityLinearizationHistory createNewEntityLinearizationHistory(WhoficEntityLinearizationSpecification linearizationSpecification,
@@ -110,6 +115,8 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                         .collect(Collectors.toSet());
 
                 saveMultipleEntityLinearizationHistories(historiesToBeSaved);
+
+                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, historiesToBeSaved.stream().toList());
             }
         };
     }

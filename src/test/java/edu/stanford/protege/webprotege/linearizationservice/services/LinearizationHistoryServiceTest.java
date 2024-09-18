@@ -2,7 +2,6 @@ package edu.stanford.protege.webprotege.linearizationservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.common.*;
-import edu.stanford.protege.webprotege.ipc.EventDispatcher;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.history.LinearizationHistoryRepository;
@@ -49,7 +48,7 @@ public class LinearizationHistoryServiceTest {
         }).when(readWriteLock).executeWriteLock(any(Runnable.class));
         eventMapper = new LinearizationEventMapper();
         processorService = new LinearizationEventsProcessorServiceImpl();
-        linearizationHistoryService = new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock, processorService);
+        linearizationHistoryService = new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock, processorService, newRevisionsEventEmitter);
     }
 
     @Test

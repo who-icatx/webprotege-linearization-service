@@ -105,7 +105,7 @@ public class LinearizationHistoryRepositoryImplTest {
         List<LinearizationRevisionWithEntity> results = linearizationHistoryRepository.getOrderedAndPagedHistoriesForProjectId(projectId, pageSize, pageNumber);
 
         assertEquals(1, results.size());
-        assertEquals(whoficEntityIri1, results.get(0).getWhoficEntityName());
+        assertEquals(whoficEntityIri1, results.get(0).getWhoficEntityIri());
 
         assertEquals(revision7.timestamp(), results.get(0).getRevision().timestamp());
     }
@@ -139,7 +139,7 @@ public class LinearizationHistoryRepositoryImplTest {
         List<LinearizationRevisionWithEntity> results = linearizationHistoryRepository.getOrderedAndPagedHistoriesForProjectId(projectId, pageSize, pageNumber);
 
         assertEquals(1, results.size());
-        assertEquals(whoficEntityIri2, results.get(0).getWhoficEntityName());
+        assertEquals(whoficEntityIri2, results.get(0).getWhoficEntityIri());
 
         assertEquals(revision6.timestamp(), results.get(0).getRevision().timestamp());
     }
