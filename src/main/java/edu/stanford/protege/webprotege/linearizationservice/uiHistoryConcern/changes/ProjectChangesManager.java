@@ -60,9 +60,8 @@ public class ProjectChangesManager {
         } else {
             // Pages are in reverse order
             ImmutableList<ProjectChange> projectChanges = getPaginatedChangesForProject(projectId, pageRequest, linearizationDefinitions);
-            int totalCountLinearizationRevisions = historyService.getRevisionCountForProject(projectId);
 
-            int pageCount = (totalCountLinearizationRevisions / pageRequest.getPageSize()) + 1;
+            int pageCount = (projectChanges.size() / pageRequest.getPageSize()) + 1;
             if (pageRequest.getPageNumber() > pageCount) {
                 return Page.emptyPage();
             }
