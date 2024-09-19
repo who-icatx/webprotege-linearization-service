@@ -120,10 +120,10 @@ public class ProjectChangesManager {
         totalChanges = changesByView.size();
 
         List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> diffElements = revision2DiffElementsTranslator.getDiffElementsFromRevision(changesByView, linearizationDefinitions);
-        diffElements.sort(
-                Comparator.comparing(diffElement -> diffElement.getSourceDocument().getSortingCode())
-        );
-        List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(diffElements, renderedEntities);
+        List<DiffElement<LinearizationDocumentChange, LinearizationEventsForView>> mutableDiffElements = new ArrayList<>(diffElements);
+        mutableDiffElements.sort(Comparator.comparing(diffElement -> diffElement.getSourceDocument().getSortingCode()));
+
+        List<DiffElement<String, String>> renderedDiffElements = renderDiffElements(mutableDiffElements, renderedEntities);
         int pageElements = renderedDiffElements.size();
         int pageCount;
         if (pageElements == 0) {

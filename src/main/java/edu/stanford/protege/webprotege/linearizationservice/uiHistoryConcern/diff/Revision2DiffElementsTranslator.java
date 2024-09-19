@@ -9,11 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-/**
- * Matthew Horridge
- * Stanford Center for Biomedical Informatics Research
- * 26/02/15
- */
+
 @Component
 public class Revision2DiffElementsTranslator {
 

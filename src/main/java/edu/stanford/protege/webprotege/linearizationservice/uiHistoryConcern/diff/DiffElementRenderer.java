@@ -7,13 +7,8 @@ import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.cha
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 
-/**
- * Matthew Horridge
- * Stanford Center for Biomedical Informatics Research
- * 26/02/15
- */
 public class DiffElementRenderer<S extends Serializable> {
 
     private final LinearizationChangeVisitor<String> visitor;
@@ -84,14 +79,14 @@ public class DiffElementRenderer<S extends Serializable> {
 
     public DiffElement<String, String> render(DiffElement<LinearizationDocumentChange, LinearizationEventsForView> element) {
         var eventsByViews = element.getLineElement();
-        var rederedLine = renderLine(eventsByViews);
+        var renderedLine = renderLine(eventsByViews);
         var source = element.getSourceDocument();
         var renderedSource = renderSource(source);
-        rederedLine = rederedLine != null ? rederedLine : "no value";
+        renderedLine = (renderedLine == null || renderedLine.isEmpty()) ? "no value" : renderedLine;
         return new DiffElement<>(
                 element.getDiffOperation(),
                 renderedSource,
-                rederedLine
+                renderedLine
         );
     }
 
@@ -109,9 +104,10 @@ public class DiffElementRenderer<S extends Serializable> {
 
     public String renderLine(LinearizationEventsForView change) {
         final StringBuilder stringBuilder = new StringBuilder();
-        change.getLinearizationEvents().sort(OrderedEventClasses.getEventClassComparator());
-        change.getLinearizationEvents()
-                .forEach(event -> stringBuilder.append(event.accept(visitor)));
+        List<LinearizationEvent> mutableEvents = new ArrayList<>(change.getLinearizationEvents());
+
+        mutableEvents.sort(OrderedEventClasses.getEventClassComparator());
+        mutableEvents.forEach(event -> stringBuilder.append(event.accept(visitor)));
 
         return stringBuilder.toString();
     }
