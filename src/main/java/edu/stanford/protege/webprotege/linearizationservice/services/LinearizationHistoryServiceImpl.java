@@ -8,7 +8,6 @@ import edu.stanford.protege.webprotege.linearizationservice.events.Linearization
 import edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.history.LinearizationHistoryRepository;
-import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationRevisionWithEntity;
 import org.bson.Document;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
@@ -93,12 +92,14 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
                                 if (!linearizationEvents.isEmpty()) {
                                     var newRevision = LinearizationRevision.create(userId, linearizationEvents);
-
                                     linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
+                                    newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, linearizationSpecification.entityIRI().toString(), newRevision);
                                 }
                             }, () -> {
                                 var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
                                 linearizationHistoryRepository.saveLinearizationHistory(newHistory);
+                                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, List.of(newHistory));
+
                             }
                     );
                 }
@@ -119,19 +120,5 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                 newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, historiesToBeSaved.stream().toList());
             }
         };
-    }
-
-    @Override
-    public List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId) {
-        return readWriteLock.executeReadLock(() -> linearizationHistoryRepository.getAllEntityHistoriesForProjectId(projectId));
-    }
-
-    public List<LinearizationRevisionWithEntity> getAllExistingHistoriesForProjectWithPageAndPageSize(ProjectId projectId, int page, int pageSize) {
-        return readWriteLock.executeReadLock(() -> linearizationHistoryRepository.getOrderedAndPagedHistoriesForProjectId(projectId, pageSize, page));
-    }
-
-    @Override
-    public int getRevisionCountForProject(ProjectId projectId) {
-        return readWriteLock.executeReadLock(() -> linearizationHistoryRepository.getRevisionCountForProject(projectId));
     }
 }

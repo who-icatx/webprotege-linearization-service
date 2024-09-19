@@ -36,6 +36,9 @@ public class LinearizationHistoryServiceTest {
     @Mock
     private ReadWriteLockService readWriteLock;
 
+    @Mock
+    private NewRevisionsEventEmitterServiceImpl newRevisionsEventEmitter;
+
     private LinearizationHistoryService linearizationHistoryService;
 
     @Before

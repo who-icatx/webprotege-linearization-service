@@ -2,7 +2,6 @@ package edu.stanford.protege.webprotege.linearizationservice.services;
 
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
-import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationRevisionWithEntity;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.util.*;
@@ -17,10 +16,4 @@ public interface LinearizationHistoryService {
                      ProjectId projectId, UserId userId);
 
     Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId);
-
-    List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId);
-
-    List<LinearizationRevisionWithEntity> getAllExistingHistoriesForProjectWithPageAndPageSize(ProjectId projectId, int page, int pageSize);
-
-    int getRevisionCountForProject(ProjectId projectId);
 }
