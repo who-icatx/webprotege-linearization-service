@@ -23,14 +23,14 @@ public class NewRevisionsEventEmitterServiceImpl implements NewRevisionsEventEmi
     @Override
     public void emitNewRevisionsEvent(ProjectId projectId, List<EntityLinearizationHistory> entityLinearizationHistories) {
         List<ProjectChangeForEntity> changeList = projectChangesManager.getProjectChangesForHistories(projectId, entityLinearizationHistories);
-        NewRevisionsEvent revisionsEvent = NewRevisionsEvent.create(EventId.generate(), projectId, changeList);
+        NewLinearizationRevisionsEvent revisionsEvent = NewLinearizationRevisionsEvent.create(EventId.generate(), projectId, changeList);
         eventDispatcher.dispatchEvent(revisionsEvent);
     }
 
     @Override
     public void emitNewRevisionsEvent(ProjectId projectId, String whoficEntityIri, LinearizationRevision entityLinearizationRevision) {
         ProjectChangeForEntity projectChange = projectChangesManager.getProjectChangesForRevision(projectId, whoficEntityIri, entityLinearizationRevision);
-        NewRevisionsEvent revisionsEvent = NewRevisionsEvent.create(EventId.generate(), projectId, List.of(projectChange));
+        NewLinearizationRevisionsEvent revisionsEvent = NewLinearizationRevisionsEvent.create(EventId.generate(), projectId, List.of(projectChange));
         eventDispatcher.dispatchEvent(revisionsEvent);
     }
 }

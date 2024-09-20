@@ -6,21 +6,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.NewRevisionsEvent.CHANNEL;
+import static edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.NewLinearizationRevisionsEvent.CHANNEL;
 
 
 @JsonTypeName(CHANNEL)
-public record NewRevisionsEvent(
+public record NewLinearizationRevisionsEvent(
         EventId eventId,
         ProjectId projectId,
         List<ProjectChangeForEntity> changeList
 ) implements ProjectEvent {
-    public final static String CHANNEL = "webprotege.events.projects.linearizations.NewRevisionsEvent";
+    public final static String CHANNEL = "webprotege.events.projects.linearizations.NewLinearizationRevisionsEvent";
 
-    public static NewRevisionsEvent create(EventId eventId,
-                                           ProjectId projectId,
-                                           List<ProjectChangeForEntity> changeList) {
-        return new NewRevisionsEvent(eventId, projectId, changeList);
+    public static NewLinearizationRevisionsEvent create(EventId eventId,
+                                                        ProjectId projectId,
+                                                        List<ProjectChangeForEntity> changeList) {
+        return new NewLinearizationRevisionsEvent(eventId, projectId, changeList);
     }
 
     @NotNull
