@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import edu.stanford.protege.webprotege.common.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.*;
 
 import static edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.NewLinearizationRevisionsEvent.CHANNEL;
 
@@ -13,14 +13,14 @@ import static edu.stanford.protege.webprotege.linearizationservice.uiHistoryConc
 public record NewLinearizationRevisionsEvent(
         EventId eventId,
         ProjectId projectId,
-        List<ProjectChangeForEntity> changeList
+        Set<ProjectChangeForEntity> changes
 ) implements ProjectEvent {
     public final static String CHANNEL = "webprotege.events.projects.linearizations.NewLinearizationRevisionsEvent";
 
     public static NewLinearizationRevisionsEvent create(EventId eventId,
                                                         ProjectId projectId,
-                                                        List<ProjectChangeForEntity> changeList) {
-        return new NewLinearizationRevisionsEvent(eventId, projectId, changeList);
+                                                        Set<ProjectChangeForEntity> changes) {
+        return new NewLinearizationRevisionsEvent(eventId, projectId, changes);
     }
 
     @NotNull
@@ -35,8 +35,8 @@ public record NewLinearizationRevisionsEvent(
         return eventId;
     }
 
-    public List<ProjectChangeForEntity> getProjectChanges() {
-        return changeList;
+    public Set<ProjectChangeForEntity> getProjectChanges() {
+        return changes;
     }
 
     @Override

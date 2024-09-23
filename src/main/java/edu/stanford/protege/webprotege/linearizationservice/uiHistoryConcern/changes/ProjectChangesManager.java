@@ -13,7 +13,7 @@ import org.slf4j.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 import static edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper.groupEventsByViews;
 
@@ -39,9 +39,9 @@ public class ProjectChangesManager {
     }
 
 
-    public List<ProjectChangeForEntity> getProjectChangesForHistories(ProjectId projectId, List<EntityLinearizationHistory> entityLinearizationHistories) {
+    public Set<ProjectChangeForEntity> getProjectChangesForHistories(ProjectId projectId, List<EntityLinearizationHistory> entityLinearizationHistories) {
         Map<String, String> entityIrisAndNames = new HashMap<>();
-        List<LinearizationRevisionWithEntity> linRevisions = entityLinearizationHistories.stream()
+        Set<LinearizationRevisionWithEntity> linRevisions = entityLinearizationHistories.stream()
                 .flatMap(history ->
                         history.getLinearizationRevisions()
                                 .stream()
@@ -49,7 +49,7 @@ public class ProjectChangesManager {
                 )
                 .sorted(Comparator.comparing(LinearizationRevisionWithEntity::getRevision))
                 .peek(revisionWithEntity -> entityIrisAndNames.put(revisionWithEntity.getWhoficEntityIri(), revisionWithEntity.getWhoficEntityIri()))
-                .toList();
+                .collect(Collectors.toSet());
 
         List<EntityNode> renderedEntitiesList = entityRendererManager.getRenderedEntities(entityIrisAndNames.keySet(), projectId);
         var linearizationDefinitions = definitionRepository.getLinearizationDefinitions();
@@ -63,7 +63,7 @@ public class ProjectChangesManager {
             entityTextOptional.ifPresent(browserText -> entityIrisAndNames.put(revisionWithEntity.getWhoficEntityIri(), browserText));
         });
 
-        List<ProjectChangeForEntity> projectChangeForEntityList = linRevisions.stream()
+        Set<ProjectChangeForEntity> projectChangeForEntityList = linRevisions.stream()
                 .flatMap(revisionWithEntity -> {
                             ProjectChange projectChange = getProjectChangesForRevision(
                                     revisionWithEntity.getRevision(),
@@ -78,7 +78,7 @@ public class ProjectChangesManager {
                             return Stream.of(projectChangeForEntity);
                         }
                 )
-                .toList();
+                .collect(Collectors.toSet());
 
         return projectChangeForEntityList;
     }

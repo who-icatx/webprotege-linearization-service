@@ -6,7 +6,7 @@ import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class NewRevisionsEventEmitterServiceImpl implements NewRevisionsEventEmitterService {
@@ -22,7 +22,7 @@ public class NewRevisionsEventEmitterServiceImpl implements NewRevisionsEventEmi
 
     @Override
     public void emitNewRevisionsEvent(ProjectId projectId, List<EntityLinearizationHistory> entityLinearizationHistories) {
-        List<ProjectChangeForEntity> changeList = projectChangesManager.getProjectChangesForHistories(projectId, entityLinearizationHistories);
+        Set<ProjectChangeForEntity> changeList = projectChangesManager.getProjectChangesForHistories(projectId, entityLinearizationHistories);
         NewLinearizationRevisionsEvent revisionsEvent = NewLinearizationRevisionsEvent.create(EventId.generate(), projectId, changeList);
         eventDispatcher.dispatchEvent(revisionsEvent);
     }
@@ -30,7 +30,7 @@ public class NewRevisionsEventEmitterServiceImpl implements NewRevisionsEventEmi
     @Override
     public void emitNewRevisionsEvent(ProjectId projectId, String whoficEntityIri, LinearizationRevision entityLinearizationRevision) {
         ProjectChangeForEntity projectChange = projectChangesManager.getProjectChangesForRevision(projectId, whoficEntityIri, entityLinearizationRevision);
-        NewLinearizationRevisionsEvent revisionsEvent = NewLinearizationRevisionsEvent.create(EventId.generate(), projectId, List.of(projectChange));
+        NewLinearizationRevisionsEvent revisionsEvent = NewLinearizationRevisionsEvent.create(EventId.generate(), projectId, Set.of(projectChange));
         eventDispatcher.dispatchEvent(revisionsEvent);
     }
 }

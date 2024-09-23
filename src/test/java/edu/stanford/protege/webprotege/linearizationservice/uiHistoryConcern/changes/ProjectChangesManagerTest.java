@@ -58,12 +58,13 @@ public class ProjectChangesManagerTest {
         when(entityRendererManager.getRenderedEntities(anySet(), eq(projectId))).thenReturn(Collections.emptyList());
         when(definitionRepository.getLinearizationDefinitions()).thenReturn(Collections.emptyList());
 
-        List<ProjectChangeForEntity> result = projectChangesManager.getProjectChangesForHistories(projectId, entityHistories);
+        Set<ProjectChangeForEntity> result = projectChangesManager.getProjectChangesForHistories(projectId, entityHistories);
 
         assertNotNull(result);
         assertEquals(1, result.size());
+        Iterator<ProjectChangeForEntity> iterator = result.iterator();
 
-        ProjectChange projectChange = result.get(0).projectChange();
+        ProjectChange projectChange = iterator.next().projectChange();
         assertNotNull(projectChange);
         assertEquals(12345L, projectChange.getTimestamp());
         assertEquals("user1", projectChange.getAuthor().id());
@@ -78,7 +79,7 @@ public class ProjectChangesManagerTest {
         ProjectId projectId = new ProjectId("testProject");
         List<EntityLinearizationHistory> emptyHistories = Collections.emptyList();
 
-        List<ProjectChangeForEntity> result = projectChangesManager.getProjectChangesForHistories(projectId, emptyHistories);
+        Set<ProjectChangeForEntity> result = projectChangesManager.getProjectChangesForHistories(projectId, emptyHistories);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
