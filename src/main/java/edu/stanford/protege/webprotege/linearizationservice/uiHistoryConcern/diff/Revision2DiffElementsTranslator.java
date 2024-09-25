@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff;
 
 
+import edu.stanford.protege.webprotege.diff.*;
 import edu.stanford.protege.webprotege.linearizationservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationDefinition;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.*;
@@ -8,11 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-/**
- * Matthew Horridge
- * Stanford Center for Biomedical Informatics Research
- * 26/02/15
- */
+
 @Component
 public class Revision2DiffElementsTranslator {
 

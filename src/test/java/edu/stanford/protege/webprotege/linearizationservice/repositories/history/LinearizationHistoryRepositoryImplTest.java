@@ -1,11 +1,14 @@
 package edu.stanford.protege.webprotege.linearizationservice.repositories.history;
 
+import com.mongodb.client.MongoClient;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.linearizationservice.*;
-import org.junit.jupiter.api.Test;
+import edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -22,9 +25,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LinearizationHistoryRepositoryImplTest {
 
     @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private MongoClient mongoClient;
+
+    @Autowired
     private LinearizationHistoryRepository linearizationHistoryRepository;
 
-    public LinearizationHistoryRepositoryImplTest() {
+    private final String whoficEntityIri1 = "whoficEntityIri1";
+    private final String whoficEntityIri2 = "whoficEntityIri2";
+    private final String testProjectId = "testProjectId";
+
+    @BeforeEach
+    void setUp() {
+        mongoTemplate.dropCollection(EntityLinearizationHistory.class);
     }
 
     @Test
@@ -58,4 +73,6 @@ public class LinearizationHistoryRepositoryImplTest {
 
         assertNotEquals(initialHistory, updatedHistory);
     }
+
+
 }

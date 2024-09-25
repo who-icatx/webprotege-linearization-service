@@ -68,16 +68,4 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
 
         return readWriteLock.executeReadLock(() -> Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION)));
     }
-
-    @Override
-    public List<EntityLinearizationHistory> getAllEntityHistoriesForProjectId(ProjectId projectId) {
-        Query query = new Query();
-
-        query.addCriteria(
-                Criteria.where(PROJECT_ID)
-                        .is(projectId.value())
-        );
-
-        return mongoTemplate.find(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION);
-    }
 }

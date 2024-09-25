@@ -27,15 +27,20 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     private final ReadWriteLockService readWriteLock;
 
     private final LinearizationEventsProcessorService processorService;
+    private final NewRevisionsEventEmitterServiceImpl newRevisionsEventEmitter;
 
     public LinearizationHistoryServiceImpl(ObjectMapper objectMapper,
                                            LinearizationHistoryRepository linearizationHistoryRepository,
-                                           LinearizationEventMapper eventMapper, ReadWriteLockService readWriteLock, LinearizationEventsProcessorService processorService) {
+                                           LinearizationEventMapper eventMapper,
+                                           ReadWriteLockService readWriteLock,
+                                           LinearizationEventsProcessorService processorService,
+                                           NewRevisionsEventEmitterServiceImpl newRevisionsEventEmitter) {
         this.objectMapper = objectMapper;
         this.linearizationHistoryRepository = linearizationHistoryRepository;
         this.eventMapper = eventMapper;
         this.readWriteLock = readWriteLock;
         this.processorService = processorService;
+        this.newRevisionsEventEmitter = newRevisionsEventEmitter;
     }
 
     private EntityLinearizationHistory createNewEntityLinearizationHistory(WhoficEntityLinearizationSpecification linearizationSpecification,
@@ -44,10 +49,6 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
         var linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
-
-        if (linearizationEvents.isEmpty()) {
-            throw new RuntimeException("Trying to create history with no events! EntityIri: " + linearizationSpecification.entityIRI());
-        }
 
         var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents);
 
@@ -91,12 +92,13 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
                                 if (!linearizationEvents.isEmpty()) {
                                     var newRevision = LinearizationRevision.create(userId, linearizationEvents);
-
                                     linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
+                                    newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, linearizationSpecification.entityIRI().toString(), newRevision);
                                 }
                             }, () -> {
                                 var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
                                 linearizationHistoryRepository.saveLinearizationHistory(newHistory);
+                                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, List.of(newHistory));
                             }
                     );
                 }
@@ -113,12 +115,9 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                         .collect(Collectors.toSet());
 
                 saveMultipleEntityLinearizationHistories(historiesToBeSaved);
+
+                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, historiesToBeSaved.stream().toList());
             }
         };
-    }
-
-    @Override
-    public List<EntityLinearizationHistory> getAllExistingHistoriesForProject(ProjectId projectId) {
-        return readWriteLock.executeWriteLock(() -> linearizationHistoryRepository.getAllEntityHistoriesForProjectId(projectId));
     }
 }

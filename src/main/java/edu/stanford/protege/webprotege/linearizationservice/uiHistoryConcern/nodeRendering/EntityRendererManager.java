@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.nodeRendering;
 
 import edu.stanford.protege.webprotege.common.ProjectId;
+import edu.stanford.protege.webprotege.entity.EntityNode;
 import edu.stanford.protege.webprotege.ipc.*;
 import edu.stanford.protege.webprotege.renderer.*;
 import org.semanticweb.owlapi.model.IRI;
@@ -8,8 +9,8 @@ import org.slf4j.*;
 import org.springframework.stereotype.Component;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.*;
+import java.util.concurrent.*;
 
 @Component
 public class EntityRendererManager {
@@ -38,6 +39,18 @@ public class EntityRendererManager {
                 new GetEntityHtmlRenderingAction(projectId, new OWLClassImpl(entityIri)),
                 executionContext
         );
+    }
+
+    public List<EntityNode> getRenderedEntities(Set<String> entityIris, ProjectId projectId) {
+        GetRenderedOwlEntitiesResult renderedEntities = null;
+        try {
+            renderedEntities = this.getRenderedEntities(new HashSet<>(entityIris), projectId, new ExecutionContext()).get(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            logger.error(e.getMessage());
+        }
+        List<EntityNode> renderedEntitiesList = renderedEntities != null ? renderedEntities.renderedEntities() : List.of();
+
+        return renderedEntitiesList;
     }
 
 }
