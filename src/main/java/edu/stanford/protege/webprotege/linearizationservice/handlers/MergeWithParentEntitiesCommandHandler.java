@@ -1,14 +1,12 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.common.EventId;
 import edu.stanford.protege.webprotege.ipc.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.linearizationservice.services.*;
-import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.ProjectLinearizationChangedEvent;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.Optional;
 
 import static edu.stanford.protege.webprotege.linearizationservice.handlers.MergeWithParentEntitiesRequest.CHANNEL;
 
@@ -19,15 +17,13 @@ public class MergeWithParentEntitiesCommandHandler implements CommandHandler<Mer
     private final LinearizationHistoryProcessorService historyProcessorService;
     private final ReadWriteLockService readWriteLock;
 
-    private final LinearizationChangeEmitterService linChangeEmitter;
 
     public MergeWithParentEntitiesCommandHandler(LinearizationHistoryService linearizationHistoryService,
                                                  LinearizationHistoryProcessorService historyProcessorService,
-                                                 ReadWriteLockService readWriteLock, LinearizationChangeEmitterService linChangeEmitter) {
+                                                 ReadWriteLockService readWriteLock) {
         this.linearizationHistoryService = linearizationHistoryService;
         this.historyProcessorService = historyProcessorService;
         this.readWriteLock = readWriteLock;
-        this.linChangeEmitter = linChangeEmitter;
     }
 
 
@@ -48,10 +44,7 @@ public class MergeWithParentEntitiesCommandHandler implements CommandHandler<Mer
         readWriteLock.executeWriteLock(() -> {
             Optional<WhoficEntityLinearizationSpecification> newWhoficSpec = historyProcessorService.mergeLinearizationViewsFromParentsAndGetDefaultSpec(request.currentEntityIri(), request.parentEntityIris(), request.projectId());
 
-            newWhoficSpec.ifPresent(newSpec -> {
-                linearizationHistoryService.addRevision(newSpec, request.projectId(), executionContext.userId());
-                linChangeEmitter.emitLinearizationChangeEvent(request.projectId(), List.of(ProjectLinearizationChangedEvent.create(EventId.generate(), request.projectId())));
-            });
+            newWhoficSpec.ifPresent(newSpec -> linearizationHistoryService.addRevision(newSpec, request.projectId(), executionContext.userId()));
         });
         return Mono.just(MergeWithParentEntitiesResponse.create());
     }

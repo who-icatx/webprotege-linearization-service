@@ -1,13 +1,10 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.common.EventId;
 import edu.stanford.protege.webprotege.ipc.*;
 import edu.stanford.protege.webprotege.linearizationservice.services.*;
-import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.ProjectLinearizationChangedEvent;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static edu.stanford.protege.webprotege.linearizationservice.handlers.RevertLinearitationToRevisionRequest.CHANNEL;
@@ -18,14 +15,11 @@ public class RevertLinearitationToRevisionCommandHandler implements CommandHandl
     private final LinearizationHistoryService historyService;
     private final LinearizationEventsProcessorService eventsProcessorService;
 
-    private final LinearizationChangeEmitterService linChangeEmitter;
 
     public RevertLinearitationToRevisionCommandHandler(LinearizationHistoryService historyService,
-                                                       LinearizationEventsProcessorService eventsProcessorService,
-                                                       LinearizationChangeEmitterService linChangeEmitter) {
+                                                       LinearizationEventsProcessorService eventsProcessorService) {
         this.historyService = historyService;
         this.eventsProcessorService = eventsProcessorService;
-        this.linChangeEmitter = linChangeEmitter;
     }
 
     @NotNull
@@ -53,7 +47,6 @@ public class RevertLinearitationToRevisionCommandHandler implements CommandHandl
 
             historyService.addRevision(newRevisionUntilTimestamp, request.projectId(), executionContext.userId());
 
-            linChangeEmitter.emitLinearizationChangeEvent(request.projectId(), List.of(ProjectLinearizationChangedEvent.create(EventId.generate(), request.projectId())));
         });
 
         return Mono.just(RevertLinearitationToRevisionResponse.create());
