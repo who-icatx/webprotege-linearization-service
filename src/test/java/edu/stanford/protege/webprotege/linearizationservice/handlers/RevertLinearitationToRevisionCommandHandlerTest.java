@@ -27,9 +27,6 @@ public class RevertLinearitationToRevisionCommandHandlerTest {
     @Mock
     private LinearizationEventsProcessorService eventsProcessorService;
 
-    @Mock
-    private LinearizationChangeEmitterService linChangeEmitter;
-
     @InjectMocks
     private RevertLinearitationToRevisionCommandHandler commandHandler;
 

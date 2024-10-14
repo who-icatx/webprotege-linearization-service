@@ -1,14 +1,10 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.common.EventId;
 import edu.stanford.protege.webprotege.ipc.*;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.WhoficEntityLinearizationSpecificationMapper;
 import edu.stanford.protege.webprotege.linearizationservice.services.*;
-import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.ProjectLinearizationChangedEvent;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 import static edu.stanford.protege.webprotege.linearizationservice.handlers.CreateLinearizationFromParentRequest.CHANNEL;
 
@@ -19,16 +15,13 @@ public class CreateLinearizationFromParentCommandHandler implements CommandHandl
     private final LinearizationEventsProcessorService linearizationEventsProcessor;
     private final WhoficEntityLinearizationSpecificationMapper whoficSpecMapper;
 
-    private final LinearizationChangeEmitterService linChangeEmitter;
 
     public CreateLinearizationFromParentCommandHandler(LinearizationHistoryService linearizationHistoryService,
                                                        LinearizationEventsProcessorService linearizationEventsProcessor,
-                                                       WhoficEntityLinearizationSpecificationMapper whoficSpecMapper,
-                                                       LinearizationChangeEmitterService linChangeEmitter) {
+                                                       WhoficEntityLinearizationSpecificationMapper whoficSpecMapper) {
         this.linearizationHistoryService = linearizationHistoryService;
         this.linearizationEventsProcessor = linearizationEventsProcessor;
         this.whoficSpecMapper = whoficSpecMapper;
-        this.linChangeEmitter = linChangeEmitter;
     }
 
     @NotNull
@@ -53,7 +46,6 @@ public class CreateLinearizationFromParentCommandHandler implements CommandHandl
 
         linearizationHistoryService.addRevision(newEntityWhoficSpec, request.projectId(), executionContext.userId());
 
-        linChangeEmitter.emitLinearizationChangeEvent(request.projectId(), List.of(ProjectLinearizationChangedEvent.create(EventId.generate(), request.projectId())));
 
         return Mono.just(CreateLinearizationFromParentResponse.create());
     }
