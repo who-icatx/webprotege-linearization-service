@@ -3,8 +3,7 @@ package edu.stanford.protege.webprotege.linearizationservice.mappers;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -15,6 +14,7 @@ public class LinearizationEventMapper {
 
 
     private final static Logger LOGGER = LoggerFactory.getLogger(LinearizationEventMapper.class);
+
     public Set<LinearizationEvent> mapLinearizationSpecificationsToEvents(WhoficEntityLinearizationSpecification linearizationSpecification) {
         if (linearizationSpecification.linearizationSpecifications() != null) {
             return linearizationSpecification.linearizationSpecifications()
@@ -107,7 +107,7 @@ public class LinearizationEventMapper {
     }
 
     private void addLinearizationParentEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, LinearizationSpecification oldSpecification) {
-        if ((specification.getLinearizationParent() != null && !specification.getLinearizationParent().isEmpty())
+        if ((specification.getLinearizationParent() != null)
                 && (oldSpecification == null || oldSpecification.getLinearizationParent() == null || !oldSpecification.getLinearizationParent().equals(specification.getLinearizationParent()))) {
             events.add(new SetLinearizationParent(specification.getLinearizationParent().toString(), specification.getLinearizationView().toString()));
         }
