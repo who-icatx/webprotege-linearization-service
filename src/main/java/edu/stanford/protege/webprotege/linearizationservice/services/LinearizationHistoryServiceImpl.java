@@ -69,7 +69,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                 .map(history -> {
                     Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
                             .stream()
-                            .sorted(Comparator.comparingLong(LinearizationRevision::timestamp))
+                            .sorted(Comparator.comparingLong(LinearizationRevision::timestamp).reversed())
                             .collect(Collectors.toCollection(TreeSet::new));
                     // Return a new EntityLinearizationHistory object with the sorted revisions
                     return new EntityLinearizationHistory(history.getWhoficEntityIri(), history.getProjectId(), sortedRevisions);
