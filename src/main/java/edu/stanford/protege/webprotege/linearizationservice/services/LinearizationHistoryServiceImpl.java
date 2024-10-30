@@ -67,10 +67,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     public Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
         return linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri.toString(), projectId)
                 .map(history -> {
-                    Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions()
-                            .stream()
-                            .sorted(Comparator.comparingLong(LinearizationRevision::timestamp).reversed())
-                            .collect(Collectors.toCollection(TreeSet::new));
+                    Set<LinearizationRevision> sortedRevisions = new TreeSet<>(history.getLinearizationRevisions());
                     // Return a new EntityLinearizationHistory object with the sorted revisions
                     return new EntityLinearizationHistory(history.getWhoficEntityIri(), history.getProjectId(), sortedRevisions);
                 });
