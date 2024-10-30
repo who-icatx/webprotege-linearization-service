@@ -18,18 +18,8 @@ public record LinearizationRevision(@Indexed(name = "timestamp", direction = Ind
     public static final String USER_ID = "userId";
     public static final String LINEARIZATION_EVENTS = "linearizationEvents";
 
-    private static long lastTimestamp = 0;
-    private static int counter = 0;
-
     public static LinearizationRevision create(UserId userId, Set<LinearizationEvent> linearizationEvents) {
-        long currentTimestamp = Instant.now().toEpochMilli();
-        if (currentTimestamp == lastTimestamp) {
-            counter++;
-        } else {
-            lastTimestamp = currentTimestamp;
-            counter = 0;
-        }
-        return new LinearizationRevision(currentTimestamp + counter, userId, linearizationEvents);
+        return new LinearizationRevision(new Date().getTime(), userId, linearizationEvents);
     }
 
     @Override
