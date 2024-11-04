@@ -117,4 +117,12 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
             }
         };
     }
+
+    @Override
+    public List<String> filterIrisWithoutHistory(List<String> iris, ProjectId projectId, int batchSize) {
+        var existingHistories = linearizationHistoryRepository.findHistoriesByEntityIrisAndProjectIdInBatches(iris, projectId, batchSize);
+        return existingHistories.stream()
+                .map(EntityLinearizationHistory::getWhoficEntityIri)
+                .toList();
+    }
 }

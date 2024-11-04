@@ -68,4 +68,31 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
 
         return readWriteLock.executeReadLock(() -> Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION)));
     }
+
+    public List<EntityLinearizationHistory> findHistoriesByEntityIrisAndProjectIdInBatches(List<String> entityIris, ProjectId projectId, int batchSize) {
+        List<EntityLinearizationHistory> allHistories = new ArrayList<>();
+        int totalSize = entityIris.size();
+
+        for (int start = 0; start < totalSize; start += batchSize) {
+            int end = Math.min(start + batchSize, totalSize);
+            List<String> batch = entityIris.subList(start, end);
+
+            Query query = new Query();
+            query.addCriteria(
+                    Criteria.where(WHOFIC_ENTITY_IRI).in(batch)
+                            .and(PROJECT_ID).is(projectId.value())
+            );
+
+            List<EntityLinearizationHistory> batchHistories = readWriteLock.executeReadLock(() ->
+                    mongoTemplate.find(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION)
+            );
+
+            batchHistories.stream()
+                    .filter(history -> history.getLinearizationRevisions() != null && !history.getLinearizationRevisions().isEmpty())
+                    .forEach(allHistories::add);
+        }
+
+        return allHistories;
+    }
+
 }

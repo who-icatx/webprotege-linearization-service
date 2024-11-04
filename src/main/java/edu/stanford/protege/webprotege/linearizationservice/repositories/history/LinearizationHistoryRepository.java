@@ -16,4 +16,6 @@ public interface LinearizationHistoryRepository {
     void addRevision(String whoficEntityIri, ProjectId projectId, LinearizationRevision newRevision);
 
     Optional<EntityLinearizationHistory> findHistoryByEntityIriAndProjectId(String entityIri, ProjectId projectId);
+
+    List<EntityLinearizationHistory> findHistoriesByEntityIrisAndProjectIdInBatches(List<String> entityIris, ProjectId projectId, int batchSize);
 }
