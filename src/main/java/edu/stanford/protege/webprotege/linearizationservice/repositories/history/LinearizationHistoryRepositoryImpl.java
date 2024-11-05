@@ -88,7 +88,22 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
             );
 
             batchHistories.stream()
-                    .filter(history -> history.getLinearizationRevisions() != null && !history.getLinearizationRevisions().isEmpty())
+                    .filter(history -> {
+                        if(history.getLinearizationRevisions() != null &&
+                                !history.getLinearizationRevisions().isEmpty()){
+                            return true;
+                        }
+                        /*ToDo: there seems to be a bug where a linearization revision without any events is being created
+                            Remove this once that bug is sorted out.
+                         */
+                        if(history.getLinearizationRevisions().size() == 1){
+                            return history.getLinearizationRevisions()
+                                    .stream()
+                                    .anyMatch(linearizationRevision ->
+                                            linearizationRevision.linearizationEvents() != null && !linearizationRevision.linearizationEvents().isEmpty());
+                        }
+                        return false;
+                    })
                     .forEach(allHistories::add);
         }
 

@@ -213,4 +213,67 @@ public class LinearizationHistoryServiceTest {
                 .emitNewRevisionsEvent(eq(projectId), anyList());
     }
 
+    @Test
+    public void GIVEN_irisWithNoHistory_WHEN_getIrisWithHistory_THEN_returnEmptyList() {
+        // GIVEN
+        ProjectId projectId = ProjectId.generate();
+        List<String> iris = List.of("iri1", "iri2", "iri3");
+        when(linearizationHistoryRepo.findHistoriesByEntityIrisAndProjectIdInBatches(anyList(), eq(projectId), anyInt()))
+                .thenReturn(List.of());
+
+        // WHEN
+        List<String> result = linearizationHistoryService.getIrisWithHistory(iris, projectId, 2);
+
+        // THEN
+        assertEquals(List.of(), result);
+    }
+
+    @Test
+    public void GIVEN_irisWithSomeHavingHistory_WHEN_getIrisWithHistory_THEN_returnOnlyIrisWithHistory() {
+        // GIVEN
+        ProjectId projectId = ProjectId.generate();
+        List<String> iris = List.of("iri1", "iri2", "iri3");
+        EntityLinearizationHistory history1 = new EntityLinearizationHistory("iri1", projectId.id(), Set.of());
+        when(linearizationHistoryRepo.findHistoriesByEntityIrisAndProjectIdInBatches(anyList(), eq(projectId), anyInt()))
+                .thenReturn(List.of(history1));
+
+        // WHEN
+        List<String> result = linearizationHistoryService.getIrisWithHistory(iris, projectId, 2);
+
+        // THEN
+        assertEquals(List.of("iri1"), result);
+    }
+
+    @Test
+    public void GIVEN_allIrisWithHistory_WHEN_getIrisWithHistory_THEN_returnAllIris() {
+        // GIVEN
+        ProjectId projectId = ProjectId.generate();
+        List<String> iris = List.of("iri1", "iri2");
+        EntityLinearizationHistory history1 = new EntityLinearizationHistory("iri1", projectId.id(), Set.of());
+        EntityLinearizationHistory history2 = new EntityLinearizationHistory("iri2", projectId.id(), Set.of());
+        when(linearizationHistoryRepo.findHistoriesByEntityIrisAndProjectIdInBatches(anyList(), eq(projectId), anyInt()))
+                .thenReturn(List.of(history1, history2));
+
+        // WHEN
+        List<String> result = linearizationHistoryService.getIrisWithHistory(iris, projectId, 2);
+
+        // THEN
+        assertEquals(iris, result);
+    }
+
+    @Test
+    public void GIVEN_emptyIriList_WHEN_getIrisWithHistory_THEN_returnEmptyList() {
+        // GIVEN
+        ProjectId projectId = ProjectId.generate();
+        List<String> iris = List.of();
+        when(linearizationHistoryRepo.findHistoriesByEntityIrisAndProjectIdInBatches(anyList(), eq(projectId), anyInt()))
+                .thenReturn(List.of());
+
+        // WHEN
+        List<String> result = linearizationHistoryService.getIrisWithHistory(iris, projectId, 2);
+
+        // THEN
+        assertEquals(List.of(), result);
+    }
+
 }

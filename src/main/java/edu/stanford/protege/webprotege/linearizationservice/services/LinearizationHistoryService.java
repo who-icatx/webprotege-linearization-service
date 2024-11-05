@@ -17,5 +17,5 @@ public interface LinearizationHistoryService {
 
     Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId);
 
-    List<String> filterIrisWithoutHistory(List<String> iris, ProjectId projectId, int batchSize);
+    List<String> getIrisWithHistory(List<String> iris, ProjectId projectId, int batchSize);
 }

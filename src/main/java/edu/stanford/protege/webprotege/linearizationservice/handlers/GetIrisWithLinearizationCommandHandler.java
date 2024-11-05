@@ -35,7 +35,7 @@ public class GetIrisWithLinearizationCommandHandler implements CommandHandler<Ge
     @Override
     public Mono<GetIrisWithLinearizationResponse> handleRequest(GetIrisWithLinearizationRequest request, ExecutionContext executionContext) {
 
-        var irisWithLinearization = linearizationHistoryService.filterIrisWithoutHistory(request.iris(), request.projectId(), batchSize);
+        var irisWithLinearization = linearizationHistoryService.getIrisWithHistory(request.iris(), request.projectId(), batchSize);
 
 
         return Mono.just(GetIrisWithLinearizationResponse.create(irisWithLinearization));
