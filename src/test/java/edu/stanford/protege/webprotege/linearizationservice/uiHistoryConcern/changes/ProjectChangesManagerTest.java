@@ -8,7 +8,7 @@ import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.diff.Revision2DiffElementsTranslator;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.nodeRendering.EntityRendererManager;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -64,7 +64,11 @@ public class ProjectChangesManagerTest {
         assertEquals(1, result.size());
         Iterator<ProjectChangeForEntity> iterator = result.iterator();
 
-        ProjectChange projectChange = iterator.next().projectChange();
+        ProjectChangeForEntity projectChangeForEntity = iterator.next();
+        ChangeType projectChangeType = projectChangeForEntity.changeType();
+        assertEquals(ChangeType.UPDATE_ENTITY, projectChangeType);
+
+        ProjectChange projectChange = projectChangeForEntity.projectChange();
         assertNotNull(projectChange);
         assertEquals(12345L, projectChange.getTimestamp());
         assertEquals("user1", projectChange.getAuthor().id());
@@ -117,6 +121,7 @@ public class ProjectChangesManagerTest {
 
         assertNotNull(result);
         assertEquals(entityIri, result.whoficEntityIri());
+        assertEquals(ChangeType.UPDATE_ENTITY, result.changeType());
 
         ProjectChange projectChange = result.projectChange();
         assertNotNull(projectChange);
