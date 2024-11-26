@@ -203,25 +203,16 @@ public class LinearizationEventMapper {
 
     private void addUnspecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
         if (specification.linearizationResiduals() != null) {
-            String newUnspecifiedTitle = specification.linearizationResiduals().getUnspecifiedResidualTitle();
+            String newTitle = specification.linearizationResiduals().getUnspecifiedResidualTitle();
+            String oldTitle = oldResiduals != null ? oldResiduals.getUnspecifiedResidualTitle() : null;
 
-            boolean shouldSaveEmptyString = oldResiduals != null &&
-                    oldResiduals.getUnspecifiedResidualTitle() != null &&
-                    newUnspecifiedTitle != null &&
-                    newUnspecifiedTitle.isEmpty() &&
-                    !oldResiduals.getUnspecifiedResidualTitle().equals(newUnspecifiedTitle);
-
-            if (shouldSaveEmptyString ||
-                    (newUnspecifiedTitle != null && !newUnspecifiedTitle.isEmpty() &&
-                            (oldResiduals == null ||
-                                    oldResiduals.getUnspecifiedResidualTitle() == null ||
-                                    !oldResiduals.getUnspecifiedResidualTitle().equals(newUnspecifiedTitle))
-                    )
-            ) {
-                events.add(new SetUnspecifiedResidualTitle(newUnspecifiedTitle));
+            if (shouldAddNewTitle(newTitle, oldTitle) ||
+                    shouldSaveEmptyString(newTitle, oldTitle)) {
+                events.add(new SetUnspecifiedResidualTitle(newTitle));
             }
         }
     }
+
 
     private void addOtherSpecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
         if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getOtherSpecifiedResidualTitle() != null) {
@@ -232,20 +223,26 @@ public class LinearizationEventMapper {
     private void addOtherSpecifiedTitleResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification, LinearizationResiduals oldResiduals) {
         if (specification.linearizationResiduals() != null) {
             String newTitle = specification.linearizationResiduals().getOtherSpecifiedResidualTitle();
+            String oldTitle = oldResiduals != null ? oldResiduals.getOtherSpecifiedResidualTitle() : null;
 
-            boolean shouldSaveEmptyString = oldResiduals != null && oldResiduals.getOtherSpecifiedResidualTitle() != null && newTitle.isEmpty();
-
-            if (shouldSaveEmptyString ||
-                    (newTitle != null &&
-                            !newTitle.isEmpty() &&
-                            (oldResiduals == null ||
-                                    oldResiduals.getOtherSpecifiedResidualTitle() == null ||
-                                    !oldResiduals.getOtherSpecifiedResidualTitle().equals(newTitle))
-                    )
-            ) {
+            if (shouldSaveEmptyString(newTitle, oldTitle) ||
+                    shouldAddNewTitle(newTitle, oldTitle)) {
                 events.add(new SetOtherSpecifiedResidualTitle(newTitle));
             }
         }
+    }
+
+    private boolean shouldAddNewTitle(String newTitle, String oldTitle) {
+        return newTitle != null &&
+                !newTitle.isEmpty() &&
+                (oldTitle == null || !oldTitle.equals(newTitle));
+    }
+
+    private boolean shouldSaveEmptyString(String newTitle, String oldTitle) {
+        return oldTitle != null &&
+                newTitle != null &&
+                newTitle.isEmpty() &&
+                !oldTitle.equals(newTitle);
     }
 
 

@@ -37,6 +37,11 @@ public class CreateLinearizationFromParentCommandHandler implements CommandHandl
 
     @Override
     public Mono<CreateLinearizationFromParentResponse> handleRequest(CreateLinearizationFromParentRequest request, ExecutionContext executionContext) {
+        var currentEntityHistory = linearizationHistoryService.getExistingHistoryOrderedByRevision(request.newEntityIri(), request.projectId());
+        if(currentEntityHistory.isPresent()){
+            return Mono.just(CreateLinearizationFromParentResponse.create());
+        }
+
         var parentEntityHistory = linearizationHistoryService.getExistingHistoryOrderedByRevision(request.parentEntityIri(), request.projectId());
         if (parentEntityHistory.isEmpty()) {
             throw new RuntimeException("Parent entity history is empty!");
