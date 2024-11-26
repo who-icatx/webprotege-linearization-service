@@ -10,7 +10,7 @@ import org.semanticweb.owlapi.model.IRI;
 import java.util.*;
 
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class LinearizationEventMapperTest {
@@ -94,4 +94,265 @@ public class LinearizationEventMapperTest {
             }
         });
     }
+
+    @Test
+    public void GIVEN_nonEmptyOldTitleAndDifferentNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_eventAdded() {
+        String oldTitle = "Old Title";
+        String newTitle = "New Title";
+
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        oldTitle,
+                        null
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        newTitle,
+                        null
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertEquals(1, events.size());
+        assertTrue(events.stream().anyMatch(event -> event instanceof SetOtherSpecifiedResidualTitle));
+        assertEquals(newTitle, events.iterator().next().getValue());
+    }
+
+    @Test
+    public void GIVEN_emptyOldTitleAndEmptyNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_noEventAdded() {
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        "",
+                        null
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        "",
+                        null
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertTrue(events.isEmpty());
+    }
+
+    @Test
+    public void GIVEN_nullOldTitleAndNonEmptyNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_eventAdded() {
+        String newTitle = "New Title";
+
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        null
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        newTitle,
+                        null
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertEquals(1, events.size());
+        assertTrue(events.stream().anyMatch(event -> event instanceof SetOtherSpecifiedResidualTitle));
+        assertEquals(newTitle, events.iterator().next().getValue());
+    }
+
+    @Test
+    public void GIVEN_nonEmptyOldTitleAndEmptyNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_eventAdded() {
+        String oldTitle = "Old Title";
+
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        oldTitle,
+                        null
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        "",
+                        null
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertEquals(1, events.size());
+        assertTrue(events.stream().anyMatch(event -> event instanceof SetOtherSpecifiedResidualTitle));
+        assertEquals("", events.iterator().next().getValue());
+    }
+
+    //----------------------------------------------------------------------------
+
+    @Test
+    public void GIVEN_nonEmptyOldUnspecifiedTitleAndDifferentNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_eventAdded() {
+        String oldTitle = "Old Title";
+        String newTitle = "New Title";
+
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        oldTitle
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        newTitle
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertEquals(1, events.size());
+        assertTrue(events.stream().anyMatch(event -> event instanceof SetUnspecifiedResidualTitle));
+        assertEquals(newTitle, events.iterator().next().getValue());
+    }
+
+    @Test
+    public void GIVEN_emptyOldUnspecifiedTitleAndEmptyNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_noEventAdded() {
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        ""
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        ""
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertTrue(events.isEmpty());
+    }
+
+    @Test
+    public void GIVEN_nullOldUnspecifiedTitleAndNonEmptyNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_eventAdded() {
+        String newTitle = "New Title";
+
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        null
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        newTitle
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertEquals(1, events.size());
+        assertTrue(events.stream().anyMatch(event -> event instanceof SetUnspecifiedResidualTitle));
+        assertEquals(newTitle, events.iterator().next().getValue());
+    }
+
+    @Test
+    public void GIVEN_nonEmptyOldUnspecifiedTitleAndEmptyNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_eventAdded() {
+        String oldTitle = "Old Title";
+
+        WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        oldTitle
+                ),
+                List.of()
+        );
+
+        WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
+                IRI.create(getRandomIri()),
+                new LinearizationResiduals(
+                        ThreeStateBoolean.FALSE,
+                        ThreeStateBoolean.FALSE,
+                        null,
+                        ""
+                ),
+                List.of()
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapLinearizationResidualsToEvents(newSpec, oldSpec);
+
+        assertEquals(1, events.size());
+        assertTrue(events.stream().anyMatch(event -> event instanceof SetUnspecifiedResidualTitle));
+        assertEquals("", events.iterator().next().getValue());
+    }
+
 }
