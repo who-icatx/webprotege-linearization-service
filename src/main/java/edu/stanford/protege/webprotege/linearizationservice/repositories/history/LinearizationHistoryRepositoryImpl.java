@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.linearizationservice.repositories.histor
 
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.result.UpdateResult;
+import edu.stanford.protege.webprotege.common.ChangeRequestId;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.services.ReadWriteLockService;
@@ -29,6 +30,8 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
     public EntityLinearizationHistory saveLinearizationHistory(EntityLinearizationHistory entityLinearizationHistory) {
         return readWriteLock.executeWriteLock(() -> mongoTemplate.save(entityLinearizationHistory, LINEARIZATION_HISTORY_COLLECTION));
     }
+
+
 
     @Override
     public void bulkWriteDocuments(List<InsertOneModel<Document>> listOfInsertOneModelDocument) {
@@ -67,5 +70,50 @@ public class LinearizationHistoryRepositoryImpl implements LinearizationHistoryR
         );
 
         return readWriteLock.executeReadLock(() -> Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION)));
+    }
+
+    @Override
+    public void deleteRevision(ChangeRequestId changeRequestId, ProjectId projectId, String entityIri) {
+
+        Query query = new Query();
+        query.addCriteria(
+                Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
+                        .and(PROJECT_ID).is(projectId.value())
+        );
+        Update update = new Update().pull("linearizationRevisions",
+                new Document("changeRequestId._id", changeRequestId.id()));
+
+        readWriteLock.executeReadLock(() ->
+                Optional.of(mongoTemplate.updateFirst(query,update, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION))
+        );
+    }
+
+    @Override
+    public Optional<EntityLinearizationHistory> getEntityHistory(String entityIri, ProjectId projectId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
+                .and(PROJECT_ID).is(projectId.id()));
+        return readWriteLock.executeReadLock(() ->
+                Optional.ofNullable(mongoTemplate.findOne(query, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION))
+        );
+    }
+
+    @Override
+    public void commitRevision(ChangeRequestId changeRequestId, ProjectId projectId, String entityIri) {
+        Query query = new Query(Criteria.where(WHOFIC_ENTITY_IRI)
+                .is(entityIri)
+                .and(PROJECT_ID).is(projectId.id())
+                .and("linearizationRevisions")
+                .elemMatch(
+                        Criteria.where("changeRequestId").is(changeRequestId)
+                                .and("commitStatus").is(CommitStatus.UNCOMMITTED.name())
+                )
+        );
+
+        Update update = new Update().set("linearizationRevisions.$.commitStatus", CommitStatus.COMMITTED.name());
+
+        readWriteLock.executeReadLock(() ->
+                Optional.of(mongoTemplate.updateFirst(query,update, EntityLinearizationHistory.class, LINEARIZATION_HISTORY_COLLECTION))
+        );
     }
 }

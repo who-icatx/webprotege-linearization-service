@@ -14,6 +14,8 @@ spring:
       auto-index-creation: true
       uri: mongodb://${spring.data.mongodb.host}:${spring.data.mongodb.port}/${spring.data.mongodb.database}
 
+logging.level.root: DEBUG
+
 webprotege:
   minio:
     access-key: webprotege
@@ -24,6 +26,8 @@ webprotege:
   rabbitmq:
     requestqueue: webprotege-linearization-service-queue
     responsequeue: webprotege-linearization-service-response-queue
+    eventsqueue: webprotege-linearization-events-queue
+    event-subscribe: true
     timeout: 60000
   linearization:
     batch-size: 100

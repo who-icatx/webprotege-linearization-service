@@ -62,7 +62,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 List.of(spec)
         );
 
-        commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec), executionContext);
+        commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec, null), executionContext);
 
         Query query = new Query();
         query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri)
@@ -138,9 +138,9 @@ public class SaveEntityLinearizationCommandHandlerTest {
                 List.of(spec2)
         );
 
-        commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec1), executionContext);
+        commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec1, null), executionContext);
 
-        commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec2), executionContext);
+        commandHandler.handleRequest(new SaveEntityLinearizationRequest(projectId, woficEntitySpec2, null), executionContext);
 
         Query query = new Query();
         query.addCriteria(Criteria.where(WHOFIC_ENTITY_IRI).is(entityIri.toString())

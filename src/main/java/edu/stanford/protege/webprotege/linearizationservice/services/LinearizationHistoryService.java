@@ -13,7 +13,8 @@ public interface LinearizationHistoryService {
     Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId);
 
     void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
+                     ProjectId projectId, UserId userId, ChangeRequestId changeRequestId);
+    void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
                      ProjectId projectId, UserId userId);
-
     Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId);
 }

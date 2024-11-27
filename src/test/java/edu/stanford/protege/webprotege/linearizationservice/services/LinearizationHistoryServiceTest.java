@@ -65,9 +65,9 @@ public class LinearizationHistoryServiceTest {
         ProjectId projectId = ProjectId.generate();
 
         // Create unsorted LinearizationRevisions
-        LinearizationRevision revision1 = new LinearizationRevision(3L, userid, new HashSet<>());
-        LinearizationRevision revision2 = new LinearizationRevision(1L, userid, new HashSet<>());
-        LinearizationRevision revision3 = new LinearizationRevision(2L, userid, new HashSet<>());
+        LinearizationRevision revision1 = new LinearizationRevision(3L, userid, new HashSet<>(), null, CommitStatus.COMMITTED);
+        LinearizationRevision revision2 = new LinearizationRevision(1L, userid, new HashSet<>(), null, CommitStatus.COMMITTED);
+        LinearizationRevision revision3 = new LinearizationRevision(2L, userid, new HashSet<>(), null, CommitStatus.COMMITTED);
 
         Set<LinearizationRevision> unsortedRevisions = new HashSet<>(Arrays.asList(revision1, revision2, revision3));
 
