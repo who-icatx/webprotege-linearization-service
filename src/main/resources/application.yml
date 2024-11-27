@@ -24,6 +24,8 @@ webprotege:
   rabbitmq:
     requestqueue: webprotege-linearization-service-queue
     responsequeue: webprotege-linearization-service-response-queue
+    eventsqueue: webprotege-linearization-events-queue
+    event-subscribe: true
     timeout: 60000
   linearization:
     batch-size: 100
