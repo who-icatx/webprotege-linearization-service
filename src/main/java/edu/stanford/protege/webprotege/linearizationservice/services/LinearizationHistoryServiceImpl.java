@@ -45,12 +45,13 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
     private EntityLinearizationHistory createNewEntityLinearizationHistory(WhoficEntityLinearizationSpecification linearizationSpecification,
                                                                            ProjectId projectId,
-                                                                           UserId userId) {
+                                                                           UserId userId,
+                                                                           ChangeRequestId changeRequestId) {
 
         var linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
 
-        var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents);
+        var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents, changeRequestId);
 
         return new EntityLinearizationHistory(linearizationSpecification.entityIRI().toString(), projectId.id(), new HashSet<>(List.of(linearizationRevision)));
     }
@@ -67,7 +68,10 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     public Optional<EntityLinearizationHistory> getExistingHistoryOrderedByRevision(IRI entityIri, ProjectId projectId) {
         return linearizationHistoryRepository.findHistoryByEntityIriAndProjectId(entityIri.toString(), projectId)
                 .map(history -> {
-                    Set<LinearizationRevision> sortedRevisions = new TreeSet<>(history.getLinearizationRevisions());
+                    Set<LinearizationRevision> sortedRevisions = history.getLinearizationRevisions().stream()
+                            .filter(linearizationRevision -> linearizationRevision.commitStatus() == null ||
+                                    linearizationRevision.commitStatus().equals(CommitStatus.COMMITTED))
+                            .collect(Collectors.toCollection(TreeSet::new));
                     // Return a new EntityLinearizationHistory object with the sorted revisions
                     return new EntityLinearizationHistory(history.getWhoficEntityIri(), history.getProjectId(), sortedRevisions);
                 });
@@ -76,7 +80,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
     @Override
     public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
-                            ProjectId projectId, UserId userId) {
+                            ProjectId projectId, UserId userId, ChangeRequestId changeRequestId) {
         readWriteLock.executeWriteLock(() -> {
                     var existingHistoryOptional = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
                     existingHistoryOptional.ifPresentOrElse(history -> {
@@ -88,12 +92,12 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                                 linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification, oldSpec));
 
                                 if (!linearizationEvents.isEmpty()) {
-                                    var newRevision = LinearizationRevision.create(userId, linearizationEvents);
+                                    var newRevision = LinearizationRevision.create(userId, linearizationEvents, changeRequestId);
                                     linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
                                     newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, linearizationSpecification.entityIRI().toString(), newRevision);
                                 }
                             }, () -> {
-                                var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId);
+                                var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId, changeRequestId);
                                 linearizationHistoryRepository.saveLinearizationHistory(newHistory);
                                 newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, List.of(newHistory));
                             }
@@ -102,13 +106,18 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
         );
     }
 
+    @Override
+    public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification, ProjectId projectId, UserId userId) {
+        addRevision(linearizationSpecification, projectId, userId, null);
+    }
+
 
     @Override
     public Consumer<List<WhoficEntityLinearizationSpecification>> createBatchProcessorForSavingPaginatedHistories(ProjectId projectId, UserId userId) {
         return page -> {
             if (isNotEmpty(page)) {
                 var historiesToBeSaved = page.stream()
-                        .map(specification -> createNewEntityLinearizationHistory(specification, projectId, userId))
+                        .map(specification -> createNewEntityLinearizationHistory(specification, projectId, userId, null))
                         .collect(Collectors.toSet());
 
                 saveMultipleEntityLinearizationHistories(historiesToBeSaved);

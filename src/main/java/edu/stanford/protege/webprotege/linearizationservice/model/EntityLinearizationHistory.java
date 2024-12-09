@@ -1,16 +1,24 @@
 package edu.stanford.protege.webprotege.linearizationservice.model;
 
 import com.fasterxml.jackson.annotation.*;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.*;
 
 import java.util.*;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.LINEARIZATION_HISTORY_COLLECTION;
+import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.WHOFIC_ENTITY_IRI;
+import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.PROJECT_ID;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(collection = LINEARIZATION_HISTORY_COLLECTION)
+@CompoundIndexes({
+        @CompoundIndex(name = "entity_iri_project_idx", def = "{'" + WHOFIC_ENTITY_IRI + "': 1, '" + PROJECT_ID + "': 1}")
+})
 public class EntityLinearizationHistory {
 
     public static final String WHOFIC_ENTITY_IRI = "whoficEntityIri";
@@ -19,9 +27,11 @@ public class EntityLinearizationHistory {
     public static final String LINEARIZATION_HISTORY_COLLECTION = "EntityLinearizationHistory";
 
     @Field("whoficEntityIri")
+    @Indexed(name = "whoficEntityIri_idx")
     private final String whoficEntityIri;
 
     @Field("projectId")
+    @Indexed(name = "entityProjectId_idx")
     private final String projectId;
 
     @Field("linearizationRevisions")
