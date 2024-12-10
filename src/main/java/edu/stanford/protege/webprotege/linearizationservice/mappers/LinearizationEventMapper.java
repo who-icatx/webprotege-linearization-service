@@ -149,8 +149,9 @@ public class LinearizationEventMapper {
 
             boolean shouldSaveUnknown = newSuppressValue.equals(ThreeStateBoolean.UNKNOWN) &&
                     oldResiduals != null &&
-                    oldResiduals.getSuppressUnspecifiedResiduals() != null &&
-                    !oldResiduals.getSuppressOtherSpecifiedResiduals().equals(ThreeStateBoolean.UNKNOWN);
+                    (oldResiduals.getSuppressUnspecifiedResiduals() == null ||
+                            (oldResiduals.getSuppressUnspecifiedResiduals() != null &&
+                    !oldResiduals.getSuppressOtherSpecifiedResiduals().equals(ThreeStateBoolean.UNKNOWN)));
 
             boolean shouldSaveValue = shouldSaveUnknown ||
                     (!newSuppressValue.equals(ThreeStateBoolean.UNKNOWN) &&
@@ -177,8 +178,9 @@ public class LinearizationEventMapper {
 
             boolean shouldSaveUnknown = newSuppressValue.equals(ThreeStateBoolean.UNKNOWN) &&
                     oldResiduals != null &&
-                    oldResiduals.getSuppressUnspecifiedResiduals() != null &&
-                    !oldResiduals.getSuppressUnspecifiedResiduals().equals(ThreeStateBoolean.UNKNOWN);
+                    (oldResiduals.getSuppressUnspecifiedResiduals() == null ||
+                            (oldResiduals.getSuppressUnspecifiedResiduals() != null &&
+                    !oldResiduals.getSuppressUnspecifiedResiduals().equals(ThreeStateBoolean.UNKNOWN)));
 
             boolean shouldSaveValue = shouldSaveUnknown ||
                     (!newSuppressValue.equals(ThreeStateBoolean.UNKNOWN) &&
