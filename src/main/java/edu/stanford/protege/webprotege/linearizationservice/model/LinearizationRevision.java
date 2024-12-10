@@ -13,7 +13,7 @@ import static com.google.common.base.MoreObjects.toStringHelper;
 public record LinearizationRevision(@Indexed(name = "timestamp", direction = IndexDirection.DESCENDING) long timestamp,
                                     UserId userId,
                                     Set<LinearizationEvent> linearizationEvents,
-                                    ChangeRequestId changeRequestId,
+                                    String changeRequestId,
                                     CommitStatus commitStatus) implements Comparable<LinearizationRevision> {
 
     public static final String TIMESTAMP = "timestamp";
@@ -24,7 +24,7 @@ public record LinearizationRevision(@Indexed(name = "timestamp", direction = Ind
                                                Set<LinearizationEvent> linearizationEvents,
                                                ChangeRequestId changeRequestId) {
         CommitStatus commitStatus = changeRequestId != null && changeRequestId.id() != null ? CommitStatus.UNCOMMITTED : CommitStatus.COMMITTED;
-        return new LinearizationRevision(new Date().getTime(), userId, linearizationEvents, changeRequestId, commitStatus);
+        return new LinearizationRevision(new Date().getTime(), userId, linearizationEvents, changeRequestId != null ? changeRequestId.id() : null, commitStatus);
     }
 
     public static LinearizationRevision create(UserId userId,
