@@ -65,9 +65,9 @@ public class LinearizationHistoryServiceTest {
         ProjectId projectId = ProjectId.generate();
 
         // Create unsorted LinearizationRevisions
-        LinearizationRevision revision1 = new LinearizationRevision(3L, userid, new HashSet<>());
-        LinearizationRevision revision2 = new LinearizationRevision(1L, userid, new HashSet<>());
-        LinearizationRevision revision3 = new LinearizationRevision(2L, userid, new HashSet<>());
+        LinearizationRevision revision1 = new LinearizationRevision(3L, userid, new HashSet<>(), null, CommitStatus.COMMITTED);
+        LinearizationRevision revision2 = new LinearizationRevision(1L, userid, new HashSet<>(), null, CommitStatus.COMMITTED);
+        LinearizationRevision revision3 = new LinearizationRevision(2L, userid, new HashSet<>(), null, CommitStatus.COMMITTED);
 
         Set<LinearizationRevision> unsortedRevisions = new HashSet<>(Arrays.asList(revision1, revision2, revision3));
 
@@ -117,12 +117,12 @@ public class LinearizationHistoryServiceTest {
         linearizationHistoryService.addRevision(woficEntitySpec, projectId, userId);
 
         verify(linearizationHistoryRepo).saveLinearizationHistory(any());
-        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),any());
+        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),any(), any());
 
         verify(linearizationHistoryRepo, times(0))
                 .addRevision(any(), any(), any());
         verify(newRevisionsEventEmitter, times(0))
-                .emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any());
+                .emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any());
     }
 
     @Test
@@ -155,10 +155,10 @@ public class LinearizationHistoryServiceTest {
         verify(linearizationHistoryRepo, times(0))
                 .saveLinearizationHistory(any());
         verify(newRevisionsEventEmitter, times(0))
-                .emitNewRevisionsEvent(eq(projectId),any());
+                .emitNewRevisionsEvent(eq(projectId),any(), any());
 
         verify(linearizationHistoryRepo).addRevision(any(), any(), any());
-        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any());
+        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any());
     }
 
     @Test
@@ -210,7 +210,7 @@ public class LinearizationHistoryServiceTest {
                 .saveMultipleEntityLinearizationHistories(anySet());
 
         verify(newRevisionsEventEmitter, times(1))
-                .emitNewRevisionsEvent(eq(projectId), anyList());
+                .emitNewRevisionsEvent(eq(projectId), anyList(), any());
     }
 
 }

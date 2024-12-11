@@ -77,36 +77,4 @@ public class LinearizationDocumentRepository {
         }
 
     }
-
-    /*
-                if (jsonParser.nextToken() != JsonToken.START_ARRAY) {
-                throw new RuntimeException("Expected start of array");
-            }
-            Iterator<WhoficEntityLinearizationSpecification> iterator = new Iterator<>() {
-                @Override
-                public boolean hasNext() {
-                    return jsonParser.currentToken() != null && jsonParser.currentToken() != JsonToken.END_ARRAY;
-                }
-
-                @Override
-                public WhoficEntityLinearizationSpecification next() {
-                    try {
-                        JsonNode node = objectMapper.readTree(jsonParser);
-                        return objectMapper.treeToValue(node.get("whoficEntityLinearizationSpecification"), WhoficEntityLinearizationSpecification.class);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
-
-            Spliterator<WhoficEntityLinearizationSpecification> spliterator = Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED);
-            return StreamSupport.stream(spliterator, false).onClose(() -> {
-                try {
-                    jsonParser.close();
-                } catch (IOException e) {
-                    logger.error("Error parsing the linearization document",e);
-                    throw new RuntimeException(e);
-                }
-            });
-     */
 }

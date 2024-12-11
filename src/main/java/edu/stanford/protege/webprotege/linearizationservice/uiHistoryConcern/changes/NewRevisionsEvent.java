@@ -13,14 +13,16 @@ import static edu.stanford.protege.webprotege.linearizationservice.uiHistoryConc
 public record NewRevisionsEvent(
         EventId eventId,
         ProjectId projectId,
-        Set<ProjectChangeForEntity> changes
+        Set<ProjectChangeForEntity> changes,
+        ChangeRequestId changeRequestId
 ) implements ProjectEvent {
     public final static String CHANNEL = "webprotege.events.projects.uiHistory.NewRevisionsEvent";
 
     public static NewRevisionsEvent create(EventId eventId,
                                            ProjectId projectId,
-                                           Set<ProjectChangeForEntity> changes) {
-        return new NewRevisionsEvent(eventId, projectId, changes);
+                                           Set<ProjectChangeForEntity> changes,
+                                           ChangeRequestId changeRequestId) {
+        return new NewRevisionsEvent(eventId, projectId, changes, changeRequestId);
     }
 
     @NotNull
