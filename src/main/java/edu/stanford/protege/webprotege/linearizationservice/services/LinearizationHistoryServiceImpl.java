@@ -94,12 +94,12 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                                 if (!linearizationEvents.isEmpty()) {
                                     var newRevision = LinearizationRevision.create(userId, linearizationEvents, changeRequestId);
                                     linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
-                                    newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, linearizationSpecification.entityIRI().toString(), newRevision);
+                                    newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, linearizationSpecification.entityIRI().toString(), newRevision,changeRequestId);
                                 }
                             }, () -> {
                                 var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId, changeRequestId);
                                 linearizationHistoryRepository.saveLinearizationHistory(newHistory);
-                                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, List.of(newHistory));
+                                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, List.of(newHistory),changeRequestId);
                             }
                     );
                 }
@@ -122,7 +122,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
                 saveMultipleEntityLinearizationHistories(historiesToBeSaved);
 
-                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, historiesToBeSaved.stream().toList());
+                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, historiesToBeSaved.stream().toList(), null);
             }
         };
     }
