@@ -24,12 +24,12 @@ public record LinearizationRevision(@Indexed(name = "timestamp", direction = Ind
                                                Set<LinearizationEvent> linearizationEvents,
                                                ChangeRequestId changeRequestId) {
         CommitStatus commitStatus = changeRequestId != null && changeRequestId.id() != null ? CommitStatus.UNCOMMITTED : CommitStatus.COMMITTED;
-        return new LinearizationRevision(new Date().getTime(), userId, linearizationEvents, changeRequestId != null ? changeRequestId.id() : null, commitStatus);
+        return new LinearizationRevision(System.currentTimeMillis(), userId, linearizationEvents, changeRequestId != null ? changeRequestId.id() : null, commitStatus);
     }
 
     public static LinearizationRevision create(UserId userId,
                                                Set<LinearizationEvent> linearizationEvents) {
-        return new LinearizationRevision(new Date().getTime(), userId, linearizationEvents, null, CommitStatus.COMMITTED);
+        return new LinearizationRevision(System.currentTimeMillis(), userId, linearizationEvents, null, CommitStatus.COMMITTED);
     }
 
     public static LinearizationRevision createCommittedClone(LinearizationRevision linearizationRevision) {
