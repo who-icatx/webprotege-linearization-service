@@ -26,10 +26,10 @@ public class Revision2DiffElementsTranslator {
                                                                                            List<LinearizationDefinition> linearizationDefinitions) {
         var lineElement = LinearizationEventsForView.create(viewName, linearizationEvents);
         LinearizationDocumentChange sourceDocument;
-        var optionalDefView = linearizationDefinitions.stream().filter(definition -> definition.getWhoficEntityIri().equals(viewName)).findFirst();
+        var optionalDefView = linearizationDefinitions.stream().filter(definition -> definition.getLinearizationUri().equals(viewName)).findFirst();
         if (optionalDefView.isPresent()) {
             var defView = optionalDefView.get();
-            sourceDocument = LinearizationDocumentChange.create(defView.getWhoficEntityIri(), defView.getDisplayLabel(), defView.getId(), defView.getSortingCode());
+            sourceDocument = LinearizationDocumentChange.create(defView.getLinearizationUri(), defView.getDisplayLabel(), defView.getLinearizationId(), defView.getSortingCode());
         } else {
             sourceDocument = LinearizationDocumentChange.create(null, "Residuals", null, "ZZZZZZZZZZ");
         }
