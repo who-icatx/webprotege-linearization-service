@@ -44,7 +44,7 @@ public class GetParentsThatAreLinearizationPathParentsCommandHandler implements 
         var linearizationParents = processedSpec.linearizationSpecifications()
                 .stream()
                 .map(LinearizationSpecification::getLinearizationParent)
-                .filter(parentIri -> !parentIri.toString().equals(""))
+                .filter(parentIri -> parentIri!=null && !parentIri.toString().isEmpty())
                 .collect(Collectors.toSet());
         var matchingParent = request.parentEntityIris()
                 .stream()
