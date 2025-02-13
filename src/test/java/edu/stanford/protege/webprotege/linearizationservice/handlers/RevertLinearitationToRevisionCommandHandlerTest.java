@@ -46,11 +46,16 @@ public class RevertLinearitationToRevisionCommandHandlerTest {
     }
 
     @Test
-    void GIVEN_existingHistory_WHEN_handleRequest_THEN_revertsToRevision() {
+    void GIVEN_existingHistory_WHEN_handleRequest_THEN_revertsToRevision() throws InterruptedException {
+        LinearizationRevision r1 = LinearizationRevision.create(userId, getRandomLinearizationEvents());
+        //added sleep so we don't get revisions with same timestamp.
+        Thread.sleep(100);
+        LinearizationRevision r2 = LinearizationRevision.create(userId, getRandomLinearizationEvents());
+
         // Arrange
         Set<LinearizationRevision> revisions = Set.of(
-                LinearizationRevision.create(userId, getRandomLinearizationEvents()),
-                LinearizationRevision.create(userId, getRandomLinearizationEvents())
+                r1,
+                r2
         );
         EntityLinearizationHistory history = EntityLinearizationHistory.create(entityIri.toString(), projectId.id(), revisions);
         when(historyService.getExistingHistoryOrderedByRevision(entityIri, projectId)).thenReturn(Optional.of(history));
