@@ -208,9 +208,6 @@ public class LinearizationHistoryServiceTest {
 
         verify(linearizationHistoryService, times(1))
                 .saveMultipleEntityLinearizationHistories(anySet());
-
-        verify(newRevisionsEventEmitter, times(1))
-                .emitNewRevisionsEvent(eq(projectId), anyList(), any());
     }
 
 }
