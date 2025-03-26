@@ -121,8 +121,6 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                         .collect(Collectors.toSet());
 
                 saveMultipleEntityLinearizationHistories(historiesToBeSaved);
-
-                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, historiesToBeSaved.stream().toList(), null);
             }
         };
     }
