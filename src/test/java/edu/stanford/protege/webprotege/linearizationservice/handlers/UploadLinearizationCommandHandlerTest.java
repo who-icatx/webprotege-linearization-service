@@ -92,7 +92,7 @@ public class UploadLinearizationCommandHandlerTest {
         assertEquals(1, savedHistory.getLinearizationRevisions().size());
         LinearizationRevision revision = (LinearizationRevision) savedHistory.getLinearizationRevisions().toArray()[0];
         assertEquals(userId, revision.userId());
-        assertEquals(43, revision.linearizationEvents().size());
+        assertEquals(45, revision.linearizationEvents().size());
         assertTrue(revision.linearizationEvents().stream()
                 .noneMatch(linearizationEvent -> linearizationEvent.getType() == null && linearizationEvent.getType().isEmpty()));
 
