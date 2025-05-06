@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.UUID;
 
 import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.*;
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.*;
@@ -44,7 +45,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
         var codingNote = getRandomString();
         var entityIri = getRandomIri();
         var projectId = ProjectId.generate();
-        var executionContext = new ExecutionContext(userId, "jwt");
+        var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
         LinearizationSpecification spec = new LinearizationSpecification(
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
@@ -103,7 +104,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
         var codingNote = getRandomString();
         var entityIri = IRI.create(getRandomIri());
         var projectId = ProjectId.generate();
-        var executionContext = new ExecutionContext(userId, "jwt");
+        var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
         LinearizationSpecification spec1 = new LinearizationSpecification(
                 ThreeStateBoolean.TRUE,
                 ThreeStateBoolean.FALSE,
