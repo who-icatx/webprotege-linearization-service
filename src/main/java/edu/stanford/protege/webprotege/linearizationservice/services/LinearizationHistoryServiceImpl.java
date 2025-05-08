@@ -99,7 +99,6 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                             }, () -> {
                                 var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId, changeRequestId);
                                 linearizationHistoryRepository.saveLinearizationHistory(newHistory);
-                                newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, List.of(newHistory),changeRequestId);
                             }
                     );
                 }
