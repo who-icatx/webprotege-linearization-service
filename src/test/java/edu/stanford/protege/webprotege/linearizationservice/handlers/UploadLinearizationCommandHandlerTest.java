@@ -25,6 +25,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.io.*;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.LINEARIZATION_HISTORY_COLLECTION;
@@ -65,7 +66,7 @@ public class UploadLinearizationCommandHandlerTest {
     public void GIVEN_largeLinearization_WHEN_savingTheInitialRevisions_THEN_paginationWorks() {
         commandHandler.handleRequest(new UploadLinearizationRequest(new OntologyDocumentId("testDocumentLocation"),
                         ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
-                new ExecutionContext(UserId.valueOf("alexsilaghi"), ""));
+                new ExecutionContext(UserId.valueOf("alexsilaghi"), "", UUID.randomUUID().toString()));
 
         verify(mongoTemplate, times(2)).getCollection(LINEARIZATION_HISTORY_COLLECTION);
     }
@@ -74,7 +75,7 @@ public class UploadLinearizationCommandHandlerTest {
     public void GIVEN_largeLinearization_WHEN_savingTheInitialRevision_THEN_eventsAreSavedIntoDatabase() throws JsonProcessingException {
         UserId userId = UserId.valueOf("alexsilaghi");
         commandHandler.handleRequest(new UploadLinearizationRequest(new OntologyDocumentId("testDocumentLocation"), ProjectId.valueOf("ecc61e85-bdb6-47f6-9bb1-664b64558f2b")),
-                new ExecutionContext(userId, ""));
+                new ExecutionContext(userId, "", UUID.randomUUID().toString()));
 
         Document filter = new Document("whoficEntityIri", "http://id.who.int/icd/entity/979278646");
         FindIterable<Document> documents = mongoTemplate.getCollection(LINEARIZATION_HISTORY_COLLECTION).find(filter);

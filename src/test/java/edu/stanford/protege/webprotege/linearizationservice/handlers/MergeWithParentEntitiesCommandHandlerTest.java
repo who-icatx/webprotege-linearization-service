@@ -49,7 +49,7 @@ class MergeWithParentEntitiesCommandHandlerTest {
         Set<IRI> parentEntityIris = Set.of(parentEntityIri1, parentEntityIri2);
         ProjectId projectId = ProjectId.generate();
         UserId userId = UserId.valueOf(getRandomString());
-        var executionContext = new ExecutionContext(userId, "jwt");
+        var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
 
         LinearizationSpecification currSpec1 = new LinearizationSpecification(
                 ThreeStateBoolean.TRUE,
@@ -151,7 +151,7 @@ class MergeWithParentEntitiesCommandHandlerTest {
         Set<IRI> parentEntityIris = Set.of(parentEntityIri1, parentEntityIri2);
         ProjectId projectId = ProjectId.generate();
         UserId userId = UserId.valueOf(getRandomString());
-        var executionContext = new ExecutionContext(userId, "jwt");
+        var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
 
         LinearizationSpecification currSpec1 = new LinearizationSpecification(
                 ThreeStateBoolean.TRUE,
