@@ -46,7 +46,7 @@ class CreateLinearizationFromParentCommandHandlerTest {
         var parentIri = getRandomIri();
         var newEntityIri = getRandomIri();
         var projectId = ProjectId.generate();
-        var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
+        var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString() );
 
         var parentEntityHistory = getEntityLinearizationHistoryForEntityIri(parentIri, projectId, 3);
         mongoTemplate.save(parentEntityHistory, LINEARIZATION_HISTORY_COLLECTION);
