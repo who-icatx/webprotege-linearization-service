@@ -17,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.*;
@@ -45,7 +46,7 @@ class CreateLinearizationFromParentCommandHandlerTest {
         var parentIri = getRandomIri();
         var newEntityIri = getRandomIri();
         var projectId = ProjectId.generate();
-        var executionContext = new ExecutionContext(userId, "jwt");
+        var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString() );
 
         var parentEntityHistory = getEntityLinearizationHistoryForEntityIri(parentIri, projectId, 3);
         mongoTemplate.save(parentEntityHistory, LINEARIZATION_HISTORY_COLLECTION);

@@ -42,7 +42,7 @@ public class RevertLinearitationToRevisionCommandHandlerTest {
         projectId = ProjectId.generate();
         entityIri = IRI.create(getRandomIri());
         request = new RevertLinearitationToRevisionRequest(entityIri, 1620000000000L, projectId);
-        executionContext = new ExecutionContext(userId, "");
+        executionContext = new ExecutionContext(userId, "", UUID.randomUUID().toString());
     }
 
     @Test
