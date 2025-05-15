@@ -3,9 +3,17 @@ package edu.stanford.protege.webprotege.linearizationservice.config;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import edu.stanford.protege.webprotege.authorization.GetAuthorizedCapabilitiesRequest;
+import edu.stanford.protege.webprotege.authorization.GetAuthorizedCapabilitiesResponse;
+import edu.stanford.protege.webprotege.authorization.GetProjectRoleDefinitionsRequest;
+import edu.stanford.protege.webprotege.authorization.GetProjectRoleDefinitionsResponse;
 import edu.stanford.protege.webprotege.common.UserId;
+import edu.stanford.protege.webprotege.ipc.CommandExecutor;
+import edu.stanford.protege.webprotege.ipc.impl.CommandExecutorImpl;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import edu.stanford.protege.webprotege.linearizationservice.*;
+import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaRequest;
+import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaResponse;
 import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.context.annotation.*;
@@ -43,6 +51,17 @@ public class ApplicationBeans {
                         new LinearizationEventWritingConverter(objectMapper)
                 )
         );
+    }
+
+
+    @Bean
+    CommandExecutor<GetAuthorizedCapabilitiesRequest, GetAuthorizedCapabilitiesResponse> getAuthorizedActionsExecutorCommand() {
+        return new CommandExecutorImpl<>(GetAuthorizedCapabilitiesResponse.class);
+    }
+
+    @Bean
+    CommandExecutor<GetMatchingCriteriaRequest, GetMatchingCriteriaResponse> getMatchingCriteriaExecutorCommand() {
+        return new CommandExecutorImpl<>(GetMatchingCriteriaResponse.class);
     }
 
 
