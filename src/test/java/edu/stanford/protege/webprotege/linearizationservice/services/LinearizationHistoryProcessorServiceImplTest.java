@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.linearizationservice.services;
 
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
@@ -63,11 +64,11 @@ public class LinearizationHistoryProcessorServiceImplTest {
                 .thenReturn(Optional.empty());
 
         Optional<WhoficEntityLinearizationSpecification> result = historyProcessorService
-                .mergeLinearizationViewsFromParentsAndGetDefaultSpec(currenteEtityIri, parentEntityIris, projectId);
+                .mergeLinearizationViewsFromParentsAndGetDefaultSpec(currenteEtityIri,any(), parentEntityIris, projectId);
 
         assertTrue(result.isEmpty());
 
-        verify(eventsProcessorService, times(0)).processHistory(any());
+        verify(eventsProcessorService, times(0)).processHistory(any(),any());
         verify(linearizationHistoryService, times(3)).getExistingHistoryOrderedByRevision(any(), any());
     }
 
@@ -118,35 +119,35 @@ public class LinearizationHistoryProcessorServiceImplTest {
         when(linearizationHistoryService.getExistingHistoryOrderedByRevision(currenteEtityIri, projectId))
                 .thenReturn(Optional.of(currEntityHistory));
 
-        when(eventsProcessorService.processHistory(currEntityHistory))
+        when(eventsProcessorService.processHistory(eq(currEntityHistory), any()))
                 .thenReturn(currentSpec);
 
         when(linearizationHistoryService.getExistingHistoryOrderedByRevision(parentEntityIri1, projectId))
                 .thenReturn(Optional.of(parent1EntityHistory));
 
-        when(eventsProcessorService.processHistory(parent1EntityHistory))
+        when(eventsProcessorService.processHistory(eq(parent1EntityHistory), any()))
                 .thenReturn(parentWhoficSpec1);
 
         when(linearizationHistoryService.getExistingHistoryOrderedByRevision(parentEntityIri2, projectId))
                 .thenReturn(Optional.of(parent2EntityHistory));
 
-        when(eventsProcessorService.processHistory(parent2EntityHistory))
+        when(eventsProcessorService.processHistory(eq(parent2EntityHistory), any()))
                 .thenReturn(parentWhoficSpec2);
 
         Optional<WhoficEntityLinearizationSpecification> result = historyProcessorService
-                .mergeLinearizationViewsFromParentsAndGetDefaultSpec(currenteEtityIri, parentEntityIris, projectId);
+                .mergeLinearizationViewsFromParentsAndGetDefaultSpec(currenteEtityIri,new ExecutionContext(), parentEntityIris, projectId);
 
         assertTrue(result.isPresent());
         assertEquals(2, result.get().linearizationSpecifications().size());
 
         verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(currenteEtityIri, projectId);
-        verify(eventsProcessorService, times(1)).processHistory(currEntityHistory);
+        verify(eventsProcessorService, times(1)).processHistory(eq(currEntityHistory), any());
 
         verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(parentEntityIri1, projectId);
-        verify(eventsProcessorService, times(1)).processHistory(parent1EntityHistory);
+        verify(eventsProcessorService, times(1)).processHistory(eq(parent1EntityHistory), any());
 
         verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(parentEntityIri2, projectId);
-        verify(eventsProcessorService, times(1)).processHistory(parent2EntityHistory);
+        verify(eventsProcessorService, times(1)).processHistory(eq(parent2EntityHistory), any());
 
         currentSpec.linearizationSpecifications()
                 .stream()
@@ -202,33 +203,33 @@ public class LinearizationHistoryProcessorServiceImplTest {
         when(linearizationHistoryService.getExistingHistoryOrderedByRevision(currenteEtityIri, projectId))
                 .thenReturn(Optional.of(currEntityHistory));
 
-        when(eventsProcessorService.processHistory(currEntityHistory))
+        when(eventsProcessorService.processHistory(eq(currEntityHistory), any()))
                 .thenReturn(currentSpec);
 
         when(linearizationHistoryService.getExistingHistoryOrderedByRevision(parentEntityIri1, projectId))
                 .thenReturn(Optional.of(parent1EntityHistory));
 
-        when(eventsProcessorService.processHistory(parent1EntityHistory))
+        when(eventsProcessorService.processHistory(eq(parent1EntityHistory), any()))
                 .thenReturn(parentWhoficSpec1);
 
         when(linearizationHistoryService.getExistingHistoryOrderedByRevision(parentEntityIri2, projectId))
                 .thenReturn(Optional.of(parent2EntityHistory));
 
-        when(eventsProcessorService.processHistory(parent2EntityHistory))
+        when(eventsProcessorService.processHistory(eq(parent2EntityHistory), any()))
                 .thenReturn(parentWhoficSpec2);
 
         Optional<WhoficEntityLinearizationSpecification> result = historyProcessorService
-                .mergeLinearizationViewsFromParentsAndGetDefaultSpec(currenteEtityIri, parentEntityIris, projectId);
+                .mergeLinearizationViewsFromParentsAndGetDefaultSpec(currenteEtityIri,new ExecutionContext(), parentEntityIris, projectId);
 
         assertTrue(result.isEmpty());
 
         verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(currenteEtityIri, projectId);
-        verify(eventsProcessorService, times(1)).processHistory(currEntityHistory);
+        verify(eventsProcessorService, times(1)).processHistory(eq(currEntityHistory), any());
 
         verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(parentEntityIri1, projectId);
-        verify(eventsProcessorService, times(1)).processHistory(parent1EntityHistory);
+        verify(eventsProcessorService, times(1)).processHistory(eq(parent1EntityHistory), any());
 
         verify(linearizationHistoryService, times(1)).getExistingHistoryOrderedByRevision(parentEntityIri2, projectId);
-        verify(eventsProcessorService, times(1)).processHistory(parent2EntityHistory);
+        verify(eventsProcessorService, times(1)).processHistory(eq(parent2EntityHistory), any());
     }
 }

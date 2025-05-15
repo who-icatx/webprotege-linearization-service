@@ -1,15 +1,24 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
+import edu.stanford.protege.webprotege.authorization.*;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.criteria.CompositeRootCriteria;
+import edu.stanford.protege.webprotege.criteria.EntityAnnotationCriteria;
+import edu.stanford.protege.webprotege.criteria.MultiMatchType;
+import edu.stanford.protege.webprotege.ipc.CommandExecutor;
 import edu.stanford.protege.webprotege.linearizationservice.*;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
+import edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.*;
@@ -17,13 +26,17 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static edu.stanford.protege.webprotege.linearizationservice.model.EntityLinearizationHistory.*;
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.EntityLinearizationHistoryHelper.getEntityLinearizationHistoryForEntityIri;
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.getRandomIri;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -39,8 +52,30 @@ class CreateLinearizationFromParentCommandHandlerTest {
     @Autowired
     private CreateLinearizationFromParentCommandHandler commandHandler;
 
+    @MockBean
+    private CommandExecutor<GetAuthorizedCapabilitiesRequest, GetAuthorizedCapabilitiesResponse> getAuthorizedActionsExecutor;
+
+    @MockBean
+    private CommandExecutor<GetMatchingCriteriaRequest, GetMatchingCriteriaResponse> getMatchingCriteriaExecutor;
+
+    @BeforeEach
+    public  void setUp(){
+        Set<Capability> capabilities = new HashSet<>();
+        LinearizationRowsCapability capability = new LinearizationRowsCapability(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW,
+                LinearizationViewIriHelper.getLinearizationViewIris().stream().map(IRI::toString).collect(Collectors.toList()),
+                CompositeRootCriteria.get(new ArrayList<>(), MultiMatchType.ANY));
+        capabilities.add(capability);
+        when(getAuthorizedActionsExecutor.execute(any(), any())).thenReturn(CompletableFuture
+                .supplyAsync(() -> new GetAuthorizedCapabilitiesResponse(new ProjectResource(ProjectId.generate()),
+                        Subject.forUser(new UserId("user1")), capabilities)));
+
+        when(getMatchingCriteriaExecutor.execute(any(), any()))
+                .thenReturn(CompletableFuture.supplyAsync(() -> new GetMatchingCriteriaResponse(Arrays.asList(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW))));
+    }
+
     @Test
     void GIVEN_parentWithLinearizationHistory_WHEN_creatingChildOfParent_THEN_alsoCreatInitialRevisionUsingParentHistoryWithDefaultValues() {
+
 
         var userId = UserId.valueOf("user1");
         var parentIri = getRandomIri();
