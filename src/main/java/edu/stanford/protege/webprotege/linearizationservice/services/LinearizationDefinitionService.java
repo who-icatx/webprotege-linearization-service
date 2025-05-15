@@ -64,13 +64,14 @@ public class LinearizationDefinitionService {
                 LinearizationRowsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationRowsCapability.class);
 
                 if ( (response.matchingKeys().contains(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW) ||
-                        criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW).isEmpty()
-                        ) &&
+                        criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)==null ||
+                        criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW).isEmpty()) &&
                         linearizationCapability.id().equals(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)) {
                     editableLinearizations.addAll(linearizationCapability.linearizationIds());
                     readableLinearizations.addAll(linearizationCapability.linearizationIds());
                 }
                 if ( (response.matchingKeys().contains(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)||
+                        criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) == null ||
                         criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW).isEmpty()) &&
                         linearizationCapability.id().equals(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)) {
                     readableLinearizations.addAll(linearizationCapability.linearizationIds());

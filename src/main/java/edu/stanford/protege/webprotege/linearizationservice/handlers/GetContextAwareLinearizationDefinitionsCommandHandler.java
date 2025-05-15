@@ -46,7 +46,7 @@ public class GetContextAwareLinearizationDefinitionsCommandHandler implements Co
 
         List<LinearizationDefinition> response = new ArrayList<>();
         try {
-            LinearizationDefinitionService.AllowedLinearizationDefinitions allowedDefs = linearizationDefinitionService.getUserAccessibleLinearizations(request.projectId(), request.entityIri(), executionContext);
+            LinearizationDefinitionService.AllowedLinearizationDefinitions allowedDefs = linearizationDefinitionService.getUserAccessibleLinearizations(request.projectId(), request.entityIRI(), executionContext);
 
             for(LinearizationDefinition definition : baseDefList) {
                 if(allowedDefs.editableLinearizations().contains(definition.getLinearizationUri()) ||
