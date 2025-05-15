@@ -10,6 +10,7 @@ import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaRequest;
 import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaResponse;
 import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationRowsCapability;
+import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,34 @@ public class LinearizationDefinitionService {
                 ProjectResource.forProject(projectId),
                 Subject.forUser(executionContext.userId())), executionContext).get();
 
+        Map<String, List<CompositeRootCriteria>> criteriaMap = extractUserPermisionCriteria(authorizedResponse);
+
+        GetMatchingCriteriaResponse response = getMatchingCriteriaExecutor.execute(new GetMatchingCriteriaRequest(criteriaMap, projectId, entityIri), executionContext).get();
+
+        Set<String> editableLinearizations = new HashSet<>();
+        Set<String> readableLinearizations = new HashSet<>();
+
+
+        for (Capability capability : authorizedResponse.capabilities()) {
+            if (capability.asGenericCapability().type().equals(LinearizationRowsCapability.TYPE)) {
+                LinearizationRowsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationRowsCapability.class);
+
+                if (isEditableCapabilityAndMatchesCriteria(criteriaMap, response, linearizationCapability)) {
+                    editableLinearizations.addAll(linearizationCapability.linearizationIds());
+                    readableLinearizations.addAll(linearizationCapability.linearizationIds());
+                }
+                if (isReadableCapabilityAndMatchesCriteria(criteriaMap, response, linearizationCapability)) {
+                    readableLinearizations.addAll(linearizationCapability.linearizationIds());
+                }
+            }
+        }
+
+        return new AllowedLinearizationDefinitions(new ArrayList<>(readableLinearizations), new ArrayList<>(editableLinearizations));
+    }
+
+
+    @NotNull
+    private Map<String, List<CompositeRootCriteria>> extractUserPermisionCriteria(GetAuthorizedCapabilitiesResponse authorizedResponse) {
         Map<String, List<CompositeRootCriteria>> criteriaMap = new HashMap<>();
 
         for (Capability capability : authorizedResponse.capabilities()) {
@@ -52,37 +81,23 @@ public class LinearizationDefinitionService {
                 criteriaMap.put(linearizationCapability.id(), existingCriteria);
             }
         }
-
-        GetMatchingCriteriaResponse response = getMatchingCriteriaExecutor.execute(new GetMatchingCriteriaRequest(criteriaMap, projectId, entityIri), executionContext).get();
-
-        Set<String> editableLinearizations = new HashSet<>();
-        Set<String> readableLinearizations = new HashSet<>();
-
-
-        for (Capability capability : authorizedResponse.capabilities()) {
-            if (capability.asGenericCapability().type().equals(LinearizationRowsCapability.TYPE)) {
-                LinearizationRowsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationRowsCapability.class);
-
-                if ( (response.matchingKeys().contains(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW) ||
-                        criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)==null ||
-                        criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW).isEmpty()) &&
-                        linearizationCapability.id().equals(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)) {
-                    editableLinearizations.addAll(linearizationCapability.linearizationIds());
-                    readableLinearizations.addAll(linearizationCapability.linearizationIds());
-                }
-                if ( (response.matchingKeys().contains(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)||
-                        criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) == null ||
-                        criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW).isEmpty()) &&
-                        linearizationCapability.id().equals(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)) {
-                    readableLinearizations.addAll(linearizationCapability.linearizationIds());
-                }
-            }
-        }
-
-        return new AllowedLinearizationDefinitions(new ArrayList<>(readableLinearizations), new ArrayList<>(editableLinearizations));
+        return criteriaMap;
     }
 
+    private static boolean isReadableCapabilityAndMatchesCriteria(Map<String, List<CompositeRootCriteria>> criteriaMap, GetMatchingCriteriaResponse response, LinearizationRowsCapability linearizationCapability) {
+        return (response.matchingKeys().contains(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) ||
+                criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) == null ||
+                criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW).isEmpty()) &&
+                linearizationCapability.id().equals(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW);
+    }
 
+    private static boolean isEditableCapabilityAndMatchesCriteria(Map<String, List<CompositeRootCriteria>> criteriaMap, GetMatchingCriteriaResponse response, LinearizationRowsCapability linearizationCapability) {
+        return (response.matchingKeys().contains(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW) ||
+                criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW) == null ||
+                criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW).isEmpty()
+        ) &&
+                linearizationCapability.id().equals(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW);
+    }
     public record AllowedLinearizationDefinitions(List<String> readableLinearizations,
                                            List<String> editableLinearizations) {
     }

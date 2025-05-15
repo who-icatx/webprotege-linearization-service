@@ -61,12 +61,12 @@ public class RevertLinearitationToRevisionCommandHandlerTest {
         when(historyService.getExistingHistoryOrderedByRevision(entityIri, projectId)).thenReturn(Optional.of(history));
 
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(entityIri, null, List.of());
-        when(eventsProcessorService.processHistory(any(), eq(history.getWhoficEntityIri()))).thenReturn(newSpec);
+        when(eventsProcessorService.processHistory(any(),any(), any(), eq(history.getWhoficEntityIri()))).thenReturn(newSpec);
 
         Mono<RevertLinearitationToRevisionResponse> response = commandHandler.handleRequest(request, executionContext);
 
         assertNotNull(response.block());
-        verify(historyService).addRevision(newSpec, projectId, userId);
+        verify(historyService).addRevision(newSpec,executionContext, projectId,  userId);
     }
 
     @Test
@@ -76,6 +76,6 @@ public class RevertLinearitationToRevisionCommandHandlerTest {
         Mono<RevertLinearitationToRevisionResponse> response = commandHandler.handleRequest(request, executionContext);
 
         assertNotNull(response.block());
-        verify(historyService, never()).addRevision(any(), any(), any());
+        verify(historyService, never()).addRevision(any(), any(), any(), any());
     }
 }

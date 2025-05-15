@@ -43,9 +43,12 @@ public class RevertLinearitationToRevisionCommandHandler implements CommandHandl
                     filter(linearizationRevision -> linearizationRevision.timestamp() <= request.revisionTimestamp())
                     .collect(Collectors.toSet());
 
-            var newRevisionUntilTimestamp = eventsProcessorService.processHistory(revisionsUntilTimestamp, history.getWhoficEntityIri());
+            var newRevisionUntilTimestamp = eventsProcessorService.processHistory(revisionsUntilTimestamp,
+                    request.projectId(),
+                    executionContext,
+                    history.getWhoficEntityIri());
 
-            historyService.addRevision(newRevisionUntilTimestamp, request.projectId(), executionContext.userId());
+            historyService.addRevision(newRevisionUntilTimestamp,executionContext, request.projectId(), executionContext.userId());
 
         });
 

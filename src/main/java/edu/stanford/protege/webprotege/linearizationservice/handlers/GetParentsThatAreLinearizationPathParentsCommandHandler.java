@@ -38,7 +38,7 @@ public class GetParentsThatAreLinearizationPathParentsCommandHandler implements 
 
         WhoficEntityLinearizationSpecification processedSpec =
                 this.linearizationHistoryService.getExistingHistoryOrderedByRevision(request.currentEntityIri(), request.projectId())
-                        .map(linearizationEventsProcessor::processHistory)
+                        .map(history -> linearizationEventsProcessor.processHistory(history, executionContext))
                         .orElseGet(() -> new WhoficEntityLinearizationSpecification(request.currentEntityIri(), null, Collections.emptyList()));
 
         var linearizationParents = processedSpec.linearizationSpecifications()

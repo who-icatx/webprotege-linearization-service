@@ -1,6 +1,7 @@
 package edu.stanford.protege.webprotege.linearizationservice.services;
 
 import edu.stanford.protege.webprotege.common.ProjectId;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.WhoficEntityLinearizationSpecificationMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
@@ -31,14 +32,14 @@ public class LinearizationHistoryProcessorServiceImpl implements LinearizationHi
 
 
     @Override
-    public Optional<WhoficEntityLinearizationSpecification> mergeLinearizationViewsFromParentsAndGetDefaultSpec(IRI currentEntityIri, Set<IRI> parentEntityIris, ProjectId projectId) {
+    public Optional<WhoficEntityLinearizationSpecification> mergeLinearizationViewsFromParentsAndGetDefaultSpec(IRI currentEntityIri, ExecutionContext executionContext, Set<IRI> parentEntityIris, ProjectId projectId) {
 
         return readWriteLockService.executeReadLock(() -> {
             var missingSpecViews = new ArrayList<LinearizationSpecification>();
 
             WhoficEntityLinearizationSpecification currentSpecs =
                     linearizationHistoryService.getExistingHistoryOrderedByRevision(currentEntityIri, projectId)
-                            .map(eventsProcessorService::processHistory)
+                            .map(history -> eventsProcessorService.processHistory(history, executionContext))
                             .orElseGet(() -> new WhoficEntityLinearizationSpecification(currentEntityIri, null, Collections.emptyList()));
 
             parentEntityIris.stream()
@@ -48,7 +49,7 @@ public class LinearizationHistoryProcessorServiceImpl implements LinearizationHi
                             return Stream.of();
                         }
 
-                        var parentWhoficSpec = eventsProcessorService.processHistory(parentEntityHistory.get());
+                        var parentWhoficSpec = eventsProcessorService.processHistory(parentEntityHistory.get(), executionContext);
                         var newDefaultWhoficSpecs = whoficSpecMapper.mapToDefaultWhoficEntityLinearizationSpecification(currentEntityIri, parentWhoficSpec);
 
                         return newDefaultWhoficSpecs.linearizationSpecifications().stream();

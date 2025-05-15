@@ -46,10 +46,10 @@ public class CreateLinearizationFromParentCommandHandler implements CommandHandl
         if (parentEntityHistory.isEmpty()) {
             throw new RuntimeException("Parent entity history is empty!");
         }
-        var parentWhoficSpec = linearizationEventsProcessor.processHistory(parentEntityHistory.get());
+        var parentWhoficSpec = linearizationEventsProcessor.processHistory(parentEntityHistory.get(), executionContext);
         var newEntityWhoficSpec = whoficSpecMapper.mapToDefaultWhoficEntityLinearizationSpecification(request.newEntityIri(), parentWhoficSpec);
 
-        linearizationHistoryService.addRevision(newEntityWhoficSpec, request.projectId(), executionContext.userId());
+        linearizationHistoryService.addRevision(newEntityWhoficSpec,executionContext, request.projectId(), executionContext.userId());
 
 
         return Mono.just(CreateLinearizationFromParentResponse.create());
