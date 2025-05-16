@@ -10,5 +10,8 @@ import java.util.List;
 import static edu.stanford.protege.webprotege.linearizationservice.handlers.ContextAwareLinearizationDefinitionRequest.CHANNEL;
 
 @JsonTypeName(CHANNEL)
-public record ContextAwareLinearizationDefinitionResponse(@JsonProperty("definitionList") List<LinearizationDefinition> definitionList) implements Response {
+public record ContextAwareLinearizationDefinitionResponse(
+        @JsonProperty("definitionList") List<LinearizationDefinition> definitionList,
+        @JsonProperty("canEditResiduals") boolean canEditResiduals
+) implements Response {
 }

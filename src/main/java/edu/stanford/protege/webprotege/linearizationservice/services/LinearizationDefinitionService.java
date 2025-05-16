@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.authorization.*;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.criteria.CompositeRootCriteria;
-import edu.stanford.protege.webprotege.ipc.CommandExecutor;
-import edu.stanford.protege.webprotege.ipc.ExecutionContext;
-import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaRequest;
-import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaResponse;
-import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationRowsCapability;
+import edu.stanford.protege.webprotege.ipc.*;
+import edu.stanford.protege.webprotege.linearizationservice.handlers.*;
+import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,7 @@ public class LinearizationDefinitionService {
 
 
     public AllowedLinearizationDefinitions getUserAccessibleLinearizations(ProjectId projectId, IRI entityIri, ExecutionContext executionContext) throws ExecutionException, InterruptedException {
-
+        boolean canEditResiduals = false;
         GetAuthorizedCapabilitiesResponse authorizedResponse = getAuthorizedActionsExecutor.execute(new GetAuthorizedCapabilitiesRequest(
                 ProjectResource.forProject(projectId),
                 Subject.forUser(executionContext.userId())), executionContext).get();
@@ -57,10 +55,14 @@ public class LinearizationDefinitionService {
                 if (isReadableCapabilityAndMatchesCriteria(criteriaMap, response, linearizationCapability)) {
                     readableLinearizations.addAll(linearizationCapability.linearizationIds());
                 }
+            } else if (capability.asGenericCapability().type().equals(LinearizationResidualsCapability.TYPE)) {
+                LinearizationResidualsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationResidualsCapability.class);
+                canEditResiduals = isEditableCapabilityAndMatchesCriteria(criteriaMap, response, linearizationCapability);
             }
         }
 
-        return new AllowedLinearizationDefinitions(new ArrayList<>(readableLinearizations), new ArrayList<>(editableLinearizations));
+
+        return new AllowedLinearizationDefinitions(new ArrayList<>(readableLinearizations), new ArrayList<>(editableLinearizations), canEditResiduals);
     }
 
 
@@ -75,7 +77,17 @@ public class LinearizationDefinitionService {
                 if (existingCriteria == null) {
                     existingCriteria = new ArrayList<>();
                 }
-                if(linearizationCapability.contextCriteria() != null) {
+                if (linearizationCapability.contextCriteria() != null) {
+                    existingCriteria.add(linearizationCapability.contextCriteria());
+                }
+                criteriaMap.put(linearizationCapability.id(), existingCriteria);
+            } else if (capability.asGenericCapability().type().equals(LinearizationResidualsCapability.TYPE)) {
+                LinearizationResidualsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationResidualsCapability.class);
+                List<CompositeRootCriteria> existingCriteria = criteriaMap.get(linearizationCapability.id());
+                if (existingCriteria == null) {
+                    existingCriteria = new ArrayList<>();
+                }
+                if (linearizationCapability.contextCriteria() != null) {
                     existingCriteria.add(linearizationCapability.contextCriteria());
                 }
                 criteriaMap.put(linearizationCapability.id(), existingCriteria);
@@ -98,7 +110,17 @@ public class LinearizationDefinitionService {
         ) &&
                 linearizationCapability.id().equals(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW);
     }
+
+    private static boolean isEditableCapabilityAndMatchesCriteria(Map<String, List<CompositeRootCriteria>> criteriaMap, GetMatchingCriteriaResponse response, LinearizationResidualsCapability linearizationCapability) {
+        return (response.matchingKeys().contains(LinearizationResidualsCapability.EDIT_LINEARIZATION_RESIDUALS) ||
+                criteriaMap.get(LinearizationResidualsCapability.EDIT_LINEARIZATION_RESIDUALS) == null ||
+                criteriaMap.get(LinearizationResidualsCapability.EDIT_LINEARIZATION_RESIDUALS).isEmpty()
+        ) &&
+                linearizationCapability.id().equals(LinearizationResidualsCapability.EDIT_LINEARIZATION_RESIDUALS);
+    }
+
     public record AllowedLinearizationDefinitions(List<String> readableLinearizations,
-                                           List<String> editableLinearizations) {
+                                                  List<String> editableLinearizations,
+                                                  boolean canEditResiduals) {
     }
 }
