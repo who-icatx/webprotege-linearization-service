@@ -4,20 +4,16 @@ package edu.stanford.protege.webprotege.linearizationservice.services;
 import edu.stanford.protege.webprotege.common.ProjectId;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
-import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationRowsCapability;
 import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.semanticweb.owlapi.model.IRI;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -45,7 +41,7 @@ public class LinearizationEventsProcessorServiceTest {
         MockitoAnnotations.openMocks(this);
         when(definitionService.getUserAccessibleLinearizations(any(), any(), any()))
                 .thenReturn(new LinearizationDefinitionService.AllowedLinearizationDefinitions(LinearizationViewIriHelper.getLinearizationViewIris()
-                        .stream().map(IRI::toString).collect(Collectors.toList()), new ArrayList<>()));
+                        .stream().map(IRI::toString).collect(Collectors.toList()), new ArrayList<>(), true));
     }
 
     @Test
