@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.linearizationservice;
+package edu.stanford.protege.webprotege.linearizationservice.config.serialization;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

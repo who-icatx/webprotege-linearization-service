@@ -45,7 +45,7 @@ public class GetEntityLinearizationsCommandHandler implements CommandHandler<Get
 
         WhoficEntityLinearizationSpecification processedSpec =
                 this.linearizationHistoryService.getExistingHistoryOrderedByRevision(currentEntityIri, request.projectId())
-                        .map(linearizationEventsProcessor::processHistory)
+                        .map(history -> linearizationEventsProcessor.processHistory(history, executionContext))
                         .orElseGet(() -> new WhoficEntityLinearizationSpecification(currentEntityIri, null, Collections.emptyList()));
 
         return Mono.just(new GetEntityLinearizationsResponse(request.entityIRI(), processedSpec));

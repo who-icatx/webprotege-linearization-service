@@ -1,4 +1,4 @@
-package edu.stanford.protege.webprotege.linearizationservice;
+package edu.stanford.protege.webprotege.linearizationservice.config.serialization;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
