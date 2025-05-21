@@ -19,6 +19,12 @@ public record LinearizationRowsCapability(@JsonProperty("id") String id,
     public static final String VIEW_LINEARIZATION_ROW = "ViewLinearizationRow";
     public static final String EDIT_LINEARIZATION_ROW = "EditLinearizationRow";
 
+    public static final String VIEW_POSTCOORDINATION_LINEARIZATION_ROW = "ViewPostcoordinationLinearizationRow";
+
+    public static final String EDIT_POSTCOORDINATION_LINEARIZATION_ROW = "EditPostcoordinationLinearizationRow";
+
+
+
     @Override
     public GenericParameterizedCapability asGenericCapability() {
         return new GenericParameterizedCapability(TYPE, id, Map.of("linearizationIds", linearizationIds, "contextCriteria", contextCriteria));

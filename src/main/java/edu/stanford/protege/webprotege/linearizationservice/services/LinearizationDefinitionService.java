@@ -23,6 +23,11 @@ public class LinearizationDefinitionService {
 
     private final ObjectMapper objectMapper;
 
+    private final static List<String> READABLE_CAPABILITIES = Arrays.asList(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW,
+            LinearizationRowsCapability.VIEW_POSTCOORDINATION_LINEARIZATION_ROW);
+    private final static List<String> EDITABLE_CAPABILITIES = Arrays.asList(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW,
+            LinearizationRowsCapability.EDIT_POSTCOORDINATION_LINEARIZATION_ROW);
+
     public LinearizationDefinitionService(CommandExecutor<GetAuthorizedCapabilitiesRequest, GetAuthorizedCapabilitiesResponse> getAuthorizedActionsExecutor, CommandExecutor<GetMatchingCriteriaRequest, GetMatchingCriteriaResponse> getMatchingCriteriaExecutor, ObjectMapper objectMapper) {
         this.getAuthorizedActionsExecutor = getAuthorizedActionsExecutor;
         this.getMatchingCriteriaExecutor = getMatchingCriteriaExecutor;
@@ -30,7 +35,10 @@ public class LinearizationDefinitionService {
     }
 
 
-    public AllowedLinearizationDefinitions getUserAccessibleLinearizations(ProjectId projectId, IRI entityIri, ExecutionContext executionContext) throws ExecutionException, InterruptedException {
+    public AllowedLinearizationDefinitions getUserAccessibleLinearizations(ProjectId projectId,
+                                                                           IRI entityIri,
+                                                                           List<String> allowedIds,
+                                                                           ExecutionContext executionContext) throws ExecutionException, InterruptedException {
         GetAuthorizedCapabilitiesResponse authorizedResponse = getAuthorizedActionsExecutor.execute(new GetAuthorizedCapabilitiesRequest(
                 ProjectResource.forProject(projectId),
                 Subject.forUser(executionContext.userId())), executionContext).get();
@@ -45,6 +53,9 @@ public class LinearizationDefinitionService {
 
         for (Capability capability : authorizedResponse.capabilities()) {
             if (capability.asGenericCapability().type().equals(LinearizationRowsCapability.TYPE)) {
+
+                if(!allowedIds.contains(capability.id())) continue;
+
                 LinearizationRowsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationRowsCapability.class);
 
                 if (isEditableCapabilityAndMatchesCriteria(criteriaMap, response, linearizationCapability)) {
@@ -92,21 +103,24 @@ public class LinearizationDefinitionService {
         return criteriaMap;
     }
 
-    private static boolean isReadableCapabilityAndMatchesCriteria(Map<String, List<CompositeRootCriteria>> criteriaMap, GetMatchingCriteriaResponse response, LinearizationRowsCapability linearizationCapability) {
-        return (response.matchingKeys().contains(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) ||
-                criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) == null ||
-                criteriaMap.get(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW).isEmpty()) &&
-                linearizationCapability.id().equals(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW);
+    private static boolean isReadableCapabilityAndMatchesCriteria(Map<String, List<CompositeRootCriteria>> criteriaMap,
+                                                                  GetMatchingCriteriaResponse response,
+                                                                  LinearizationRowsCapability linearizationCapability) {
+        return READABLE_CAPABILITIES.contains(linearizationCapability.id()) &&
+                (hasNoCriteria(criteriaMap, linearizationCapability.id()) || matchesCriteria(response, linearizationCapability.id()));
     }
-
     private static boolean isEditableCapabilityAndMatchesCriteria(Map<String, List<CompositeRootCriteria>> criteriaMap, GetMatchingCriteriaResponse response, LinearizationRowsCapability linearizationCapability) {
-        return (response.matchingKeys().contains(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW) ||
-                criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW) == null ||
-                criteriaMap.get(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW).isEmpty()
-        ) &&
-                linearizationCapability.id().equals(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW);
+        return EDITABLE_CAPABILITIES.contains(linearizationCapability.id()) &&
+                (hasNoCriteria(criteriaMap, linearizationCapability.id()) || matchesCriteria(response, linearizationCapability.id()));
+    }
+    private static boolean matchesCriteria(GetMatchingCriteriaResponse response, String capability) {
+        return response.matchingKeys().contains(capability);
     }
 
+    private static boolean hasNoCriteria(Map<String, List<CompositeRootCriteria>> criteriaMap, String capability) {
+        return criteriaMap.get(capability) == null ||
+                criteriaMap.get(capability).isEmpty();
+    }
 
     public record AllowedLinearizationDefinitions(List<String> readableLinearizations,
                                                   List<String> editableLinearizations) {

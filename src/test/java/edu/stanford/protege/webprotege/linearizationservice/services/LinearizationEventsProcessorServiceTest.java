@@ -39,7 +39,7 @@ public class LinearizationEventsProcessorServiceTest {
     @Before
     public void setUp() throws ExecutionException, InterruptedException {
         MockitoAnnotations.openMocks(this);
-        when(definitionService.getUserAccessibleLinearizations(any(), any(), any()))
+        when(definitionService.getUserAccessibleLinearizations(any(), any(),any(), any()))
                 .thenReturn(new LinearizationDefinitionService.AllowedLinearizationDefinitions(LinearizationViewIriHelper.getLinearizationViewIris()
                         .stream().map(IRI::toString).collect(Collectors.toList()), new ArrayList<>()));
     }

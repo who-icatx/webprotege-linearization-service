@@ -58,7 +58,7 @@ public class LinearizationHistoryServiceTest {
             runnable.run();
             return null;
         }).when(readWriteLock).executeWriteLock(any(Runnable.class));
-        when(definitionService.getUserAccessibleLinearizations(any(), any(), any()))
+        when(definitionService.getUserAccessibleLinearizations(any(), any(), any(), any()))
                 .thenReturn(new LinearizationDefinitionService.AllowedLinearizationDefinitions(LinearizationViewIriHelper.getLinearizationViewIris()
                         .stream().map(IRI::toString).collect(Collectors.toList()), new ArrayList<>()));
         objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
