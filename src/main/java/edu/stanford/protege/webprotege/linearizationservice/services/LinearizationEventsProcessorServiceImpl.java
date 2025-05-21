@@ -100,7 +100,8 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
             LinearizationDefinitionService.AllowedLinearizationDefinitions allowedLinearizations = 
                 linearizationDefinitionService.getUserAccessibleLinearizations(
                     projectId, 
-                    IRI.create(entityIri), 
+                    IRI.create(entityIri),
+                    Arrays.asList(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW, LinearizationRowsCapability.EDIT_LINEARIZATION_ROW),
                     executionContext
                 );
 
