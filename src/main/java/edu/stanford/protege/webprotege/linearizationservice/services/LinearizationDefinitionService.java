@@ -88,16 +88,6 @@ public class LinearizationDefinitionService {
                     existingCriteria.add(linearizationCapability.contextCriteria());
                 }
                 criteriaMap.put(linearizationCapability.id(), existingCriteria);
-            } else if (capability.asGenericCapability().type().equals(ContextAwareCapability.TYPE)) {
-                ContextAwareCapability contextAwareCapability = objectMapper.convertValue(capability, ContextAwareCapability.class);
-                List<CompositeRootCriteria> existingCriteria = criteriaMap.get(contextAwareCapability.id());
-                if (existingCriteria == null) {
-                    existingCriteria = new ArrayList<>();
-                }
-                if (contextAwareCapability.contextCriteria() != null) {
-                    existingCriteria.add(contextAwareCapability.contextCriteria());
-                }
-                criteriaMap.put(contextAwareCapability.id(), existingCriteria);
             }
         }
         return criteriaMap;
