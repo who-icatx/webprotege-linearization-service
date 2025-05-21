@@ -49,6 +49,8 @@ class LinearizationDefinitionServiceTest {
     private IRI entityIri;
     private UserId userId;
 
+    private final static List<String> allowedIds = Arrays.asList(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW);
+
     @BeforeEach
     void setUp() {
         service = new LinearizationDefinitionService(getAuthorizedActionsExecutor, getMatchingCriteriaExecutor, objectMapper);
@@ -75,19 +77,19 @@ class LinearizationDefinitionServiceTest {
 
         // Ensure all keys are present in the response
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(capability, LinearizationRowsCapability.class))
-            .thenReturn(capability);
+                .thenReturn(capability);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).contains(linearizationId);
@@ -111,19 +113,19 @@ class LinearizationDefinitionServiceTest {
 
         // Ensure all keys are present in the response
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(capability, LinearizationRowsCapability.class))
-            .thenReturn(capability);
+                .thenReturn(capability);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).isEmpty();
@@ -138,17 +140,17 @@ class LinearizationDefinitionServiceTest {
 
         // Return a GetMatchingCriteriaResponse with both keys, but empty list
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).isEmpty();
@@ -172,19 +174,19 @@ class LinearizationDefinitionServiceTest {
 
         // Ensure all keys are present in the response
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(capability, LinearizationRowsCapability.class))
-            .thenReturn(capability);
+                .thenReturn(capability);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).containsAll(linearizationIds);
@@ -195,13 +197,13 @@ class LinearizationDefinitionServiceTest {
     void shouldPropagateExecutionException() {
         // Given
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.failedFuture(new ExecutionException("Test exception", null)));
+                .thenReturn(CompletableFuture.failedFuture(new ExecutionException("Test exception", null)));
 
         // When/Then
-        assertThatThrownBy(() -> 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext))
-            .isInstanceOf(ExecutionException.class)
-            .hasMessageContaining("Test exception");
+        assertThatThrownBy(() ->
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext))
+                .isInstanceOf(ExecutionException.class)
+                .hasMessageContaining("Test exception");
     }
 
     @Test
@@ -221,19 +223,19 @@ class LinearizationDefinitionServiceTest {
 
         // Ensure all keys are present in the response
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(capability, LinearizationRowsCapability.class))
-            .thenReturn(capability);
+                .thenReturn(capability);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).contains(linearizationId);
@@ -258,19 +260,19 @@ class LinearizationDefinitionServiceTest {
 
         // The matching response does NOT include EDIT_LINEARIZATION_ROW, so the context does not match
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) // Only view capability matches
+                List.of(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW) // Only view capability matches
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(capability, LinearizationRowsCapability.class))
-            .thenReturn(capability);
+                .thenReturn(capability);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).isEmpty();
@@ -285,7 +287,7 @@ class LinearizationDefinitionServiceTest {
         LinearizationRowsCapability capability = mock(LinearizationRowsCapability.class);
         GenericParameterizedCapability genericCapability = mock(GenericParameterizedCapability.class);
         CompositeRootCriteria viewCriteria = mock(CompositeRootCriteria.class);
-        
+
         lenient().when(capability.id()).thenReturn(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW);
         lenient().when(capability.linearizationIds()).thenReturn(List.of(linearizationId));
         lenient().when(capability.contextCriteria()).thenReturn(viewCriteria);
@@ -297,19 +299,19 @@ class LinearizationDefinitionServiceTest {
 
         // Only EDIT_LINEARIZATION_ROW in matching keys, VIEW_LINEARIZATION_ROW is not present
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(capability, LinearizationRowsCapability.class))
-            .thenReturn(capability);
+                .thenReturn(capability);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).isEmpty();
@@ -346,21 +348,21 @@ class LinearizationDefinitionServiceTest {
 
         // Both EDIT and VIEW are in matching keys
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW, LinearizationRowsCapability.VIEW_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(editCapability, LinearizationRowsCapability.class))
-            .thenReturn(editCapability);
+                .thenReturn(editCapability);
         when(objectMapper.convertValue(viewCapability, LinearizationRowsCapability.class))
-            .thenReturn(viewCapability);
+                .thenReturn(viewCapability);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).contains(linearizationId);
@@ -397,21 +399,21 @@ class LinearizationDefinitionServiceTest {
 
         // Both criteria match
         GetMatchingCriteriaResponse matchingResponse = new GetMatchingCriteriaResponse(
-            List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)
+                List.of(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW)
         );
 
         when(getAuthorizedActionsExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
+                .thenReturn(CompletableFuture.completedFuture(authorizedResponse));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
-            .thenReturn(CompletableFuture.completedFuture(matchingResponse));
+                .thenReturn(CompletableFuture.completedFuture(matchingResponse));
         when(objectMapper.convertValue(capability1, LinearizationRowsCapability.class))
-            .thenReturn(capability1);
+                .thenReturn(capability1);
         when(objectMapper.convertValue(capability2, LinearizationRowsCapability.class))
-            .thenReturn(capability2);
+                .thenReturn(capability2);
 
         // When
-        LinearizationDefinitionService.AllowedLinearizationDefinitions result = 
-            service.getUserAccessibleLinearizations(projectId, entityIri, executionContext);
+        LinearizationDefinitionService.AllowedLinearizationDefinitions result =
+                service.getUserAccessibleLinearizations(projectId, entityIri, allowedIds, executionContext);
 
         // Then
         assertThat(result.editableLinearizations()).contains(linearizationId);
