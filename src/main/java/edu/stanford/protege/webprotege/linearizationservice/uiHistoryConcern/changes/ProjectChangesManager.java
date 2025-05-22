@@ -69,7 +69,8 @@ public class ProjectChangesManager {
                                     revisionWithEntity.getRevision(),
                                     entityIrisAndNames.get(revisionWithEntity.getWhoficEntityIri()),
                                     renderedEntitiesList,
-                                    linearizationDefinitions
+                                    linearizationDefinitions,
+                                    ""
                             );
                             ProjectChangeForEntity projectChangeForEntity = ProjectChangeForEntity.create(
                                     revisionWithEntity.getWhoficEntityIri(),
@@ -83,7 +84,7 @@ public class ProjectChangesManager {
         return projectChangeForEntityList;
     }
 
-    public ProjectChangeForEntity getProjectChangesForRevision(ProjectId projectId, String whoficEntityIri, LinearizationRevision linearizationRevision) {
+    public ProjectChangeForEntity getProjectChangesForRevision(ProjectId projectId, String whoficEntityIri, LinearizationRevision linearizationRevision, String commitMessage) {
         Map<String, String> entityIrisAndNames = new HashMap<>();
         entityIrisAndNames.put(whoficEntityIri, whoficEntityIri);
         List<EntityNode> renderedEntitiesList = entityRendererManager.getRenderedEntities(Set.of(whoficEntityIri), projectId);
@@ -100,7 +101,8 @@ public class ProjectChangesManager {
                 linearizationRevision,
                 entityIrisAndNames.get(whoficEntityIri),
                 renderedEntitiesList,
-                linearizationDefinitions
+                linearizationDefinitions,
+                commitMessage
         );
 
         ProjectChangeForEntity projectChangeForEntity = ProjectChangeForEntity.create(
@@ -114,7 +116,7 @@ public class ProjectChangesManager {
     private ProjectChange getProjectChangesForRevision(LinearizationRevision revision,
                                                        String subjectName,
                                                        List<EntityNode> renderedEntities,
-                                                       List<LinearizationDefinition> linearizationDefinitions) {
+                                                       List<LinearizationDefinition> linearizationDefinitions, String commitMessage) {
         final int totalChanges;
         var changesByView = groupEventsByViews(revision.linearizationEvents().stream().toList());
         totalChanges = changesByView.size();
@@ -137,11 +139,12 @@ public class ProjectChangesManager {
                 renderedDiffElements,
                 totalChanges
         );
+        var message = commitMessage != null ? commitMessage : "";
         ProjectChange projectChange = ProjectChange.get(
                 RevisionNumber.valueOf("0"),
                 revision.userId(),
                 revision.timestamp(),
-                "Edited Linearization for Entity: " + subjectName,
+                "Edited Linearization for Entity: " + subjectName + " : " + message,
                 totalChanges,
                 page);
         return projectChange;

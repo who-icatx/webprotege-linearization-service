@@ -28,8 +28,8 @@ public class NewRevisionsEventEmitterServiceImpl implements NewRevisionsEventEmi
     }
 
     @Override
-    public void emitNewRevisionsEvent(ProjectId projectId, String whoficEntityIri, LinearizationRevision entityLinearizationRevision, ChangeRequestId changeRequestId) {
-        ProjectChangeForEntity projectChange = projectChangesManager.getProjectChangesForRevision(projectId, whoficEntityIri, entityLinearizationRevision);
+    public void emitNewRevisionsEvent(ProjectId projectId, String whoficEntityIri, LinearizationRevision entityLinearizationRevision, ChangeRequestId changeRequestId, String commitMessage) {
+        ProjectChangeForEntity projectChange = projectChangesManager.getProjectChangesForRevision(projectId, whoficEntityIri, entityLinearizationRevision, commitMessage);
         NewRevisionsEvent revisionsEvent = NewRevisionsEvent.create(EventId.generate(), projectId, Set.of(projectChange), changeRequestId);
         eventDispatcher.dispatchEvent(revisionsEvent);
     }

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface NewRevisionsEventEmitterService {
     void emitNewRevisionsEvent(ProjectId projectId, List<EntityLinearizationHistory> entityLinearizationHistories, ChangeRequestId changeRequestId);
-    void emitNewRevisionsEvent(ProjectId projectId, String whoficEntityIri, LinearizationRevision entityLinearizationRevision, ChangeRequestId changeRequestId);
+    void emitNewRevisionsEvent(ProjectId projectId, String whoficEntityIri, LinearizationRevision entityLinearizationRevision, ChangeRequestId changeRequestId, String commitMessage);
 }

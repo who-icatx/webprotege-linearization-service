@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 
+import javax.annotation.Nullable;
+
 import static edu.stanford.protege.webprotege.linearizationservice.handlers.SaveEntityLinearizationRequest.CHANNEL;
 
 @JsonTypeName(CHANNEL)
@@ -13,7 +15,8 @@ public record SaveEntityLinearizationRequest(
         @JsonProperty("entityLinearization")
         WhoficEntityLinearizationSpecification entityLinearization,
         @JsonProperty("changeRequestId")
-        ChangeRequestId changeRequestId
+        ChangeRequestId changeRequestId,
+        @JsonProperty("commitsMessage") @Nullable String commitMessage
 ) implements Request<SaveEntityLinearizationResponse> {
 
     public static final String CHANNEL = "webprotege.linearization.SaveEntityLinearization";

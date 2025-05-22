@@ -15,7 +15,7 @@ public interface LinearizationHistoryService {
 
     void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
                      ExecutionContext executionContext,
-                     ProjectId projectId, UserId userId, ChangeRequestId changeRequestId);
+                     ProjectId projectId, UserId userId, ChangeRequestId changeRequestId, String commitMessage);
     void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
                      ExecutionContext executionContext,
                      ProjectId projectId, UserId userId);

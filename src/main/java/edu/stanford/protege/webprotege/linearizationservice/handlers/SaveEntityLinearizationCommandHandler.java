@@ -31,7 +31,7 @@ public class SaveEntityLinearizationCommandHandler implements CommandHandler<Sav
     @Override
     public Mono<SaveEntityLinearizationResponse> handleRequest(SaveEntityLinearizationRequest request, ExecutionContext executionContext) {
 
-        linearizationHistoryService.addRevision(request.entityLinearization(),executionContext, request.projectId(), executionContext.userId(), request.changeRequestId());
+        linearizationHistoryService.addRevision(request.entityLinearization(),executionContext, request.projectId(), executionContext.userId(), request.changeRequestId(), request.commitMessage());
 
 
         return Mono.just(SaveEntityLinearizationResponse.create());
