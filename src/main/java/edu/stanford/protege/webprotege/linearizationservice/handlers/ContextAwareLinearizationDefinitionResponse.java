@@ -11,7 +11,6 @@ import static edu.stanford.protege.webprotege.linearizationservice.handlers.Cont
 
 @JsonTypeName(CHANNEL)
 public record ContextAwareLinearizationDefinitionResponse(
-        @JsonProperty("definitionList") List<LinearizationDefinition> definitionList,
-        @JsonProperty("canEditResiduals") boolean canEditResiduals
+        @JsonProperty("definitionList") List<LinearizationDefinition> definitionList
 ) implements Response {
 }

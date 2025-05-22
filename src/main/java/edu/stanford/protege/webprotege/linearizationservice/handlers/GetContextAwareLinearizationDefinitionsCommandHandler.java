@@ -45,7 +45,6 @@ public class GetContextAwareLinearizationDefinitionsCommandHandler implements Co
         List<LinearizationDefinition> baseDefList = repository.getLinearizationDefinitions();
 
         List<LinearizationDefinition> response = new ArrayList<>();
-        boolean canEditLinearization;
         try {
             LinearizationDefinitionService.AllowedLinearizationDefinitions allowedDefs = linearizationDefinitionService.getUserAccessibleLinearizations(request.projectId(),
                     request.entityIRI(),request.allowedIds(), executionContext);
@@ -60,7 +59,6 @@ public class GetContextAwareLinearizationDefinitionsCommandHandler implements Co
                 }
             }
 
-            canEditLinearization = allowedDefs.canEditResiduals();
 
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
@@ -69,6 +67,6 @@ public class GetContextAwareLinearizationDefinitionsCommandHandler implements Co
         }
 
 
-        return Mono.just(new ContextAwareLinearizationDefinitionResponse(response, canEditLinearization));
+        return Mono.just(new ContextAwareLinearizationDefinitionResponse(response));
     }
 }
