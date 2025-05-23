@@ -16,7 +16,7 @@ public record SaveEntityLinearizationRequest(
         WhoficEntityLinearizationSpecification entityLinearization,
         @JsonProperty("changeRequestId")
         ChangeRequestId changeRequestId,
-        @JsonProperty("commitsMessage") @Nullable String commitMessage
+        @JsonProperty("commitMessage") @Nullable String commitMessage
 ) implements Request<SaveEntityLinearizationResponse> {
 
     public static final String CHANNEL = "webprotege.linearization.SaveEntityLinearization";
