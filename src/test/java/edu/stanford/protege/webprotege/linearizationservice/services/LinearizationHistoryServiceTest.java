@@ -130,7 +130,7 @@ public class LinearizationHistoryServiceTest {
         verify(linearizationHistoryRepo, times(0))
                 .addRevision(any(), any(), any());
         verify(newRevisionsEventEmitter, times(1))
-                .emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any());
+                .emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any(), "");
     }
 
     @Test
@@ -166,7 +166,7 @@ public class LinearizationHistoryServiceTest {
                 .emitNewRevisionsEvent(eq(projectId),any(), any());
 
         verify(linearizationHistoryRepo).addRevision(any(), any(), any());
-        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any());
+        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any(), "");
     }
 
     @Test
