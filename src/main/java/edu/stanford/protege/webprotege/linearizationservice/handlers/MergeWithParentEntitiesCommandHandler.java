@@ -42,9 +42,10 @@ public class MergeWithParentEntitiesCommandHandler implements CommandHandler<Mer
     public Mono<MergeWithParentEntitiesResponse> handleRequest(MergeWithParentEntitiesRequest request, ExecutionContext executionContext) {
 
         readWriteLock.executeWriteLock(() -> {
-            Optional<WhoficEntityLinearizationSpecification> newWhoficSpec = historyProcessorService.mergeLinearizationViewsFromParentsAndGetDefaultSpec(request.currentEntityIri(), request.parentEntityIris(), request.projectId());
+            Optional<WhoficEntityLinearizationSpecification> newWhoficSpec = historyProcessorService.mergeLinearizationViewsFromParentsAndGetDefaultSpec(request.currentEntityIri(),executionContext,
+                    request.parentEntityIris(), request.projectId());
 
-            newWhoficSpec.ifPresent(newSpec -> linearizationHistoryService.addRevision(newSpec, request.projectId(), executionContext.userId()));
+            newWhoficSpec.ifPresent(newSpec -> linearizationHistoryService.addRevision(newSpec,executionContext, request.projectId(), executionContext.userId()));
         });
         return Mono.just(MergeWithParentEntitiesResponse.create());
     }

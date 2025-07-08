@@ -89,7 +89,7 @@ class GetParentsThatAreLinearizationPathParentsCommandHandlerTest {
                 linearizationSpecifications
         );
 
-        when(linearizationEventsProcessor.processHistory(any())).thenReturn(processedHistory);
+        when(linearizationEventsProcessor.processHistory(any(), any())).thenReturn(processedHistory);
 
         GetParentsThatAreLinearizationPathParentsRequest request =
                 new GetParentsThatAreLinearizationPathParentsRequest(entityIri, Set.of(parentIri1, parentIri2, parentIri3), projectId);
@@ -101,7 +101,7 @@ class GetParentsThatAreLinearizationPathParentsCommandHandlerTest {
         assertEquals(Set.of(parentIri1, parentIri2), response.parentsThatAreLinearizationPathParents());
 
         verify(linearizationHistoryService).getExistingHistoryOrderedByRevision(entityIri, projectId);
-        verify(linearizationEventsProcessor).processHistory(any());
+        verify(linearizationEventsProcessor).processHistory(any(), any());
     }
 
 
@@ -150,7 +150,7 @@ class GetParentsThatAreLinearizationPathParentsCommandHandlerTest {
                 currentEntityIri, null, linearizationSpecifications
         );
 
-        when(linearizationEventsProcessor.processHistory(any()))
+        when(linearizationEventsProcessor.processHistory(any(), any()))
                 .thenReturn(processedSpec);
 
         GetParentsThatAreLinearizationPathParentsRequest request =
@@ -164,7 +164,7 @@ class GetParentsThatAreLinearizationPathParentsCommandHandlerTest {
         assertEquals(Set.of(), response.parentsThatAreLinearizationPathParents());
 
         verify(linearizationHistoryService).getExistingHistoryOrderedByRevision(currentEntityIri, projectId);
-        verify(linearizationEventsProcessor).processHistory(any());
+        verify(linearizationEventsProcessor).processHistory(any(), any());
     }
 
 

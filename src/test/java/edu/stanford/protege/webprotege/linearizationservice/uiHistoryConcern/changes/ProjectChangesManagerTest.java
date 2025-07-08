@@ -117,7 +117,7 @@ public class ProjectChangesManagerTest {
         when(definitionRepository.getLinearizationDefinitions())
                 .thenReturn(Collections.emptyList());
 
-        ProjectChangeForEntity result = projectChangesManager.getProjectChangesForRevision(projectId, entityIri, revision);
+        ProjectChangeForEntity result = projectChangesManager.getProjectChangesForRevision(projectId, entityIri, revision, "");
 
         assertNotNull(result);
         assertEquals(entityIri, result.whoficEntityIri());
@@ -137,7 +137,7 @@ public class ProjectChangesManagerTest {
         ProjectId projectId = new ProjectId("testProject");
         String entityIri = "http://example.com/entity";
 
-        assertThrows(NullPointerException.class, () -> projectChangesManager.getProjectChangesForRevision(projectId, entityIri, null));
+        assertThrows(NullPointerException.class, () -> projectChangesManager.getProjectChangesForRevision(projectId, entityIri, null, null));
     }
 }
 

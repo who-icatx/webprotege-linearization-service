@@ -4,20 +4,33 @@ import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
+import edu.stanford.protege.webprotege.common.ProjectId;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 @Service
 public class LinearizationEventsProcessorServiceImpl implements LinearizationEventsProcessorService {
-    public WhoficEntityLinearizationSpecification processHistory(@Nonnull EntityLinearizationHistory linearizationHistory) {
-        return processHistory(linearizationHistory.getLinearizationRevisions(), linearizationHistory.getWhoficEntityIri());
+    
+    private final LinearizationDefinitionService linearizationDefinitionService;
+
+    public LinearizationEventsProcessorServiceImpl(LinearizationDefinitionService linearizationDefinitionService) {
+        this.linearizationDefinitionService = linearizationDefinitionService;
     }
 
-    public WhoficEntityLinearizationSpecification processHistory(@Nonnull Set<LinearizationRevision> linearizationRevisions, String entityIri) {
+    public WhoficEntityLinearizationSpecification processHistory(@Nonnull EntityLinearizationHistory linearizationHistory, ExecutionContext executionContext) {
+        return processHistory(linearizationHistory.getLinearizationRevisions(),ProjectId.valueOf(linearizationHistory.getProjectId()), executionContext, linearizationHistory.getWhoficEntityIri());
+    }
+
+    public WhoficEntityLinearizationSpecification processHistory(@Nonnull Set<LinearizationRevision> linearizationRevisions,
+                                                                 ProjectId projectId,
+                                                                 ExecutionContext executionContext,
+                                                                 String entityIri) {
         Map<String, Queue<LinearizationSpecificationEvent>> allEventsThatHappenedPerIRI = new HashMap<>();
         List<LinearizationEvent> linearizationResidualEvents = new ArrayList<>();
         List<LinearizationSpecification> linearizationSpecifications = new ArrayList<>();
@@ -63,8 +76,44 @@ public class LinearizationEventsProcessorServiceImpl implements LinearizationEve
         for (LinearizationEvent event : linearizationResidualEvents) {
             residuals = (LinearizationResiduals) event.applyEvent(residuals);
         }
+
+        // Filter specifications based on user access rights
+        List<LinearizationSpecification> accessibleSpecifications = filterAccessibleSpecifications(
+            linearizationSpecifications,
+            executionContext,
+            projectId,
+            entityIri
+        );
+
         return new WhoficEntityLinearizationSpecification(IRI.create(entityIri),
                 residuals,
-                linearizationSpecifications);
+                accessibleSpecifications);
+    }
+
+    private List<LinearizationSpecification> filterAccessibleSpecifications(
+            List<LinearizationSpecification> specifications,
+            ExecutionContext executionContext,
+            ProjectId projectId,
+            String entityIri) {
+        try {
+            // Get user's accessible linearizations
+            LinearizationDefinitionService.AllowedLinearizationDefinitions allowedLinearizations = 
+                linearizationDefinitionService.getUserAccessibleLinearizations(
+                    projectId, 
+                    IRI.create(entityIri),
+                    Arrays.asList(LinearizationRowsCapability.VIEW_LINEARIZATION_ROW, LinearizationRowsCapability.EDIT_LINEARIZATION_ROW),
+                    executionContext
+                );
+
+            // Filter specifications based on readable linearizations
+            return specifications.stream()
+                .filter(spec -> allowedLinearizations.readableLinearizations()
+                    .contains(spec.getLinearizationView().toString()))
+                .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            // Log error and return empty list or throw appropriate exception
+            throw new RuntimeException("Failed to filter accessible linearizations", e);
+        }
     }
 }

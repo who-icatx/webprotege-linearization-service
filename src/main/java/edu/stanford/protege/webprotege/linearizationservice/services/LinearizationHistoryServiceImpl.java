@@ -4,6 +4,7 @@ package edu.stanford.protege.webprotege.linearizationservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.InsertOneModel;
 import edu.stanford.protege.webprotege.common.*;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
@@ -79,13 +80,13 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     }
 
     @Override
-    public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification,
-                            ProjectId projectId, UserId userId, ChangeRequestId changeRequestId) {
+    public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification, ExecutionContext executionContext,
+                            ProjectId projectId, UserId userId, ChangeRequestId changeRequestId, String commitMessage) {
         readWriteLock.executeWriteLock(() -> {
                     var existingHistoryOptional = getExistingHistoryOrderedByRevision(linearizationSpecification.entityIRI(), projectId);
                     existingHistoryOptional.ifPresentOrElse(history -> {
 
-                                WhoficEntityLinearizationSpecification oldSpec = processorService.processHistory(history);
+                                WhoficEntityLinearizationSpecification oldSpec = processorService.processHistory(history, executionContext);
 
                                 Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification, oldSpec);
 
@@ -94,7 +95,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                                 if (!linearizationEvents.isEmpty()) {
                                     var newRevision = LinearizationRevision.create(userId, linearizationEvents, changeRequestId);
                                     linearizationHistoryRepository.addRevision(linearizationSpecification.entityIRI().toString(), projectId, newRevision);
-                                    newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, linearizationSpecification.entityIRI().toString(), newRevision,changeRequestId);
+                                    newRevisionsEventEmitter.emitNewRevisionsEvent(projectId, linearizationSpecification.entityIRI().toString(), newRevision,changeRequestId, commitMessage);
                                 }
                             }, () -> {
                                 var newHistory = createNewEntityLinearizationHistory(linearizationSpecification, projectId, userId, changeRequestId);
@@ -106,8 +107,8 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
     }
 
     @Override
-    public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification, ProjectId projectId, UserId userId) {
-        addRevision(linearizationSpecification, projectId, userId, null);
+    public void addRevision(WhoficEntityLinearizationSpecification linearizationSpecification, ExecutionContext executionContext, ProjectId projectId, UserId userId) {
+        addRevision(linearizationSpecification, executionContext, projectId, userId, null, null);
     }
 
 

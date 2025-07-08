@@ -33,6 +33,9 @@ public class LinearizationDefinition {
     @JsonProperty("oldId")
     private final String oldId;
 
+    @JsonProperty("definitionAccessibility")
+    private LinearizationDefinitionAccessibility accessibility;
+
 
     @JsonCreator
     public LinearizationDefinition(@JsonProperty("linearizationId") String linearizationId,
@@ -53,6 +56,7 @@ public class LinearizationDefinition {
         this.sortingCode = sortingCode;
         this.oldId = oldId;
         this.displayLabel = displayLabel;
+        this.accessibility = LinearizationDefinitionAccessibility.READABLE;
     }
 
     public String getLinearizationId() {
@@ -89,5 +93,13 @@ public class LinearizationDefinition {
 
     public String getOldId() {
         return oldId;
+    }
+
+    public LinearizationDefinitionAccessibility getAccessibility() {
+        return accessibility;
+    }
+
+    public void setAccessibility(LinearizationDefinitionAccessibility accessibility) {
+        this.accessibility = accessibility;
     }
 }
