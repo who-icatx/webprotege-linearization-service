@@ -175,8 +175,8 @@ public class LinearizationEventMapper {
 
 
     private void addSuppressedUnspecifiedResidual(Set<LinearizationEvent> events, WhoficEntityLinearizationSpecification specification) {
-        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals() != null) {
-            events.add(new SetSuppressedUnspecifiedResiduals(specification.linearizationResiduals().getSuppressOtherSpecifiedResiduals()));
+        if (specification.linearizationResiduals() != null && specification.linearizationResiduals().getSuppressUnspecifiedResiduals() != null) {
+            events.add(new SetSuppressedUnspecifiedResiduals(specification.linearizationResiduals().getSuppressUnspecifiedResiduals()));
         } else {
             events.add(new SetSuppressedUnspecifiedResiduals(ThreeStateBoolean.UNKNOWN));
         }
