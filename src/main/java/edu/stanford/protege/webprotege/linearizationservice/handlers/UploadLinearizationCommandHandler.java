@@ -55,10 +55,8 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
         var stream = linearizationRepository.fetchFromDocument(request.documentId().id());
 
-        readWriteLock.executeWriteLock(() -> {
-            Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
-            stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
-        });
+        Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
+        stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
 
 
         return Mono.just(UploadLinearizationResponse.create());
