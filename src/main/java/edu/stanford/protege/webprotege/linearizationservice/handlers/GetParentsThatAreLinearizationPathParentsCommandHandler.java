@@ -51,6 +51,6 @@ public class GetParentsThatAreLinearizationPathParentsCommandHandler implements 
                 .filter(linearizationParents::contains)
                 .collect(Collectors.toSet());
 
-        return Mono.just(new GetParentsThatAreLinearizationPathParentsResponse(matchingParent));
+        return Mono.just(new GetParentsThatAreLinearizationPathParentsResponse(matchingParent,linearizationParents));
     }
 }

@@ -31,7 +31,7 @@ public class SetLinearizationParent extends LinearizationSpecificationEvent {
             return new LinearizationSpecification(specification.getIsAuxiliaryAxisChild(),
                     specification.getIsGrouping(),
                     specification.getIsIncludedInLinearization(),
-                    IRI.create(value),
+                    value == null || value.isEmpty() ? null : IRI.create(value),
                     specification.getLinearizationView(),
                     specification.getCodingNote());
         }
