@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.linearizationservice.repositories.defini
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationDefinition;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +24,7 @@ public class LinearizationDefinitionRepository {
         this.objectMapper = objectMapper;
     }
 
+    @Cacheable("linearizationDefinitions")
     public List<LinearizationDefinition> getLinearizationDefinitions() {
         return StreamSupport.stream(mongoTemplate.getCollection(DEFINITIONS_COLLECTION)
                                 .find().spliterator(),

@@ -79,15 +79,15 @@ public class SaveEntityLinearizationCommandHandlerTest {
         var projectId = ProjectId.generate();
         var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
         LinearizationSpecification spec = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.UNKNOWN,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.UNKNOWN,
                 IRI.create(linearizationParent),
                 IRI.create(linearizationView),
                 codingNote
         );
 
-        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE, ThreeStateBoolean.FALSE, getRandomString(), getRandomString());
+        var residual = new LinearizationResiduals(LinearizationStateCell.FALSE, LinearizationStateCell.FALSE, getRandomString(), getRandomString());
 
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(entityIri),
@@ -138,15 +138,15 @@ public class SaveEntityLinearizationCommandHandlerTest {
         var projectId = ProjectId.generate();
         var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
         LinearizationSpecification spec1 = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.UNKNOWN,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.UNKNOWN,
                 linearizationParent,
                 linearizationView,
                 codingNote
         );
 
-        var residual1 = new LinearizationResiduals(ThreeStateBoolean.FALSE, ThreeStateBoolean.FALSE, getRandomString(), getRandomString());
+        var residual1 = new LinearizationResiduals(LinearizationStateCell.FALSE, LinearizationStateCell.FALSE, getRandomString(), getRandomString());
 
         var woficEntitySpec1 = new WhoficEntityLinearizationSpecification(
                 entityIri,
@@ -155,15 +155,15 @@ public class SaveEntityLinearizationCommandHandlerTest {
         );
 
         LinearizationSpecification spec2 = new LinearizationSpecification(
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.TRUE,
                 linearizationParent,
                 linearizationView,
                 codingNote
         );
 
-        var residual2 = new LinearizationResiduals(ThreeStateBoolean.TRUE, ThreeStateBoolean.FALSE, getRandomString(), getRandomString());
+        var residual2 = new LinearizationResiduals(LinearizationStateCell.TRUE, LinearizationStateCell.FALSE, getRandomString(), getRandomString());
 
         var woficEntitySpec2 = new WhoficEntityLinearizationSpecification(
                 entityIri,

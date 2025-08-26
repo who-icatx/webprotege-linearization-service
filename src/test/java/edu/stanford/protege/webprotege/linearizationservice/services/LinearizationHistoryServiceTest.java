@@ -6,6 +6,7 @@ import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.history.LinearizationHistoryRepository;
 import edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper;
 import org.junit.*;
@@ -46,7 +47,8 @@ public class LinearizationHistoryServiceTest {
     private LinearizationDefinitionService definitionService;
     @Mock
     private NewRevisionsEventEmitterServiceImpl newRevisionsEventEmitter;
-
+    @Mock
+    private LinearizationDefinitionRepository linearizationDefinitionRepository;
     @Spy
     private LinearizationHistoryService linearizationHistoryService;
 
@@ -62,7 +64,7 @@ public class LinearizationHistoryServiceTest {
                 .thenReturn(new LinearizationDefinitionService.AllowedLinearizationDefinitions(LinearizationViewIriHelper.getLinearizationViewIris()
                         .stream().map(IRI::toString).collect(Collectors.toList()), new ArrayList<>()));
         objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
-        eventMapper = new LinearizationEventMapper();
+        eventMapper = new LinearizationEventMapper(linearizationDefinitionRepository);
         processorService = new LinearizationEventsProcessorServiceImpl(definitionService);
         linearizationHistoryService = spy(new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock, processorService, newRevisionsEventEmitter));
     }
@@ -106,15 +108,15 @@ public class LinearizationHistoryServiceTest {
         var entityIri = getRandomIri();
         var projectId = ProjectId.generate();
         LinearizationSpecification spec = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.UNKNOWN,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.UNKNOWN,
                 IRI.create(linearizationParent),
                 IRI.create(linearizationView),
                 codingNote
         );
 
-        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE,ThreeStateBoolean.FALSE,getRandomString(), getRandomString());
+        var residual = new LinearizationResiduals(LinearizationStateCell.FALSE, LinearizationStateCell.FALSE,getRandomString(), getRandomString());
 
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(entityIri),
@@ -142,14 +144,14 @@ public class LinearizationHistoryServiceTest {
         var entityIri = getRandomIri();
         var projectId = ProjectId.generate();
         LinearizationSpecification spec = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.UNKNOWN,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.UNKNOWN,
                 IRI.create(linearizationParent),
                 IRI.create(linearizationView),
                 codingNote
         );
-        var residual = new LinearizationResiduals(ThreeStateBoolean.FALSE,ThreeStateBoolean.FALSE,getRandomString(),  getRandomString());
+        var residual = new LinearizationResiduals(LinearizationStateCell.FALSE, LinearizationStateCell.FALSE,getRandomString(),  getRandomString());
         var woficEntitySpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(entityIri),
                 residual,
@@ -177,32 +179,32 @@ public class LinearizationHistoryServiceTest {
         IRI currenteEtityIri1 = IRI.create(getRandomIri());
 
         LinearizationSpecification currSpec11 = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.TRUE,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.TRUE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/MMS"),
                 "");
         LinearizationSpecification currSpec21 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.FALSE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
                 "");
         WhoficEntityLinearizationSpecification currentSpec1 = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec11, currSpec21));
 
         LinearizationSpecification currSpec12 = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.TRUE,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.TRUE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/MMS"),
                 "");
         LinearizationSpecification currSpec22 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.FALSE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
                 "");

@@ -83,22 +83,22 @@ class MergeWithParentEntitiesCommandHandlerTest {
         var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
 
         LinearizationSpecification currSpec1 = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.TRUE,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.TRUE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/MMS"),
                 "");
         LinearizationSpecification currSpec2 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.FALSE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
                 "");
         WhoficEntityLinearizationSpecification currentSpec = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec1, currSpec2));
 
-        Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(currentSpec);
+        Set<LinearizationEvent> linearizationEvents = eventMapper.mapInitialLinearizationSpecificationsToEvents(currentSpec);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(currentSpec));
 
         var currEntityRevision = LinearizationRevision.create(userId, linearizationEvents);
@@ -107,15 +107,15 @@ class MergeWithParentEntitiesCommandHandlerTest {
         mongoTemplate.save(currEntityHistory, LINEARIZATION_HISTORY_COLLECTION);
 
         LinearizationSpecification missingSpec1 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.FALSE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/research"),
                 "");
         WhoficEntityLinearizationSpecification parentWhoficSpec1 = new WhoficEntityLinearizationSpecification(parentEntityIri1, null, List.of(missingSpec1));
 
-        Set<LinearizationEvent> parent1Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec1);
+        Set<LinearizationEvent> parent1Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec1);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec1));
 
         var parent1EntityRevision = LinearizationRevision.create(userId, parent1Events);
@@ -125,16 +125,16 @@ class MergeWithParentEntitiesCommandHandlerTest {
 
 
         LinearizationSpecification missingSpec2 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.FALSE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/mentalHealth"),
                 "");
 
         WhoficEntityLinearizationSpecification parentWhoficSpec2 = new WhoficEntityLinearizationSpecification(parentEntityIri2, null, List.of(missingSpec2));
 
-        Set<LinearizationEvent> parent2Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec2);
+        Set<LinearizationEvent> parent2Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec2);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec2));
 
         var parent2EntityRevision = LinearizationRevision.create(userId, parent2Events);
@@ -185,22 +185,22 @@ class MergeWithParentEntitiesCommandHandlerTest {
         var executionContext = new ExecutionContext(userId, "jwt", UUID.randomUUID().toString());
 
         LinearizationSpecification currSpec1 = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.TRUE,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.TRUE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/MMS"),
                 "");
         LinearizationSpecification currSpec2 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.FALSE,
                 IRI.create(""),
                 IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
                 "");
         WhoficEntityLinearizationSpecification currentSpec = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec1, currSpec2));
 
-        Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(currentSpec);
+        Set<LinearizationEvent> linearizationEvents = eventMapper.mapInitialLinearizationSpecificationsToEvents(currentSpec);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(currentSpec));
 
         var currEntityRevision = LinearizationRevision.create(userId, linearizationEvents);
@@ -211,7 +211,7 @@ class MergeWithParentEntitiesCommandHandlerTest {
 
         WhoficEntityLinearizationSpecification parentWhoficSpec1 = new WhoficEntityLinearizationSpecification(parentEntityIri1, null, List.of(currSpec1));
 
-        Set<LinearizationEvent> parent1Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec1);
+        Set<LinearizationEvent> parent1Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec1);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec1));
 
         var parent1EntityRevision = LinearizationRevision.create(userId, parent1Events);
@@ -221,7 +221,7 @@ class MergeWithParentEntitiesCommandHandlerTest {
 
         WhoficEntityLinearizationSpecification parentWhoficSpec2 = new WhoficEntityLinearizationSpecification(parentEntityIri2, null, List.of(currSpec2));
 
-        Set<LinearizationEvent> parent2Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec2);
+        Set<LinearizationEvent> parent2Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec2);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec2));
 
         var parent2EntityRevision = LinearizationRevision.create(userId, parent2Events);

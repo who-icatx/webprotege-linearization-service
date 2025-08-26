@@ -11,10 +11,10 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 public class SetSuppressedOtherSpecifiedResidual implements LinearizationEvent {
 
     public static final String DISCRIMINATOR = "SetSuppressedOtherSpecifiedResidual";
-    private final ThreeStateBoolean value;
+    private final LinearizationStateCell value;
 
     @JsonCreator
-    public SetSuppressedOtherSpecifiedResidual(@JsonProperty("value") ThreeStateBoolean value) {
+    public SetSuppressedOtherSpecifiedResidual(@JsonProperty("value") LinearizationStateCell value) {
         this.value = value;
     }
 

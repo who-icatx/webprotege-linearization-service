@@ -3,7 +3,6 @@ package edu.stanford.protege.webprotege.linearizationservice.handlers;
 import edu.stanford.protege.webprotege.authorization.*;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.criteria.CompositeRootCriteria;
-import edu.stanford.protege.webprotege.criteria.EntityAnnotationCriteria;
 import edu.stanford.protege.webprotege.criteria.MultiMatchType;
 import edu.stanford.protege.webprotege.ipc.CommandExecutor;
 import edu.stanford.protege.webprotege.linearizationservice.*;
@@ -11,7 +10,6 @@ import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -107,17 +105,17 @@ class CreateLinearizationFromParentCommandHandlerTest {
         //here we are expecting the default values. If the default values change we need to also update this test.
         newEntityRevision.linearizationEvents().forEach(event -> {
             if (event instanceof SetAuxiliaryAxisChild) {
-                assertEquals(ThreeStateBoolean.FALSE.name(), event.getValue());
+                assertEquals(LinearizationStateCell.FALSE.name(), event.getValue());
             } else if (event instanceof SetCodingNote) {
                 assertEquals("", event.getValue());
             } else if (event instanceof SetGrouping) {
-                assertEquals(ThreeStateBoolean.FALSE.name(), event.getValue());
+                assertEquals(LinearizationStateCell.FALSE.name(), event.getValue());
             } else if (event instanceof SetIncludedInLinearization) {
-                assertEquals(ThreeStateBoolean.UNKNOWN.name(), event.getValue());
+                assertEquals(LinearizationStateCell.UNKNOWN.name(), event.getValue());
             } else if (event instanceof SetLinearizationParent) {
                 assertEquals("", event.getValue());
             } else if (event instanceof SetSuppressedOtherSpecifiedResidual) {
-                assertEquals(ThreeStateBoolean.UNKNOWN.name(), event.getValue());
+                assertEquals(LinearizationStateCell.UNKNOWN.name(), event.getValue());
             } else if (event instanceof SetUnspecifiedResidualTitle) {
                 assertEquals("", event.getValue());
             }

@@ -66,17 +66,17 @@ class GetParentsThatAreLinearizationPathParentsCommandHandlerTest {
 
         List<LinearizationSpecification> linearizationSpecifications = List.of(
                 new LinearizationSpecification(
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
                         parentIri1,
                         linearizationView1,
                         ""
                 ),
                 new LinearizationSpecification(
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
                         parentIri2,
                         linearizationView2,
                         ""
@@ -120,17 +120,17 @@ class GetParentsThatAreLinearizationPathParentsCommandHandlerTest {
 
         List<LinearizationSpecification> linearizationSpecifications = List.of(
                 new LinearizationSpecification(
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
                         historyParentIri1,
                         linearizationView1,
                         ""
                 ),
                 new LinearizationSpecification(
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
-                        ThreeStateBoolean.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
+                        LinearizationStateCell.UNKNOWN,
                         historyParentIri2,
                         linearizationView2,
                         ""

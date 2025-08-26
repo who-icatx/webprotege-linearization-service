@@ -9,12 +9,12 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 public class SetAuxiliaryAxisChild extends LinearizationSpecificationEvent {
 
-    private final ThreeStateBoolean value;
+    private final LinearizationStateCell value;
 
     public final static String DISCRIMINATOR = "SetAuxiliaryAxisChild";
 
     @JsonCreator
-    public SetAuxiliaryAxisChild(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
+    public SetAuxiliaryAxisChild(@JsonProperty("value") LinearizationStateCell value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }
