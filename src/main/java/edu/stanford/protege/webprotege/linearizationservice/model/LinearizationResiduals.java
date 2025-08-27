@@ -6,9 +6,9 @@ import edu.stanford.protege.webprotege.linearizationservice.events.EventProcesab
 
 public class LinearizationResiduals extends EventProcesableParameter {
 
-    private final ThreeStateBoolean suppressOtherSpecifiedResiduals;
+    private final LinearizationStateCell suppressOtherSpecifiedResiduals;
 
-    private final ThreeStateBoolean suppressUnspecifiedResiduals;
+    private final LinearizationStateCell suppressUnspecifiedResiduals;
 
 
     private final String unspecifiedResidualTitle;
@@ -16,8 +16,8 @@ public class LinearizationResiduals extends EventProcesableParameter {
 
 
     @JsonCreator
-    public LinearizationResiduals( @JsonProperty("suppressOtherSpecifiedResiduals") ThreeStateBoolean suppressOtherSpecifiedResiduals,
-                                   @JsonProperty("suppressUnspecifiedResiduals") ThreeStateBoolean suppressUnspecifiedResiduals,
+    public LinearizationResiduals( @JsonProperty("suppressOtherSpecifiedResiduals") LinearizationStateCell suppressOtherSpecifiedResiduals,
+                                   @JsonProperty("suppressUnspecifiedResiduals") LinearizationStateCell suppressUnspecifiedResiduals,
                                    @JsonProperty("otherSpecifiedResidualTitle") String otherSpecifiedResidualTitle,
                                    @JsonProperty("unspecifiedResidualTitle") String unspecifiedResidualTitle) {
         this.suppressOtherSpecifiedResiduals = suppressOtherSpecifiedResiduals;
@@ -28,7 +28,7 @@ public class LinearizationResiduals extends EventProcesableParameter {
 
 
     @JsonProperty("suppressOtherSpecifiedResiduals")
-    public ThreeStateBoolean getSuppressOtherSpecifiedResiduals() {
+    public LinearizationStateCell getSuppressOtherSpecifiedResiduals() {
         return suppressOtherSpecifiedResiduals;
     }
 
@@ -38,7 +38,7 @@ public class LinearizationResiduals extends EventProcesableParameter {
     }
 
     @JsonProperty("suppressUnspecifiedResiduals")
-    public ThreeStateBoolean getSuppressUnspecifiedResiduals() {
+    public LinearizationStateCell getSuppressUnspecifiedResiduals() {
         return suppressUnspecifiedResiduals;
     }
 

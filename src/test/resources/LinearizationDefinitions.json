@@ -1,0 +1,176 @@
+[{
+  "linearizationId": "MMS",
+  "linearizationUri": "http://id.who.int/icd/release/11/mms",
+  "description": "ICD-11 for Mortality and Morbidity Statistics",
+  "displayLabel": "MMS",
+  "linearizationMode": "LinMode.Basic",
+  "rootId": "http://id.who.int/icd/entity/455013390",
+  "sortingCode": "01"
+},
+  {
+    "oldId": "Primary_Care_Low_RS",
+    "linearizationId": "PCL",
+    "linearizationUri": "http://id.who.int/icd/release/11/pcl",
+    "description": "ICD-11 Primary Care Low Resource Setting Linearization",
+    "displayLabel": "Primary Care - Low Res. Set.",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "03"
+  },
+  {
+    "oldId": "Primary_Care_High_RS",
+    "linearizationId": "PCH",
+    "linearizationUri": "http://id.who.int/icd/release/11/pch",
+    "description": "ICD-11 Primary Care High Resource Setting Linearization",
+    "displayLabel": "Primary Care - High Res. Set.",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "80.2"
+  },
+  {
+    "oldId": "Specialty_Adaptation_Dermatology",
+    "linearizationId": "DER",
+    "linearizationUri": "http://id.who.int/icd/release/11/der",
+    "description": "ICD-11 Classification of Dermatological Diseases",
+    "displayLabel": "Spec. Lin: Dermatology",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "06"
+  },
+  {
+
+    "oldId": "Speciality_Adaptation_Mental_Health",
+    "linearizationId": "MNH",
+    "linearizationUri": "http://id.who.int/icd/release/11/mnh",
+    "description": "ICD-11 Mental Health Speciality Linearization",
+    "displayLabel": "Spec. Lin: Mental Health",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "05"
+  },
+  {
+
+    "oldId": "Specialty_Adaptation_Paediatrics",
+    "linearizationId": "PED",
+    "linearizationUri": "http://id.who.int/icd/release/11/ped",
+    "description": "ICD-11 Paediatrics Speciality Linearization",
+    "displayLabel": "Spec. Lin: Paediatrics",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "09"
+  },
+  {
+
+    "oldId": "Specialty_Adaptation_Occupational_Health",
+    "linearizationId": "OCU",
+    "linearizationUri": "http://id.who.int/icd/release/11/ocu",
+    "description": "ICD-11 Occupational Health Speciality Linearization",
+    "displayLabel": "Spec. Lin: Occupational Health",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "10"
+  },
+  {
+
+    "oldId": "Specialty_Adaptation_Rare_Diseases",
+    "linearizationId": "RAR",
+    "linearizationUri": "http://id.who.int/icd/release/11/rar",
+    "description": "ICD-11 Rare Diseases Speciality Linearization",
+    "displayLabel": "Spec. Lin: Rare Diseases",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "12"
+  },
+  {
+
+    "oldId": "Specialty_Adaptation_Neurology",
+    "linearizationId": "NER",
+    "linearizationUri": "http://id.who.int/icd/release/11/ner",
+    "description": "ICD-11 Neurology Speciality Linearization",
+    "displayLabel": "Spec. Lin: Neurology",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "08"
+  },
+  {
+
+    "oldId": "Specialty_Adaptation_Musculoskeletal",
+    "linearizationId": "MUS",
+    "linearizationUri": "http://id.who.int/icd/release/11/mus",
+    "description": "ICD-11 Musculoskeletal Speciality Linearization",
+    "displayLabel": "Spec. Lin: Musculoskeletal",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "07"
+  },
+  {
+
+    "oldId": "Specialty_Adaptation_Ophthalmology",
+    "linearizationId": "OPH",
+    "linearizationUri": "http://id.who.int/icd/release/11/oph",
+    "description": "ICD-11 Ophthalmology Speciality Linearization",
+    "displayLabel": "Spec. Lin: Ophthalmology",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "13"
+  },
+  {
+
+    "oldId": "Specialty_Adaptation_Environmental_Health",
+    "linearizationId": "ENV",
+    "linearizationUri": "http://id.who.int/icd/release/11/env",
+    "description": "ICD-11 Environmental Health Speciality Linearization",
+    "displayLabel": "Spec. Lin: Environmental Health",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "11"
+  },
+  {
+
+    "linearizationId": "ICD-O",
+    "linearizationUri": "http://id.who.int/icd/release/11/icd-o",
+    "description": "ICD-O Linearization",
+    "displayLabel": "ICD-O",
+    "linearizationMode": "LinMode.Basic",
+    "rootId": "http://id.who.int/icd/entity/77159832",
+    "sortingCode": "25"
+  },
+  {
+    "linearizationId": "Research",
+    "linearizationUri": "http://id.who.int/icd/release/11/research",
+    "description": "ICD-11 Linearization for Research",
+    "displayLabel": "Research",
+    "linearizationMode": "LinMode.TelescopicFromAnotherLinearization",
+    "coreLinId": "MMS",
+    "rootId": "http://id.who.int/icd/entity/455013390",
+    "sortingCode": "04"
+  },
+  {
+    "linearizationId": "ICF",
+    "linearizationUri": "http://id.who.int/icd/release/11/icf",
+    "description": "International Classification of Functioning, Disability and Health (ICF)",
+    "displayLabel": "ICF",
+    "linearizationMode": "LinMode.Basic",
+    "rootId": "http://id.who.int/icd/entity/1405434703",
+    "sortingCode": "02.02"
+  },
+  {
+    "linearizationId": "ICHI",
+    "linearizationUri": "http://id.who.int/icd/release/11/ichi",
+    "description": "International Classification of Health Interventions (ICHI)",
+    "displayLabel": "ICHI",
+    "linearizationMode": "LinMode.Basic",
+    "rootId": "http://id.who.int/icd/entity/60347385",
+    "sortingCode": "02.01"
+  }]

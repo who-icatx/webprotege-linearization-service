@@ -49,7 +49,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
                                                                            UserId userId,
                                                                            ChangeRequestId changeRequestId) {
 
-        var linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification);
+        var linearizationEvents = eventMapper.mapInitialLinearizationSpecificationsToEvents(linearizationSpecification);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification));
 
         var linearizationRevision = LinearizationRevision.create(userId, linearizationEvents, changeRequestId);
@@ -88,7 +88,7 @@ public class LinearizationHistoryServiceImpl implements LinearizationHistoryServ
 
                                 WhoficEntityLinearizationSpecification oldSpec = processorService.processHistory(history, executionContext);
 
-                                Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(linearizationSpecification, oldSpec);
+                                Set<LinearizationEvent> linearizationEvents = eventMapper.mapInitialLinearizationSpecificationsToEvents(linearizationSpecification, oldSpec);
 
                                 linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(linearizationSpecification, oldSpec));
 

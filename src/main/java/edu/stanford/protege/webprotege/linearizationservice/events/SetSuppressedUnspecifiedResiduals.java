@@ -3,7 +3,7 @@ package edu.stanford.protege.webprotege.linearizationservice.events;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationResiduals;
-import edu.stanford.protege.webprotege.linearizationservice.model.ThreeStateBoolean;
+import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationStateCell;
 import edu.stanford.protege.webprotege.linearizationservice.uiHistoryConcern.changes.LinearizationChangeVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,10 +12,10 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 public class SetSuppressedUnspecifiedResiduals implements LinearizationEvent {
 
     public static final String DISCRIMINATOR = "SetSuppressedUnspecifiedResiduals";
-    private final ThreeStateBoolean value;
+    private final LinearizationStateCell value;
 
     @JsonCreator
-    public SetSuppressedUnspecifiedResiduals(@JsonProperty("value") ThreeStateBoolean value) {
+    public SetSuppressedUnspecifiedResiduals(@JsonProperty("value") LinearizationStateCell value) {
         this.value = value;
     }
 

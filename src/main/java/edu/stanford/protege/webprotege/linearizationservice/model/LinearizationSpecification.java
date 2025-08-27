@@ -12,11 +12,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LinearizationSpecification extends EventProcesableParameter {
 
-    private final ThreeStateBoolean isAuxiliaryAxisChild;
+    private final LinearizationStateCell isAuxiliaryAxisChild;
 
-    private final ThreeStateBoolean isGrouping;
+    private final LinearizationStateCell isGrouping;
 
-    private final ThreeStateBoolean isIncludedInLinearization;
+    private final LinearizationStateCell isIncludedInLinearization;
 
     private final IRI linearizationParent;
 
@@ -25,9 +25,9 @@ public class LinearizationSpecification extends EventProcesableParameter {
     private final String codingNote;
 
     @JsonCreator
-    public LinearizationSpecification(@JsonProperty("isAuxiliaryAxisChild") ThreeStateBoolean isAuxiliaryAxisChild,
-                                      @JsonProperty("isGrouping") ThreeStateBoolean isGrouping,
-                                      @JsonProperty("isIncludedInLinearization") ThreeStateBoolean isIncludedInLinearization,
+    public LinearizationSpecification(@JsonProperty("isAuxiliaryAxisChild") LinearizationStateCell isAuxiliaryAxisChild,
+                                      @JsonProperty("isGrouping") LinearizationStateCell isGrouping,
+                                      @JsonProperty("isIncludedInLinearization") LinearizationStateCell isIncludedInLinearization,
                                       @JsonProperty("linearizationParent") IRI linearizationParent,
                                       @JsonProperty("linearizationView") @Nonnull IRI linearizationView,
                                       @JsonProperty("codingNote") String codingNote) {
@@ -40,15 +40,15 @@ public class LinearizationSpecification extends EventProcesableParameter {
     }
 
 
-    public ThreeStateBoolean getIsAuxiliaryAxisChild() {
+    public LinearizationStateCell getIsAuxiliaryAxisChild() {
         return isAuxiliaryAxisChild;
     }
 
-    public ThreeStateBoolean getIsGrouping() {
+    public LinearizationStateCell getIsGrouping() {
         return isGrouping;
     }
 
-    public ThreeStateBoolean getIsIncludedInLinearization() {
+    public LinearizationStateCell getIsIncludedInLinearization() {
         return isIncludedInLinearization;
     }
 

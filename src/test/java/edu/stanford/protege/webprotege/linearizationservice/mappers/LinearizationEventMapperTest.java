@@ -1,37 +1,59 @@
 package edu.stanford.protege.webprotege.linearizationservice.mappers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.semanticweb.owlapi.model.IRI;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class LinearizationEventMapperTest {
 
     private LinearizationEventMapper eventMapper;
 
+    @Mock
+    private LinearizationDefinitionRepository linearizationDefinitionRepository;
+
     @Before
-    public void setUp() {
-        eventMapper = new LinearizationEventMapper();
+    public void setUp() throws IOException {
+        MockitoAnnotations.openMocks(this);
+
+        ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
+
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/LinearizationDefinitions.json");
+        when(linearizationDefinitionRepository.getLinearizationDefinitions())
+                .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
+                }));
+        eventMapper = new LinearizationEventMapper(linearizationDefinitionRepository);
     }
 
     @Test
     public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allSpecificationEventsAreCreated() {
-        String linearizationView = getRandomIri();
+        String linearizationView = "http://id.who.int/icd/release/11/mms";
         String linearizationParent = getRandomIri();
         String codingNote = getRandomString();
         String entityIri = getRandomIri();
         LinearizationSpecification spec = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.UNKNOWN,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.UNKNOWN,
                 IRI.create(linearizationParent),
                 IRI.create(linearizationView),
                 codingNote
@@ -43,7 +65,7 @@ public class LinearizationEventMapperTest {
                 List.of(spec)
         );
 
-        Set<LinearizationEvent> events = eventMapper.mapLinearizationSpecificationsToEvents(entityLinearizationSpecification);
+        Set<LinearizationEvent> events = eventMapper.mapInitialLinearizationSpecificationsToEvents(entityLinearizationSpecification);
 
         assertEquals(5, events.size());
         events.forEach(event -> {
@@ -67,8 +89,8 @@ public class LinearizationEventMapperTest {
         IRI entityIri = IRI.create(getRandomIri());
 
         LinearizationResiduals residuals = new LinearizationResiduals(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.TRUE,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.TRUE,
                 residualTitle,
                 getRandomString()
         );
@@ -103,8 +125,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         oldTitle,
                         null
                 ),
@@ -114,8 +136,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         newTitle,
                         null
                 ),
@@ -134,8 +156,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         "",
                         null
                 ),
@@ -145,8 +167,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         "",
                         null
                 ),
@@ -165,8 +187,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         null
                 ),
@@ -176,8 +198,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         newTitle,
                         null
                 ),
@@ -198,8 +220,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         oldTitle,
                         null
                 ),
@@ -209,8 +231,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         "",
                         null
                 ),
@@ -234,8 +256,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         oldTitle
                 ),
@@ -245,8 +267,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         newTitle
                 ),
@@ -265,8 +287,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         ""
                 ),
@@ -276,8 +298,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         ""
                 ),
@@ -296,8 +318,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         null
                 ),
@@ -307,8 +329,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         newTitle
                 ),
@@ -329,8 +351,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification oldSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         oldTitle
                 ),
@@ -340,8 +362,8 @@ public class LinearizationEventMapperTest {
         WhoficEntityLinearizationSpecification newSpec = new WhoficEntityLinearizationSpecification(
                 IRI.create(getRandomIri()),
                 new LinearizationResiduals(
-                        ThreeStateBoolean.FALSE,
-                        ThreeStateBoolean.FALSE,
+                        LinearizationStateCell.FALSE,
+                        LinearizationStateCell.FALSE,
                         null,
                         ""
                 ),

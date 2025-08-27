@@ -11,10 +11,10 @@ public class SetIncludedInLinearization extends LinearizationSpecificationEvent 
 
     public static final String DISCRIMINATOR = "SetIncludedInLinearization";
 
-    private final ThreeStateBoolean value;
+    private final LinearizationStateCell value;
 
     @JsonCreator
-    public SetIncludedInLinearization(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
+    public SetIncludedInLinearization(@JsonProperty("value") LinearizationStateCell value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }

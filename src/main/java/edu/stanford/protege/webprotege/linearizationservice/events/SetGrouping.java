@@ -11,10 +11,10 @@ public class SetGrouping extends LinearizationSpecificationEvent {
 
     public static final String DISCRIMINATOR = "SetGrouping";
 
-    private final ThreeStateBoolean value;
+    private final LinearizationStateCell value;
 
     @JsonCreator
-    public SetGrouping(@JsonProperty("value") ThreeStateBoolean value, @JsonProperty("linearizationView") String linearizationView) {
+    public SetGrouping(@JsonProperty("value") LinearizationStateCell value, @JsonProperty("linearizationView") String linearizationView) {
         super(linearizationView);
         this.value = value;
     }

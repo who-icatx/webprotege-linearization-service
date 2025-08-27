@@ -1,7 +1,8 @@
 package edu.stanford.protege.webprotege.linearizationservice.model;
 
-public enum ThreeStateBoolean {
+public enum LinearizationStateCell {
     TRUE,
     FALSE,
-    UNKNOWN
+    UNKNOWN,
+    FOLLOW_BASE_LINEARIZATION
 }

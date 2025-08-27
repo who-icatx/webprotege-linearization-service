@@ -23,32 +23,32 @@ class WhoficEntityLinearizationSpecificationMapperTest {
         IRI linParentIri = IRI.create(getRandomIri());
         IRI linearizationView = getRandomLinearizationView();
         LinearizationSpecification spec = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE,
-                ThreeStateBoolean.FALSE,
-                ThreeStateBoolean.TRUE,
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.TRUE,
                 linParentIri,
                 linearizationView,
                 "codingNote"
         );
         WhoficEntityLinearizationSpecification whoficSpec = new WhoficEntityLinearizationSpecification(
                 entityIri,
-                new LinearizationResiduals(ThreeStateBoolean.TRUE,ThreeStateBoolean.FALSE,"otherSpecifiedTitle", "residualTitle"),
+                new LinearizationResiduals(LinearizationStateCell.TRUE, LinearizationStateCell.FALSE,"otherSpecifiedTitle", "residualTitle"),
                 List.of(spec)
         );
 
         WhoficEntityLinearizationSpecification result = mapper.mapToDefaultWhoficEntityLinearizationSpecification(newSpecIri, whoficSpec);
 
         assertEquals(newSpecIri, result.entityIRI());
-        assertEquals(ThreeStateBoolean.UNKNOWN, result.linearizationResiduals().getSuppressOtherSpecifiedResiduals());
+        assertEquals(LinearizationStateCell.UNKNOWN, result.linearizationResiduals().getSuppressOtherSpecifiedResiduals());
         assertEquals("", result.linearizationResiduals().getUnspecifiedResidualTitle());
 
         List<LinearizationSpecification> defaultSpecifications = result.linearizationSpecifications();
         assertEquals(1, defaultSpecifications.size());
 
         LinearizationSpecification defaultSpec = defaultSpecifications.get(0);
-        assertEquals(ThreeStateBoolean.FALSE, defaultSpec.getIsAuxiliaryAxisChild());
-        assertEquals(ThreeStateBoolean.FALSE, defaultSpec.getIsGrouping());
-        assertEquals(ThreeStateBoolean.UNKNOWN, defaultSpec.getIsIncludedInLinearization());
+        assertEquals(LinearizationStateCell.FALSE, defaultSpec.getIsAuxiliaryAxisChild());
+        assertEquals(LinearizationStateCell.FALSE, defaultSpec.getIsGrouping());
+        assertEquals(LinearizationStateCell.UNKNOWN, defaultSpec.getIsIncludedInLinearization());
         assertEquals(IRI.create(""), defaultSpec.getLinearizationParent());
         assertEquals(linearizationView, defaultSpec.getLinearizationView());
         assertEquals("", defaultSpec.getCodingNote());

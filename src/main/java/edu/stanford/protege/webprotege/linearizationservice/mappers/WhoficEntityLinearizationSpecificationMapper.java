@@ -22,8 +22,8 @@ public class WhoficEntityLinearizationSpecificationMapper {
     }
 
     private LinearizationResiduals getDefaultResiduals() {
-        ThreeStateBoolean suppressOtherSpecifiedResidual = ThreeStateBoolean.UNKNOWN;
-        ThreeStateBoolean suppressUnspecifiedSpecifiedResidual = ThreeStateBoolean.UNKNOWN;
+        LinearizationStateCell suppressOtherSpecifiedResidual = LinearizationStateCell.UNKNOWN;
+        LinearizationStateCell suppressUnspecifiedSpecifiedResidual = LinearizationStateCell.UNKNOWN;
 
         String unspecifiedResidualTitle = "";
         String otherSpecifiedResidualTitle = "";
@@ -35,9 +35,9 @@ public class WhoficEntityLinearizationSpecificationMapper {
         return linearizationSpecifications.stream()
                 .map(spec ->
                         new LinearizationSpecification(
-                                ThreeStateBoolean.FALSE,
-                                ThreeStateBoolean.FALSE,
-                                ThreeStateBoolean.UNKNOWN,
+                                LinearizationStateCell.FALSE,
+                                LinearizationStateCell.FALSE,
+                                LinearizationStateCell.UNKNOWN,
                                 IRI.create(""),
                                 spec.getLinearizationView(),
                                 ""

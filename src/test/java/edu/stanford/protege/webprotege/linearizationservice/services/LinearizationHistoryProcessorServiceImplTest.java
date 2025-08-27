@@ -1,16 +1,25 @@
 package edu.stanford.protege.webprotege.linearizationservice.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
+import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import edu.stanford.protege.webprotege.linearizationservice.events.LinearizationEvent;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.semanticweb.owlapi.model.IRI;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -20,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class LinearizationHistoryProcessorServiceImplTest {
 
     @Mock
@@ -36,20 +46,26 @@ public class LinearizationHistoryProcessorServiceImplTest {
 
     @Mock
     private ReadWriteLockService readWriteLockService;
-
+    @Mock
+    private LinearizationDefinitionRepository linearizationDefinitionRepository;
     @InjectMocks
     private LinearizationHistoryProcessorServiceImpl historyProcessorService;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
 
         doAnswer(invocation -> {
             Callable<?> callable = invocation.getArgument(0);
             return callable.call();
         }).when(readWriteLockService).executeReadLock(any(Callable.class));
+        ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
 
-        eventMapper = new LinearizationEventMapper();
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/LinearizationDefinitions.json");
+        when(linearizationDefinitionRepository.getLinearizationDefinitions())
+                .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
+                }));
+        eventMapper = new LinearizationEventMapper(linearizationDefinitionRepository);
         whoficSpecMapper = new WhoficEntityLinearizationSpecificationMapper();
         historyProcessorService = new LinearizationHistoryProcessorServiceImpl(linearizationHistoryService, eventsProcessorService, whoficSpecMapper, readWriteLockService);
     }
@@ -82,12 +98,12 @@ public class LinearizationHistoryProcessorServiceImplTest {
         UserId userId = UserId.valueOf(getRandomString());
 
         LinearizationSpecification currSpec1 = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE, ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.TRUE, IRI.create(""), IRI.create("http://id.who.int/icd/entity/MMS"), "");
+                LinearizationStateCell.TRUE, LinearizationStateCell.UNKNOWN, LinearizationStateCell.TRUE, IRI.create(""), IRI.create("http://id.who.int/icd/release/11/mms"), "");
         LinearizationSpecification currSpec2 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.FALSE, ThreeStateBoolean.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/entity/primCareLowResSet"), "");
+                LinearizationStateCell.UNKNOWN, LinearizationStateCell.FALSE, LinearizationStateCell.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/release/11/ichi"), "");
         WhoficEntityLinearizationSpecification currentSpec = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec1, currSpec2));
 
-        Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(currentSpec);
+        Set<LinearizationEvent> linearizationEvents = eventMapper.mapInitialLinearizationSpecificationsToEvents(currentSpec);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(currentSpec));
 
         var currEntityRevision = LinearizationRevision.create(userId, linearizationEvents);
@@ -95,21 +111,21 @@ public class LinearizationHistoryProcessorServiceImplTest {
 
 
         LinearizationSpecification missingSpec1 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/entity/research"), "");
+                LinearizationStateCell.UNKNOWN, LinearizationStateCell.UNKNOWN, LinearizationStateCell.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/release/11/icf"), "");
         WhoficEntityLinearizationSpecification parentWhoficSpec1 = new WhoficEntityLinearizationSpecification(parentEntityIri1, null, List.of(missingSpec1));
 
-        Set<LinearizationEvent> parent1Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec1);
+        Set<LinearizationEvent> parent1Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec1);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec1));
 
         var parent1EntityRevision = LinearizationRevision.create(userId, parent1Events);
         var parent1EntityHistory = EntityLinearizationHistory.create(parentEntityIri1.toString(), projectId.id(), Set.of(parent1EntityRevision));
 
         LinearizationSpecification missingSpec2 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/entity/mentalHealth"), "");
+                LinearizationStateCell.UNKNOWN, LinearizationStateCell.UNKNOWN, LinearizationStateCell.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/release/11/icd-o"), "");
 
         WhoficEntityLinearizationSpecification parentWhoficSpec2 = new WhoficEntityLinearizationSpecification(parentEntityIri2, null, List.of(missingSpec2));
 
-        Set<LinearizationEvent> parent2Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec2);
+        Set<LinearizationEvent> parent2Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec2);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec2));
 
         var parent2EntityRevision = LinearizationRevision.create(userId, parent2Events);
@@ -171,12 +187,12 @@ public class LinearizationHistoryProcessorServiceImplTest {
         UserId userId = UserId.valueOf(getRandomString());
 
         LinearizationSpecification currSpec1 = new LinearizationSpecification(
-                ThreeStateBoolean.TRUE, ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.TRUE, IRI.create(""), IRI.create("http://id.who.int/icd/entity/MMS"), "");
+                LinearizationStateCell.TRUE, LinearizationStateCell.UNKNOWN, LinearizationStateCell.TRUE, IRI.create(""), IRI.create("http://id.who.int/icd/release/11/mms"), "");
         LinearizationSpecification currSpec2 = new LinearizationSpecification(
-                ThreeStateBoolean.UNKNOWN, ThreeStateBoolean.FALSE, ThreeStateBoolean.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/entity/primCareLowResSet"), "");
+                LinearizationStateCell.UNKNOWN, LinearizationStateCell.FALSE, LinearizationStateCell.FALSE, IRI.create(""), IRI.create("http://id.who.int/icd/release/11/icd-o"), "");
         WhoficEntityLinearizationSpecification currentSpec = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec1, currSpec2));
 
-        Set<LinearizationEvent> linearizationEvents = eventMapper.mapLinearizationSpecificationsToEvents(currentSpec);
+        Set<LinearizationEvent> linearizationEvents = eventMapper.mapInitialLinearizationSpecificationsToEvents(currentSpec);
         linearizationEvents.addAll(eventMapper.mapLinearizationResidualsToEvents(currentSpec));
 
         var currEntityRevision = LinearizationRevision.create(userId, linearizationEvents);
@@ -185,7 +201,7 @@ public class LinearizationHistoryProcessorServiceImplTest {
 
         WhoficEntityLinearizationSpecification parentWhoficSpec1 = new WhoficEntityLinearizationSpecification(parentEntityIri1, null, List.of(currSpec1));
 
-        Set<LinearizationEvent> parent1Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec1);
+        Set<LinearizationEvent> parent1Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec1);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec1));
 
         var parent1EntityRevision = LinearizationRevision.create(userId, parent1Events);
@@ -193,7 +209,7 @@ public class LinearizationHistoryProcessorServiceImplTest {
 
         WhoficEntityLinearizationSpecification parentWhoficSpec2 = new WhoficEntityLinearizationSpecification(parentEntityIri2, null, List.of(currSpec2));
 
-        Set<LinearizationEvent> parent2Events = eventMapper.mapLinearizationSpecificationsToEvents(parentWhoficSpec2);
+        Set<LinearizationEvent> parent2Events = eventMapper.mapInitialLinearizationSpecificationsToEvents(parentWhoficSpec2);
         parent1Events.addAll(eventMapper.mapLinearizationResidualsToEvents(parentWhoficSpec2));
 
         var parent2EntityRevision = LinearizationRevision.create(userId, parent2Events);
