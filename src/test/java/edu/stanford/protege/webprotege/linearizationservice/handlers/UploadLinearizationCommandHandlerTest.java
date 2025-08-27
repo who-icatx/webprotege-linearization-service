@@ -2,6 +2,7 @@ package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.FindIterable;
 import edu.stanford.protege.webprotege.change.OntologyDocumentId;
@@ -10,6 +11,7 @@ import edu.stanford.protege.webprotege.linearizationservice.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import org.bson.Document;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +49,8 @@ public class UploadLinearizationCommandHandlerTest {
 
     @SpyBean
     private MongoTemplate mongoTemplate;
+    @MockBean
+    private LinearizationDefinitionRepository definitionRepository;
 
     @Autowired
     UploadLinearizationCommandHandler commandHandler;
@@ -54,11 +58,18 @@ public class UploadLinearizationCommandHandlerTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
-    public void setUp() throws FileNotFoundException {
+    public void setUp() throws IOException {
         File initialFile = new File("src/test/resources/TestLinearization.json");
         InputStream targetStream = new FileInputStream(initialFile);
         when(minioLinearizationDocumentLoader.fetchLinearizationDocument(any())).thenReturn(targetStream);
         objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
+
+        ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
+
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/LinearizationDefinitions.json");
+        when(definitionRepository.getLinearizationDefinitions())
+                .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
+                }));
     }
 
 

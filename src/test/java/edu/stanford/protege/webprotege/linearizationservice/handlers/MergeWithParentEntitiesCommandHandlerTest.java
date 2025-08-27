@@ -1,15 +1,19 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.authorization.*;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.criteria.CompositeRootCriteria;
 import edu.stanford.protege.webprotege.criteria.MultiMatchType;
 import edu.stanford.protege.webprotege.ipc.CommandExecutor;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
+import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import edu.stanford.protege.webprotege.linearizationservice.*;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.mappers.LinearizationEventMapper;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +27,11 @@ import org.springframework.data.mongodb.core.query.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -57,8 +65,12 @@ class MergeWithParentEntitiesCommandHandlerTest {
     @MockBean
     private CommandExecutor<GetMatchingCriteriaRequest, GetMatchingCriteriaResponse> getMatchingCriteriaExecutor;
 
+    @MockBean
+    private LinearizationDefinitionRepository definitionRepository;
+
+
     @BeforeEach
-    public  void setUp(){
+    public  void setUp() throws IOException {
         Set<Capability> capabilities = new HashSet<>();
         LinearizationRowsCapability capability = new LinearizationRowsCapability(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW,
                 LinearizationViewIriHelper.getLinearizationViewIris().stream().map(IRI::toString).collect(Collectors.toList()),
@@ -67,7 +79,12 @@ class MergeWithParentEntitiesCommandHandlerTest {
         when(getAuthorizedActionsExecutor.execute(any(), any())).thenReturn(CompletableFuture
                 .supplyAsync(() -> new GetAuthorizedCapabilitiesResponse(new ProjectResource(ProjectId.generate()),
                         Subject.forUser(new UserId("user1")), capabilities)));
+        ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
 
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/LinearizationDefinitions.json");
+        when(definitionRepository.getLinearizationDefinitions())
+                .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
+                }));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
                 .thenReturn(CompletableFuture.supplyAsync(() -> new GetMatchingCriteriaResponse(Arrays.asList(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW))));
     }
@@ -87,14 +104,14 @@ class MergeWithParentEntitiesCommandHandlerTest {
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.TRUE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/MMS"),
+                IRI.create("http://id.who.int/icd/release/11/mms"),
                 "");
         LinearizationSpecification currSpec2 = new LinearizationSpecification(
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.FALSE,
                 LinearizationStateCell.FALSE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
+                IRI.create("http://id.who.int/icd/release/11/pcl"),
                 "");
         WhoficEntityLinearizationSpecification currentSpec = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec1, currSpec2));
 
@@ -111,7 +128,7 @@ class MergeWithParentEntitiesCommandHandlerTest {
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.FALSE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/research"),
+                IRI.create("http://id.who.int/icd/release/11/icd-o"),
                 "");
         WhoficEntityLinearizationSpecification parentWhoficSpec1 = new WhoficEntityLinearizationSpecification(parentEntityIri1, null, List.of(missingSpec1));
 
@@ -129,7 +146,7 @@ class MergeWithParentEntitiesCommandHandlerTest {
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.FALSE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/mentalHealth"),
+                IRI.create("http://id.who.int/icd/release/11/icd-o"),
                 "");
 
         WhoficEntityLinearizationSpecification parentWhoficSpec2 = new WhoficEntityLinearizationSpecification(parentEntityIri2, null, List.of(missingSpec2));
@@ -189,14 +206,14 @@ class MergeWithParentEntitiesCommandHandlerTest {
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.TRUE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/MMS"),
+                IRI.create("http://id.who.int/icd/release/11/mms"),
                 "");
         LinearizationSpecification currSpec2 = new LinearizationSpecification(
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.FALSE,
                 LinearizationStateCell.FALSE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
+                IRI.create("http://id.who.int/icd/release/11/mms"),
                 "");
         WhoficEntityLinearizationSpecification currentSpec = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec1, currSpec2));
 

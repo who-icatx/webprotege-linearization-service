@@ -1,36 +1,52 @@
 package edu.stanford.protege.webprotege.linearizationservice.mappers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import org.junit.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.semanticweb.owlapi.model.IRI;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 import static edu.stanford.protege.webprotege.linearizationservice.testUtils.RandomHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class LinearizationEventMapperTest {
 
     private LinearizationEventMapper eventMapper;
 
-
     @Mock
     private LinearizationDefinitionRepository linearizationDefinitionRepository;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
+        MockitoAnnotations.openMocks(this);
+
+        ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
+
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/LinearizationDefinitions.json");
+        when(linearizationDefinitionRepository.getLinearizationDefinitions())
+                .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
+                }));
         eventMapper = new LinearizationEventMapper(linearizationDefinitionRepository);
     }
 
     @Test
     public void GIVEN_entityLinearizationSpecification_WHEN_mappedToLinearizationEvent_allSpecificationEventsAreCreated() {
-        String linearizationView = getRandomIri();
+        String linearizationView = "http://id.who.int/icd/release/11/mms";
         String linearizationParent = getRandomIri();
         String codingNote = getRandomString();
         String entityIri = getRandomIri();

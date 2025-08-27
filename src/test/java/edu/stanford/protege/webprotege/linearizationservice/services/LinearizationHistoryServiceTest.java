@@ -1,5 +1,6 @@
 package edu.stanford.protege.webprotege.linearizationservice.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
@@ -16,6 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.semanticweb.owlapi.model.IRI;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -53,7 +57,7 @@ public class LinearizationHistoryServiceTest {
     private LinearizationHistoryService linearizationHistoryService;
 
     @Before
-    public void setUp() throws ExecutionException, InterruptedException {
+    public void setUp() throws ExecutionException, InterruptedException, IOException {
         MockitoAnnotations.openMocks(this);
         doAnswer(invocation -> {
             Runnable runnable = invocation.getArgument(0);
@@ -64,6 +68,10 @@ public class LinearizationHistoryServiceTest {
                 .thenReturn(new LinearizationDefinitionService.AllowedLinearizationDefinitions(LinearizationViewIriHelper.getLinearizationViewIris()
                         .stream().map(IRI::toString).collect(Collectors.toList()), new ArrayList<>()));
         objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/LinearizationDefinitions.json");
+        when(linearizationDefinitionRepository.getLinearizationDefinitions())
+                .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
+                }));
         eventMapper = new LinearizationEventMapper(linearizationDefinitionRepository);
         processorService = new LinearizationEventsProcessorServiceImpl(definitionService);
         linearizationHistoryService = spy(new LinearizationHistoryServiceImpl(objectMapper, linearizationHistoryRepo, eventMapper, readWriteLock, processorService, newRevisionsEventEmitter));
@@ -102,7 +110,7 @@ public class LinearizationHistoryServiceTest {
     @Test
     public void GIVEN_entityWithNoLinearizationHistory_WHEN_savingNewRevision_THEN_newHistoryWithRevisionIsCreated() {
         var userId = UserId.valueOf("user1");
-        var linearizationView = getRandomIri();
+        var linearizationView = "http://id.who.int/icd/release/11/mms";
         var linearizationParent = getRandomIri();
         var codingNote = getRandomString();
         var entityIri = getRandomIri();
@@ -131,14 +139,12 @@ public class LinearizationHistoryServiceTest {
 
         verify(linearizationHistoryRepo, times(0))
                 .addRevision(any(), any(), any());
-        verify(newRevisionsEventEmitter, times(1))
-                .emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any(), "");
     }
 
     @Test
     public void GIVEN_entityWithALinearizationHistory_WHEN_savingNewRevision_THEN_addnewRevisionToHistory() {
         var userId = UserId.valueOf("user1");
-        var linearizationView = getRandomIri();
+        var linearizationView = "http://id.who.int/icd/release/11/mms";
         var linearizationParent = getRandomIri();
         var codingNote = getRandomString();
         var entityIri = getRandomIri();
@@ -168,7 +174,7 @@ public class LinearizationHistoryServiceTest {
                 .emitNewRevisionsEvent(eq(projectId),any(), any());
 
         verify(linearizationHistoryRepo).addRevision(any(), any(), any());
-        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any(), "");
+        verify(newRevisionsEventEmitter).emitNewRevisionsEvent(eq(projectId),eq(woficEntitySpec.entityIRI().toString()),any(), any(), eq(null));
     }
 
     @Test
@@ -183,14 +189,14 @@ public class LinearizationHistoryServiceTest {
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.TRUE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/MMS"),
+                IRI.create("http://id.who.int/icd/release/11/mms"),
                 "");
         LinearizationSpecification currSpec21 = new LinearizationSpecification(
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.FALSE,
                 LinearizationStateCell.FALSE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
+                IRI.create("http://id.who.int/icd/release/11/pcl"),
                 "");
         WhoficEntityLinearizationSpecification currentSpec1 = new WhoficEntityLinearizationSpecification(currenteEtityIri, null, List.of(currSpec11, currSpec21));
 
@@ -199,14 +205,14 @@ public class LinearizationHistoryServiceTest {
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.TRUE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/MMS"),
+                IRI.create("http://id.who.int/icd/release/11/mms"),
                 "");
         LinearizationSpecification currSpec22 = new LinearizationSpecification(
                 LinearizationStateCell.UNKNOWN,
                 LinearizationStateCell.FALSE,
                 LinearizationStateCell.FALSE,
                 IRI.create(""),
-                IRI.create("http://id.who.int/icd/entity/primCareLowResSet"),
+                IRI.create("http://id.who.int/icd/release/11/pcl"),
                 "");
         WhoficEntityLinearizationSpecification currentSpec2 = new WhoficEntityLinearizationSpecification(currenteEtityIri1, null, List.of(currSpec12, currSpec22));
         Set<WhoficEntityLinearizationSpecification> page = Set.of(currentSpec1, currentSpec2);

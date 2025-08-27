@@ -1,14 +1,18 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.protege.webprotege.authorization.*;
 import edu.stanford.protege.webprotege.common.*;
 import edu.stanford.protege.webprotege.criteria.CompositeRootCriteria;
 import edu.stanford.protege.webprotege.criteria.MultiMatchType;
 import edu.stanford.protege.webprotege.ipc.CommandExecutor;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
+import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
 import edu.stanford.protege.webprotege.linearizationservice.*;
 import edu.stanford.protege.webprotege.linearizationservice.events.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
+import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.linearizationservice.testUtils.LinearizationViewIriHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +27,10 @@ import org.springframework.data.mongodb.core.query.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -52,10 +59,11 @@ public class SaveEntityLinearizationCommandHandlerTest {
 
     @MockBean
     private CommandExecutor<GetMatchingCriteriaRequest, GetMatchingCriteriaResponse> getMatchingCriteriaExecutor;
-
+    @MockBean
+    private LinearizationDefinitionRepository definitionRepository;
 
     @BeforeEach
-    public  void setUp(){
+    public  void setUp() throws IOException {
         Set<Capability> capabilities = new HashSet<>();
         LinearizationRowsCapability capability = new LinearizationRowsCapability(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW,
                 LinearizationViewIriHelper.getLinearizationViewIris().stream().map(IRI::toString).collect(Collectors.toList()),
@@ -64,7 +72,12 @@ public class SaveEntityLinearizationCommandHandlerTest {
         when(getAuthorizedActionsExecutor.execute(any(), any())).thenReturn(CompletableFuture
                 .supplyAsync(() -> new GetAuthorizedCapabilitiesResponse(new ProjectResource(ProjectId.generate()),
                         Subject.forUser(new UserId("user1")), capabilities)));
+        ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
 
+        FileInputStream fileInputStream = new FileInputStream("src/test/resources/LinearizationDefinitions.json");
+        when(definitionRepository.getLinearizationDefinitions())
+                .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
+                }));
         when(getMatchingCriteriaExecutor.execute(any(), any()))
                 .thenReturn(CompletableFuture.supplyAsync(() -> new GetMatchingCriteriaResponse(Arrays.asList(LinearizationRowsCapability.EDIT_LINEARIZATION_ROW))));
     }
@@ -72,7 +85,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
     @Test
     public void GIVEN_entityWithNoLinearizationHistory_WHEN_savingNewEntityLinearization_THEN_createNewHistoryWithNewRevision() {
         var userId = UserId.valueOf("user1");
-        var linearizationView = getRandomIri();
+        var linearizationView = "http://id.who.int/icd/release/11/mms";
         var linearizationParent = getRandomIri();
         var codingNote = getRandomString();
         var entityIri = getRandomIri();
@@ -131,7 +144,7 @@ public class SaveEntityLinearizationCommandHandlerTest {
     @Test
     public void GIVEN_entityWithLinearizationHistory_WHEN_savingEntityLinearization_THEN_createNewRevisionAndAddToExistingHistory() {
         var userId = UserId.valueOf("user1");
-        var linearizationView = IRI.create(getRandomIri());
+        var linearizationView = IRI.create("http://id.who.int/icd/release/11/mms");
         var linearizationParent = IRI.create(getRandomIri());
         var codingNote = getRandomString();
         var entityIri = IRI.create(getRandomIri());
