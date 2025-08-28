@@ -66,7 +66,7 @@ public class LinearizationHistoryProcessorServiceImplTest {
                 .thenReturn(objectMapper.readValue(fileInputStream, new TypeReference<>() {
                 }));
         eventMapper = new LinearizationEventMapper(linearizationDefinitionRepository);
-        whoficSpecMapper = new WhoficEntityLinearizationSpecificationMapper();
+        whoficSpecMapper = new WhoficEntityLinearizationSpecificationMapper(linearizationDefinitionRepository);
         historyProcessorService = new LinearizationHistoryProcessorServiceImpl(linearizationHistoryService, eventsProcessorService, whoficSpecMapper, readWriteLockService);
     }
 
