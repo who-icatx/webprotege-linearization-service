@@ -121,7 +121,8 @@ class CreateLinearizationFromParentCommandHandlerTest {
              if (event instanceof SetCodingNote) {
                 assertEquals("", event.getValue());
             } else if (event instanceof SetIncludedInLinearization) {
-                assertEquals(LinearizationStateCell.UNKNOWN.name(), event.getValue());
+                assertTrue(event.getValue().equals(LinearizationStateCell.UNKNOWN.name()) ||
+                          event.getValue().equals(LinearizationStateCell.FOLLOW_BASE_LINEARIZATION.name()));
             } else if (event instanceof SetLinearizationParent) {
                 assertEquals("", event.getValue());
             } else if (event instanceof SetSuppressedOtherSpecifiedResidual) {

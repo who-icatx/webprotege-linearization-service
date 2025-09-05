@@ -31,7 +31,7 @@ public class LinearizationEventMapper {
                                 linearizationSpecification.linearizationSpecifications(),
                                 linearizationDefinitions);
                         List<LinearizationSpecificationEvent> response = new ArrayList<>();
-                        addIncludedInLinearizationEvent(response, specification);
+                        addIncludedInLinearizationEvent(response, specification, linearizationDefinitions, parentSpecification);
                         addAuxiliaryAxisChildEvent(response, specification, linearizationDefinitions);
                         addLinearizationParentEvent(response, specification);
                         addGroupingEvent(response, specification, linearizationDefinitions, parentSpecification);
@@ -109,9 +109,27 @@ public class LinearizationEventMapper {
         return residuals;
     }
 
-    private void addIncludedInLinearizationEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification) {
-        if (specification.getIsIncludedInLinearization() != null) {
-            events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));
+    private void addIncludedInLinearizationEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, List<LinearizationDefinition> linearizationDefinitions, Optional<LinearizationSpecification> parentSpecification) {
+         var isDerived = isDerived(specification, linearizationDefinitions);
+
+        if(!isDerived) {
+            if(specification.getIsIncludedInLinearization() != null) {
+                events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));
+            } else {
+                events.add(new SetIncludedInLinearization(LinearizationStateCell.UNKNOWN, specification.getLinearizationView().toString()));
+            }
+        } else {
+            LinearizationSpecification parentSpec = parentSpecification.orElseThrow(() -> new RuntimeException("Parent is not present for derived class " + specification.getLinearizationView()));
+            if(specification.getIsIncludedInLinearization() != null && parentSpec.getIsIncludedInLinearization() != null) {
+                if(parentSpecification.get().getIsIncludedInLinearization().equals(specification.getIsIncludedInLinearization()) || LinearizationStateCell.UNKNOWN.equals(specification.getIsIncludedInLinearization())) {
+                    events.add(new SetIncludedInLinearization(LinearizationStateCell.FOLLOW_BASE_LINEARIZATION, specification.getLinearizationView().toString()));
+                } else {
+                    events.add(new SetIncludedInLinearization(specification.getIsIncludedInLinearization(), specification.getLinearizationView().toString()));
+                }
+            } else {
+                events.add(new SetIncludedInLinearization(LinearizationStateCell.FOLLOW_BASE_LINEARIZATION, specification.getLinearizationView().toString()));
+            }
+
         }
     }
 
@@ -168,7 +186,9 @@ public class LinearizationEventMapper {
         }
     }
 
-    private void addGroupingEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification, List<LinearizationDefinition> definitions, Optional<LinearizationSpecification> parentSpecification) {
+    private void addGroupingEvent(List<LinearizationSpecificationEvent> events, LinearizationSpecification specification,
+                                  List<LinearizationDefinition> definitions,
+                                  Optional<LinearizationSpecification> parentSpecification) {
         var isDerived = isDerived(specification, definitions);
 
         if(!isDerived) {
@@ -180,7 +200,7 @@ public class LinearizationEventMapper {
         } else {
             LinearizationSpecification parentSpec = parentSpecification.orElseThrow(() -> new RuntimeException("Parent is not present for derived class " + specification.getLinearizationView()));
             if(specification.getIsGrouping() != null && parentSpec.getIsGrouping() != null) {
-                if(parentSpecification.get().getIsGrouping().equals(specification.getIsGrouping())) {
+                if(parentSpecification.get().getIsGrouping().equals(specification.getIsGrouping()) || LinearizationStateCell.UNKNOWN.equals(specification.getIsGrouping())) {
                     events.add(new SetGrouping(LinearizationStateCell.FOLLOW_BASE_LINEARIZATION, specification.getLinearizationView().toString()));
                 } else {
                     events.add(new SetGrouping(specification.getIsGrouping(), specification.getLinearizationView().toString()));

@@ -246,7 +246,6 @@ public class LinearizationEventMapperTest {
         assertEquals("", events.iterator().next().getValue());
     }
 
-    //----------------------------------------------------------------------------
 
     @Test
     public void GIVEN_nonEmptyOldUnspecifiedTitleAndDifferentNewTitle_WHEN_mapLinearizationResidualsToEvents_called_THEN_eventAdded() {
@@ -375,6 +374,149 @@ public class LinearizationEventMapperTest {
         assertEquals(1, events.size());
         assertTrue(events.stream().anyMatch(event -> event instanceof SetUnspecifiedResidualTitle));
         assertEquals("", events.iterator().next().getValue());
+    }
+
+    @Test
+    public void GIVEN_derivedLinearizationWithUnknownValue_WHEN_mappedToEvents_THEN_followBaseLinearization() {
+        String derivedLinearizationView = "http://id.who.int/icd/release/11/pcl";
+        String parentLinearizationView = "http://id.who.int/icd/release/11/mms";
+        String entityIri = getRandomIri();
+        
+        LinearizationSpecification parentSpec = new LinearizationSpecification(
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.TRUE,
+                IRI.create(getRandomIri()),
+                IRI.create(parentLinearizationView),
+                "parent coding note"
+        );
+        
+        LinearizationSpecification derivedSpec = new LinearizationSpecification(
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.UNKNOWN,
+                IRI.create(getRandomIri()),
+                IRI.create(derivedLinearizationView),
+                "derived coding note"
+        );
+
+        WhoficEntityLinearizationSpecification entityLinearizationSpecification = new WhoficEntityLinearizationSpecification(
+                IRI.create(entityIri),
+                null,
+                List.of(parentSpec, derivedSpec)
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapInitialLinearizationSpecificationsToEvents(entityLinearizationSpecification);
+
+        Optional<SetIncludedInLinearization> includedEvent = events.stream()
+                .filter(event -> event instanceof SetIncludedInLinearization)
+                .map(event -> (SetIncludedInLinearization) event)
+                .filter(event -> event.getLinearizationView().equals(derivedLinearizationView))
+                .findFirst();
+        
+        assertTrue(includedEvent.isPresent());
+        assertEquals("FOLLOW_BASE_LINEARIZATION", includedEvent.get().getValue());
+        
+        Optional<SetGrouping> groupingEvent = events.stream()
+                .filter(event -> event instanceof SetGrouping)
+                .map(event -> (SetGrouping) event)
+                .filter(event -> event.getLinearizationView().equals(derivedLinearizationView))
+                .findFirst();
+        
+        assertTrue(groupingEvent.isPresent());
+        assertEquals("FOLLOW_BASE_LINEARIZATION", groupingEvent.get().getValue());
+    }
+
+    @Test
+    public void GIVEN_derivedLinearizationWithDifferentValue_WHEN_mappedToEvents_THEN_setSpecificValue() {
+        String derivedLinearizationView = "http://id.who.int/icd/release/11/pcl";
+        String parentLinearizationView = "http://id.who.int/icd/release/11/mms";
+        String entityIri = getRandomIri();
+        
+        LinearizationSpecification parentSpec = new LinearizationSpecification(
+                LinearizationStateCell.TRUE,
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.TRUE,
+                IRI.create(getRandomIri()),
+                IRI.create(parentLinearizationView),
+                "parent coding note"
+        );
+        
+        LinearizationSpecification derivedSpec = new LinearizationSpecification(
+                LinearizationStateCell.FALSE,
+                LinearizationStateCell.UNKNOWN,
+                LinearizationStateCell.FALSE,
+                IRI.create(getRandomIri()),
+                IRI.create(derivedLinearizationView),
+                "derived coding note"
+        );
+
+        WhoficEntityLinearizationSpecification entityLinearizationSpecification = new WhoficEntityLinearizationSpecification(
+                IRI.create(entityIri),
+                null,
+                List.of(parentSpec, derivedSpec)
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapInitialLinearizationSpecificationsToEvents(entityLinearizationSpecification);
+
+        Optional<SetIncludedInLinearization> includedEvent = events.stream()
+                .filter(event -> event instanceof SetIncludedInLinearization)
+                .map(event -> (SetIncludedInLinearization) event)
+                .filter(event -> event.getLinearizationView().equals(derivedLinearizationView))
+                .findFirst();
+        
+        assertTrue(includedEvent.isPresent());
+        assertEquals("FALSE", includedEvent.get().getValue());
+        
+        Optional<SetGrouping> groupingEvent = events.stream()
+                .filter(event -> event instanceof SetGrouping)
+                .map(event -> (SetGrouping) event)
+                .filter(event -> event.getLinearizationView().equals(derivedLinearizationView))
+                .findFirst();
+        
+        assertTrue(groupingEvent.isPresent());
+        assertEquals("FALSE", groupingEvent.get().getValue());
+    }
+
+    @Test
+    public void GIVEN_nonDerivedLinearizationWithNullValue_WHEN_mappedToEvents_THEN_setUnknown() {
+        String linearizationView = "http://id.who.int/icd/release/11/mms";
+        String entityIri = getRandomIri();
+        
+        LinearizationSpecification spec = new LinearizationSpecification(
+                null,
+                null,
+                null,
+                IRI.create(getRandomIri()),
+                IRI.create(linearizationView),
+                "coding note"
+        );
+
+        WhoficEntityLinearizationSpecification entityLinearizationSpecification = new WhoficEntityLinearizationSpecification(
+                IRI.create(entityIri),
+                null,
+                List.of(spec)
+        );
+
+        Set<LinearizationEvent> events = eventMapper.mapInitialLinearizationSpecificationsToEvents(entityLinearizationSpecification);
+
+        Optional<SetIncludedInLinearization> includedEvent = events.stream()
+                .filter(event -> event instanceof SetIncludedInLinearization)
+                .map(event -> (SetIncludedInLinearization) event)
+                .filter(event -> event.getLinearizationView().equals(linearizationView))
+                .findFirst();
+        
+        assertTrue(includedEvent.isPresent());
+        assertEquals("UNKNOWN", includedEvent.get().getValue());
+        
+        Optional<SetGrouping> groupingEvent = events.stream()
+                .filter(event -> event instanceof SetGrouping)
+                .map(event -> (SetGrouping) event)
+                .filter(event -> event.getLinearizationView().equals(linearizationView))
+                .findFirst();
+        
+        assertTrue(groupingEvent.isPresent());
+        assertEquals("UNKNOWN", groupingEvent.get().getValue());
     }
 
 }
