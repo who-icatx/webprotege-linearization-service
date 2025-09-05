@@ -10,7 +10,7 @@
     </parent>
     <groupId>edu.stanford.protege</groupId>
     <artifactId>webprotege-linearization-service</artifactId>
-    <version>1.0.37</version>
+    <version>1.0.38</version>
     <name>webprotege-linearization-service</name>
     <description>This service reads linearization documents from cloud storage (using MinIO) and, from these, generates WebProtégé linearization.
         Also, it handles querying and event sourcing</description>
