@@ -9,6 +9,8 @@ import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationD
 import edu.stanford.protege.webprotege.linearizationservice.repositories.definitions.LinearizationDefinitionRepository;
 import edu.stanford.protege.webprotege.linearizationservice.services.LinearizationDefinitionService;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -17,6 +19,9 @@ import java.util.concurrent.ExecutionException;
 
 @WebProtegeHandler
 public class GetContextAwareLinearizationDefinitionsCommandHandler implements CommandHandler<ContextAwareLinearizationDefinitionRequest, ContextAwareLinearizationDefinitionResponse> {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(GetContextAwareLinearizationDefinitionsCommandHandler.class);
+
     private final LinearizationDefinitionRepository repository;
 
     private final LinearizationDefinitionService linearizationDefinitionService;
@@ -66,6 +71,8 @@ public class GetContextAwareLinearizationDefinitionsCommandHandler implements Co
             throw new RuntimeException(e);
         }
 
+
+        LOGGER.info("Returning configuration for {} . {}",executionContext.userId(), response);
 
         return Mono.just(new ContextAwareLinearizationDefinitionResponse(response));
     }
