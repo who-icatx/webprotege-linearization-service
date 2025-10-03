@@ -102,4 +102,20 @@ public class LinearizationDefinition {
     public void setAccessibility(LinearizationDefinitionAccessibility accessibility) {
         this.accessibility = accessibility;
     }
+
+    @Override
+    public String toString() {
+        return "LinearizationDefinition{" +
+                "linearizationId='" + linearizationId + '\'' +
+                ", linearizationUri='" + linearizationUri + '\'' +
+                ", description='" + description + '\'' +
+                ", linearizationMode='" + linearizationMode + '\'' +
+                ", rootId='" + rootId + '\'' +
+                ", coreLinId='" + coreLinId + '\'' +
+                ", sortingCode='" + sortingCode + '\'' +
+                ", displayLabel='" + displayLabel + '\'' +
+                ", oldId='" + oldId + '\'' +
+                ", accessibility=" + accessibility +
+                '}';
+    }
 }
