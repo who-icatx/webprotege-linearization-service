@@ -1,35 +1,42 @@
 package edu.stanford.protege.webprotege.linearizationservice.config;
 
 
-import com.fasterxml.jackson.databind.*;
+import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.semanticweb.owlapi.model.IRI;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import edu.stanford.protege.webprotege.authorization.GetAuthorizedCapabilitiesRequest;
 import edu.stanford.protege.webprotege.authorization.GetAuthorizedCapabilitiesResponse;
 import edu.stanford.protege.webprotege.common.UserId;
 import edu.stanford.protege.webprotege.ipc.CommandExecutor;
 import edu.stanford.protege.webprotege.ipc.impl.CommandExecutorImpl;
 import edu.stanford.protege.webprotege.jackson.WebProtegeJacksonApplication;
-import edu.stanford.protege.webprotege.linearizationservice.config.serialization.*;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.IriDeserializer;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.IriSerializer;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.LinearizationCellStateSerializer;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.LinearizationDefinitionAccessibilityDeserializer;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.LinearizationDefinitionAccessibilitySerializer;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.ThreeStateBooleanDeserializer;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.UserIdDeserializer;
+import edu.stanford.protege.webprotege.linearizationservice.config.serialization.UserIdSerializer;
 import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaRequest;
 import edu.stanford.protege.webprotege.linearizationservice.handlers.GetMatchingCriteriaResponse;
-import edu.stanford.protege.webprotege.linearizationservice.model.*;
-import org.semanticweb.owlapi.model.IRI;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.*;
-import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationDefinitionAccessibility;
+import edu.stanford.protege.webprotege.linearizationservice.model.LinearizationStateCell;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
-import java.util.List;
-import java.util.concurrent.locks.*;
-
 @Configuration
-public class ApplicationBeans extends CachingConfigurerSupport {
+public class ApplicationBeans {
 
-    @Value("${webprotege.cache.linearization-definitions.ttl-seconds:300}")
-    private int cacheTtlSeconds;
 
 
     @Bean
@@ -79,9 +86,4 @@ public class ApplicationBeans extends CachingConfigurerSupport {
         return new ReentrantReadWriteLock(true);
     }
 
-    @Override
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("linearizationDefinitions");
-    }
 }

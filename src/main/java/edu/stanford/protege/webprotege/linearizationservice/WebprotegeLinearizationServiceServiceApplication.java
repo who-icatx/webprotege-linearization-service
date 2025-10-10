@@ -1,15 +1,14 @@
 package edu.stanford.protege.webprotege.linearizationservice;
 
-import edu.stanford.protege.webprotege.ipc.WebProtegeIpcApplication;
-import io.minio.MinioClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
+import edu.stanford.protege.webprotege.ipc.WebProtegeIpcApplication;
+import io.minio.MinioClient;
+
 @SpringBootApplication
-@EnableCaching
 @Import({WebProtegeIpcApplication.class})
 public class WebprotegeLinearizationServiceServiceApplication {
 

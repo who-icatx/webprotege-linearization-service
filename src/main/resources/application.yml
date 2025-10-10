@@ -32,6 +32,3 @@ webprotege:
   readWriteLock:
     timeoutInMillies: 1000
     maxRetries: 5
-  cache:
-    linearization-definitions:
-      ttl-seconds: 300
