@@ -10,6 +10,8 @@ import edu.stanford.protege.webprotege.linearizationservice.handlers.*;
 import edu.stanford.protege.webprotege.linearizationservice.model.*;
 import org.jetbrains.annotations.NotNull;
 import org.semanticweb.owlapi.model.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,6 +19,9 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class LinearizationDefinitionService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(LinearizationDefinitionService.class);
+
     private final CommandExecutor<GetAuthorizedCapabilitiesRequest, GetAuthorizedCapabilitiesResponse> getAuthorizedActionsExecutor;
 
     private final CommandExecutor<GetMatchingCriteriaRequest, GetMatchingCriteriaResponse> getMatchingCriteriaExecutor;
@@ -57,7 +62,7 @@ public class LinearizationDefinitionService {
                 if(!allowedIds.contains(capability.id())) continue;
 
                 LinearizationRowsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationRowsCapability.class);
-
+                LOGGER.info("Checking compatibility {}  and criteria map  {}", capability, criteriaMap );
                 if (isEditableCapabilityAndMatchesCriteria(criteriaMap, response, linearizationCapability)) {
                     editableLinearizations.addAll(linearizationCapability.linearizationIds());
                     readableLinearizations.addAll(linearizationCapability.linearizationIds());

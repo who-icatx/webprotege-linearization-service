@@ -29,4 +29,13 @@ public record LinearizationRowsCapability(@JsonProperty("id") String id,
     public GenericParameterizedCapability asGenericCapability() {
         return new GenericParameterizedCapability(TYPE, id, Map.of("linearizationIds", linearizationIds, "contextCriteria", contextCriteria));
     }
+
+    @Override
+    public String toString() {
+        return "LinearizationRowsCapability{" +
+                "id='" + id + '\'' +
+                ", linearizationIds=" + linearizationIds +
+                ", contextCriteria=" + contextCriteria +
+                '}';
+    }
 }
