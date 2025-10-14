@@ -62,7 +62,6 @@ public class LinearizationDefinitionService {
                 if(!allowedIds.contains(capability.id())) continue;
 
                 LinearizationRowsCapability linearizationCapability = objectMapper.convertValue(capability, LinearizationRowsCapability.class);
-                LOGGER.info("Checking compatibility {}  and criteria map  {}", capability, criteriaMap );
                 if (isEditableCapabilityAndMatchesCriteria(criteriaMap, response, linearizationCapability)) {
                     editableLinearizations.addAll(linearizationCapability.linearizationIds());
                     readableLinearizations.addAll(linearizationCapability.linearizationIds());
