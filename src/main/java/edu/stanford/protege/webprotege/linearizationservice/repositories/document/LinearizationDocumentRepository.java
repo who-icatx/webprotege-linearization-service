@@ -66,6 +66,7 @@ public class LinearizationDocumentRepository {
                                 action.accept(person);
                                 return true;
                             } catch (IOException e) {
+                                logger.error("Error in stream " , e);
                                 throw new UncheckedIOException(e);
                             }
                         }
@@ -73,6 +74,8 @@ public class LinearizationDocumentRepository {
 
 
         } catch (IOException e) {
+            logger.error("Error in fetching the doc  " , e);
+
             throw new RuntimeException(e);
         }
 
