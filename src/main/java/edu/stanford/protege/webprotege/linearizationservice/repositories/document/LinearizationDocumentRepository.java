@@ -1,16 +1,26 @@
 package edu.stanford.protege.webprotege.linearizationservice.repositories.document;
 
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.*;
-import edu.stanford.protege.webprotege.linearizationservice.MinioLinearizationDocumentLoader;
-import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
-import org.slf4j.*;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.ProtocolException;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.*;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import edu.stanford.protege.webprotege.linearizationservice.MinioLinearizationDocumentLoader;
+import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 
 /**
  * Matthew Horridge
@@ -66,7 +76,13 @@ public class LinearizationDocumentRepository {
                                 action.accept(person);
                                 return true;
                             } catch (IOException e) {
-                                logger.error("Error in stream " , e);
+                                logger.error("Error in stream processing for document: {}", location, e);
+                                
+                                // Check if it's a connection issue that might be retryable
+                                if (e instanceof ProtocolException || e.getMessage().contains("unexpected end of stream")) {
+                                    logger.warn("Connection interrupted during stream processing, this might be retryable: {}", e.getMessage());
+                                }
+                                
                                 throw new UncheckedIOException(e);
                             }
                         }
@@ -74,9 +90,14 @@ public class LinearizationDocumentRepository {
 
 
         } catch (IOException e) {
-            logger.error("Error in fetching the doc  " , e);
+            logger.error("Error in fetching the document: {}", location, e);
+            
+            // Provide more specific error information
+            if (e instanceof ProtocolException || e.getMessage().contains("unexpected end of stream")) {
+                logger.error("Connection was interrupted while fetching document from MinIO. This might be due to network issues or MinIO server problems.");
+            }
 
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to fetch linearization document: " + location, e);
         }
 
     }

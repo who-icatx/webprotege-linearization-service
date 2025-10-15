@@ -21,6 +21,11 @@ webprotege:
     secret-key: webprotege
     bucket-name: webprotege-uploads
     revision-history-documents-bucket-name: webprotege-revision-history-documents
+    connection-timeout: 30000
+    read-timeout: 300000
+    write-timeout: 300000
+    max-retries: 3
+    retry-delay-ms: 1000
   rabbitmq:
     requestqueue: webprotege-linearization-service-queue
     responsequeue: webprotege-linearization-service-response-queue
