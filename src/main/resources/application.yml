@@ -31,7 +31,7 @@ webprotege:
     responsequeue: webprotege-linearization-service-response-queue
     eventsqueue: webprotege-linearization-events-queue
     event-subscribe: true
-    timeout: 60000
+    timeout: 300000  # 5 minute timeout pentru RabbitMQ
   linearization:
     batch-size: 100
   readWriteLock:

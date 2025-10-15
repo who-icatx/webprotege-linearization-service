@@ -2,6 +2,10 @@ package edu.stanford.protege.webprotege.linearizationservice.config;
 
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -84,6 +88,21 @@ public class ApplicationBeans {
     @Bean
     public ReadWriteLock readWriteLock() {
         return new ReentrantReadWriteLock(true);
+    }
+
+    @Bean("taskExecutor")
+    public Executor taskExecutor() {
+        return new ThreadPoolExecutor(
+            2, // core pool size
+            10, // maximum pool size
+            60L, TimeUnit.SECONDS, // keep alive time
+            new LinkedBlockingQueue<>(100), // queue capacity
+            r -> {
+                Thread t = new Thread(r, "linearization-task-" + System.currentTimeMillis());
+                t.setDaemon(true);
+                return t;
+            }
+        );
     }
 
 }

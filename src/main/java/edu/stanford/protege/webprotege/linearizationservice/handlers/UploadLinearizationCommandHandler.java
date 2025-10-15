@@ -2,11 +2,13 @@ package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import edu.stanford.protege.webprotege.ipc.CommandHandler;
@@ -41,18 +43,21 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
     private final ReadWriteLockService readWriteLock;
 
+    private final Executor taskExecutor;
+
     public UploadLinearizationCommandHandler(LinearizationDocumentRepository linearizationRepository,
                                              MinioLinearizationDocumentLoader minioDocumentLoader,
                                              LinearizationHistoryService linearizationHistoryService,
-                                             ReadWriteLockService readWriteLock) {
+                                             ReadWriteLockService readWriteLock,
+                                             @Qualifier("taskExecutor") Executor taskExecutor) {
         this.linearizationRepository = linearizationRepository;
         this.minioDocumentLoader = minioDocumentLoader;
         this.linearizationHistoryService = linearizationHistoryService;
         this.readWriteLock = readWriteLock;
+        this.taskExecutor = taskExecutor;
         // TODO: Implement read/write lock usage if needed for concurrent access control
     }
 
-    @NotNull
     @Override
     public String getChannelName() {
         return UploadLinearizationRequest.CHANNEL;
@@ -68,38 +73,49 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
                                                            ExecutionContext executionContext) {
 
         String documentId = request.documentId().id();
-        Path tempFile = null;
         
-        try {
-            // Pasul 1: Descarcă fișierul din MinIO în fișier temporar local
-            logger.info("Downloading document {} from MinIO to local file", documentId);
-            tempFile = minioDocumentLoader.downloadToLocalFile(documentId);
-            
-            // Pasul 2: Procesează fișierul local (fără probleme de timeout)
-            logger.info("Processing local file: {}", tempFile);
-            var stream = linearizationRepository.fetchFromLocalFile(tempFile);
-            
-            Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = 
-                linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
-            
-            // Procesează stream-ul din fișierul local
-            stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
-            
-            logger.info("Successfully processed linearization document: {}", documentId);
-            return Mono.just(UploadLinearizationResponse.create());
-            
-        } catch (RuntimeException e) {
-            logger.error("Error processing linearization document: {}", documentId, e);
-            throw e;
-        } catch (Exception e) {
-            logger.error("Unexpected error processing linearization document: {}", documentId, e);
-            throw new RuntimeException("Failed to process linearization document: " + documentId, e);
-        } finally {
-            // Pasul 3: Cleanup - șterge fișierul temporar
-            if (tempFile != null) {
-                minioDocumentLoader.cleanupTempFile(tempFile);
+        logger.info("Starting async processing for document: {}", documentId);
+        
+        CompletableFuture.runAsync(() -> {
+            Path tempFile = null;
+            try {
+                // Pasul 1: Descarcă fișierul din MinIO în fișier temporar local
+                logger.info("Downloading document {} from MinIO to local file", documentId);
+                tempFile = minioDocumentLoader.downloadToLocalFile(documentId);
+                
+                // Pasul 2: Procesează fișierul local (fără probleme de timeout)
+                logger.info("Processing local file: {}", tempFile);
+                var stream = linearizationRepository.fetchFromLocalFile(tempFile);
+                
+                Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = 
+                    linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
+                
+                // Procesează stream-ul din fișierul local
+                stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+                
+                logger.info("Successfully processed linearization document: {}", documentId);
+                
+            } catch (Exception e) {
+                logger.error("Error processing linearization document: {} - {}", documentId, e.getMessage(), e);
+                throw e;
+            } finally {
+                if (tempFile != null) {
+                    try {
+                        minioDocumentLoader.cleanupTempFile(tempFile);
+                        logger.debug("Cleaned up temporary file: {}", tempFile);
+                    } catch (Exception cleanupException) {
+                        logger.warn("Failed to cleanup temporary file: {} - {}", tempFile, cleanupException.getMessage());
+                    }
+                }
             }
-        }
+        }, taskExecutor)
+        .exceptionally(throwable -> {
+            logger.error("Async processing failed for document: {} - {}", documentId, throwable.getMessage(), throwable);
+            return null;
+        });
+        
+        // Returnează imediat răspunsul pentru a evita timeout-ul RabbitMQ
+        return Mono.just(UploadLinearizationResponse.create());
     }
 
 
