@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 
 import edu.stanford.protege.webprotege.ipc.WebProtegeIpcApplication;
 import io.minio.MinioClient;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 
 @SpringBootApplication
@@ -29,6 +30,8 @@ public class WebprotegeLinearizationServiceServiceApplication {
                               .connectTimeout(properties.getConnectionTimeout(), TimeUnit.MILLISECONDS)
                               .readTimeout(properties.getReadTimeout(), TimeUnit.MILLISECONDS)
                               .writeTimeout(properties.getWriteTimeout(), TimeUnit.MILLISECONDS)
+                              .connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES))
+                              .retryOnConnectionFailure(true)
                               .build())
                           .build();
     }

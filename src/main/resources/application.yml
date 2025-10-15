@@ -17,15 +17,15 @@ spring:
 webprotege:
   minio:
     access-key: webprotege
-    end-point: http://localhost:9000
+    end-point: http://minio:9000  # Folosește numele containerului în loc de localhost
     secret-key: webprotege
     bucket-name: webprotege-uploads
     revision-history-documents-bucket-name: webprotege-revision-history-documents
-    connection-timeout: 30000
-    read-timeout: 300000
-    write-timeout: 300000
-    max-retries: 3
-    retry-delay-ms: 1000
+    connection-timeout: 60000      # 1 minut pentru conexiune
+    read-timeout: 600000          # 10 minute pentru citire
+    write-timeout: 600000         # 10 minute pentru scriere
+    max-retries: 5                # Mai multe încercări
+    retry-delay-ms: 2000          # 2 secunde între retry-uri
   rabbitmq:
     requestqueue: webprotege-linearization-service-queue
     responsequeue: webprotege-linearization-service-response-queue

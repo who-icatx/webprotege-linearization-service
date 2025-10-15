@@ -1,16 +1,22 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
-import edu.stanford.protege.webprotege.ipc.*;
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
+import edu.stanford.protege.webprotege.ipc.CommandHandler;
+import edu.stanford.protege.webprotege.ipc.ExecutionContext;
+import edu.stanford.protege.webprotege.ipc.WebProtegeHandler;
 import edu.stanford.protege.webprotege.linearizationservice.StreamUtils;
 import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.document.LinearizationDocumentRepository;
-import edu.stanford.protege.webprotege.linearizationservice.services.*;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
+import edu.stanford.protege.webprotege.linearizationservice.services.LinearizationHistoryService;
+import edu.stanford.protege.webprotege.linearizationservice.services.ReadWriteLockService;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Matthew Horridge
@@ -19,6 +25,8 @@ import java.util.function.Consumer;
  */
 @WebProtegeHandler
 public class UploadLinearizationCommandHandler implements CommandHandler<UploadLinearizationRequest, UploadLinearizationResponse> {
+
+    private final Logger logger = LoggerFactory.getLogger(UploadLinearizationCommandHandler.class);
 
     private final LinearizationDocumentRepository linearizationRepository;
 
@@ -56,7 +64,14 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
         var stream = linearizationRepository.fetchFromDocument(request.documentId().id());
 
         Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
-        stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+        
+        // Procesează imediat stream-ul pentru a evita lazy loading issues
+        try {
+            stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+        } catch (Exception e) {
+            logger.error("Error processing linearization stream for document: {}", request.documentId().id(), e);
+            throw new RuntimeException("Failed to process linearization document", e);
+        }
 
 
         return Mono.just(UploadLinearizationResponse.create());
