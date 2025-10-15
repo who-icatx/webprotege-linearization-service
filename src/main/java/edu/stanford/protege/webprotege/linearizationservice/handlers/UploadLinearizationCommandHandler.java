@@ -1,5 +1,6 @@
 package edu.stanford.protege.webprotege.linearizationservice.handlers;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import edu.stanford.protege.webprotege.ipc.CommandHandler;
 import edu.stanford.protege.webprotege.ipc.ExecutionContext;
 import edu.stanford.protege.webprotege.ipc.WebProtegeHandler;
+import edu.stanford.protege.webprotege.linearizationservice.MinioLinearizationDocumentLoader;
 import edu.stanford.protege.webprotege.linearizationservice.StreamUtils;
 import edu.stanford.protege.webprotege.linearizationservice.model.WhoficEntityLinearizationSpecification;
 import edu.stanford.protege.webprotege.linearizationservice.repositories.document.LinearizationDocumentRepository;
@@ -30,6 +32,8 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
     private final LinearizationDocumentRepository linearizationRepository;
 
+    private final MinioLinearizationDocumentLoader minioDocumentLoader;
+
     @Value("${webprotege.linearization.batch-size:1500}")
     private int batchSize;
 
@@ -37,13 +41,15 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
 
     private final ReadWriteLockService readWriteLock;
 
-
     public UploadLinearizationCommandHandler(LinearizationDocumentRepository linearizationRepository,
+                                             MinioLinearizationDocumentLoader minioDocumentLoader,
                                              LinearizationHistoryService linearizationHistoryService,
                                              ReadWriteLockService readWriteLock) {
         this.linearizationRepository = linearizationRepository;
+        this.minioDocumentLoader = minioDocumentLoader;
         this.linearizationHistoryService = linearizationHistoryService;
         this.readWriteLock = readWriteLock;
+        // TODO: Implement read/write lock usage if needed for concurrent access control
     }
 
     @NotNull
@@ -61,20 +67,39 @@ public class UploadLinearizationCommandHandler implements CommandHandler<UploadL
     public Mono<UploadLinearizationResponse> handleRequest(UploadLinearizationRequest request,
                                                            ExecutionContext executionContext) {
 
-        var stream = linearizationRepository.fetchFromDocument(request.documentId().id());
-
-        Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
+        String documentId = request.documentId().id();
+        Path tempFile = null;
         
-        // Procesează imediat stream-ul pentru a evita lazy loading issues
         try {
+            // Pasul 1: Descarcă fișierul din MinIO în fișier temporar local
+            logger.info("Downloading document {} from MinIO to local file", documentId);
+            tempFile = minioDocumentLoader.downloadToLocalFile(documentId);
+            
+            // Pasul 2: Procesează fișierul local (fără probleme de timeout)
+            logger.info("Processing local file: {}", tempFile);
+            var stream = linearizationRepository.fetchFromLocalFile(tempFile);
+            
+            Consumer<List<WhoficEntityLinearizationSpecification>> batchProcessor = 
+                linearizationHistoryService.createBatchProcessorForSavingPaginatedHistories(request.projectId(), executionContext.userId());
+            
+            // Procesează stream-ul din fișierul local
             stream.collect(StreamUtils.batchCollector(batchSize, batchProcessor));
+            
+            logger.info("Successfully processed linearization document: {}", documentId);
+            return Mono.just(UploadLinearizationResponse.create());
+            
+        } catch (RuntimeException e) {
+            logger.error("Error processing linearization document: {}", documentId, e);
+            throw e;
         } catch (Exception e) {
-            logger.error("Error processing linearization stream for document: {}", request.documentId().id(), e);
-            throw new RuntimeException("Failed to process linearization document", e);
+            logger.error("Unexpected error processing linearization document: {}", documentId, e);
+            throw new RuntimeException("Failed to process linearization document: " + documentId, e);
+        } finally {
+            // Pasul 3: Cleanup - șterge fișierul temporar
+            if (tempFile != null) {
+                minioDocumentLoader.cleanupTempFile(tempFile);
+            }
         }
-
-
-        return Mono.just(UploadLinearizationResponse.create());
     }
 
 
