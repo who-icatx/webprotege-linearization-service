@@ -52,6 +52,8 @@ public class UploadLinearizationCommandHandlerTest {
     @MockBean
     private LinearizationDefinitionRepository definitionRepository;
 
+
+
     @Autowired
     UploadLinearizationCommandHandler commandHandler;
 
@@ -63,6 +65,8 @@ public class UploadLinearizationCommandHandlerTest {
         InputStream targetStream = new FileInputStream(initialFile);
         when(minioLinearizationDocumentLoader.fetchLinearizationDocument(any())).thenReturn(targetStream);
         objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
+
+        when(minioLinearizationDocumentLoader.downloadToLocalFile(any())).thenReturn(initialFile.toPath());
 
         ObjectMapper objectMapper = new WebProtegeJacksonApplication().objectMapper(new OWLDataFactoryImpl());
 
